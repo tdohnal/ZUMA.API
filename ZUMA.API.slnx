@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="ZUMA.API/ZUMA.API.csproj" />
   <Project Path="ZUMA.BussinessLogic/ZUMA.BussinessLogic.csproj" Id="e3f16f3b-25d5-4cf6-87d5-cb2136cf3bfb" />
+  <Project Path="ZUMA.DbMigrator/ZUMA.DbMigrator.csproj" Id="31fd0150-1ef9-4f58-a674-9b24b4477484" />
 </Solution>

@@ -1,3 +1,5 @@
+using ZUMA.BussinessLogic.Plugins;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -12,6 +14,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    ConsoleManager.Show();
 }
 
 app.UseHttpsRedirection();
