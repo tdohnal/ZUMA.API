@@ -11,15 +11,12 @@ namespace ZUMA.API.REST.Controllers;
 public class UserController : BaseController
 {
     private readonly IUserService _userService;
-    private readonly ILogger<UserController> _logger;
 
     public UserController(
-        IUserService userService,
-        ILogger<UserController> logger
+        IUserService userService
         )
     {
         _userService = userService;
-        _logger = logger;
     }
 
     /// <summary>
@@ -29,9 +26,22 @@ public class UserController : BaseController
     [ApiVersion("1.0")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserEntity))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetUserByIdAsync(int id)
+    public async Task<IActionResult> GetUserByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        var user = await _userService.GetByIdAsync(id);
+        var user = await _userService.GetByIdAsync(id, cancellationToken);
+        return user == null ? NotFound() : Ok(user);
+    }
+
+    /// <summary>
+    /// Get all Users
+    /// </summary>
+    [HttpGet()]
+    [ApiVersion("1.0")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserEntity))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetUsersAsync(CancellationToken cancellationToken = default)
+    {
+        var user = await _userService.GetAllAsync(cancellationToken);
         return user == null ? NotFound() : Ok(user);
     }
 
@@ -43,10 +53,9 @@ public class UserController : BaseController
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(UserEntity))]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
-    public async Task<IActionResult> AddUserAsync([FromBody] UserDto userDto)
+    public async Task<IActionResult> AddUserAsync([FromBody] UserDto userDto, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Body:{userDto}", userDto.ToString());
-        var created = await _userService.CreateAsync(userDto.ToEntity());
+        var created = await _userService.CreateAsync(userDto.ToEntity(), cancellationToken);
         return created != null ? Ok(created.Id) : NoContent();
     }
 
@@ -59,12 +68,12 @@ public class UserController : BaseController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
-    public async Task<IActionResult> UpdateUserAsync(int id, [FromBody] UserDto userDto)
+    public async Task<IActionResult> UpdateUserAsync(int id, [FromBody] UserDto userDto, CancellationToken cancellationToken = default)
     {
         var entity = userDto.ToEntity();
         entity.Id = id; // zajistí update správného záznamu
 
-        var updated = await _userService.UpdateAsync(entity);
+        var updated = await _userService.UpdateAsync(entity, cancellationToken);
         return updated == null ? NotFound() : Ok(updated);
     }
 
@@ -75,9 +84,9 @@ public class UserController : BaseController
     [ApiVersion("1.0")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteUserAsync(int id)
+    public async Task<IActionResult> DeleteUserAsync(int id, CancellationToken cancellationToken = default)
     {
-        var success = await _userService.DeleteAsync(id);
+        var success = await _userService.DeleteAsync(id, cancellationToken);
         return success ? NoContent() : NotFound();
     }
 }
