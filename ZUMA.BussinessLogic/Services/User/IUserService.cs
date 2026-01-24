@@ -1,5 +1,7 @@
-﻿namespace ZUMA.BussinessLogic.Services.User;
+﻿using ZUMA.BussinessLogic.Infrastructure.Entities.Customer;
 
-public interface IUserService
+namespace ZUMA.BussinessLogic.Services.User;
+
+public interface IUserService : IServiceBase<UserEntity>
 {
 }

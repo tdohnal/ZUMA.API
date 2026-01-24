@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using ZUMA.BussinessLogic.Infrastructure.Contexts.Customer;
 using ZUMA.BussinessLogic.Infrastructure.Entities.Customer;
 
 namespace ZUMA.BussinessLogic.Repositories.User;

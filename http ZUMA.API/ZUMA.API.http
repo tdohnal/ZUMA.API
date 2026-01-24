@@ -73,4 +73,79 @@ Content-Type: application/json
 
 ### Version 1.0 & 2.0 - Delete User
 DELETE {{ZUMA.API_HostAddress}}/api/{{ApiVersion}}/user/1
+Accept: application/json@ZUMA.API_HostAddress = http://localhost:5044
+@ApiVersion = v1
+
+### Version 1.0 - Get User by ID
+GET {{ZUMA.API_HostAddress}}/api/{{ApiVersion}}/user/1
+Accept: application/json
+
+###
+
+### Version 1.0 - Get All Users
+GET {{ZUMA.API_HostAddress}}/api/{{ApiVersion}}/user
+Accept: application/json
+
+###
+
+### Version 2.0 - Get All Users (Paged)
+GET {{ZUMA.API_HostAddress}}/api/v2/user?page=1&pageSize=10
+Accept: application/json
+
+###
+
+### Version 1.0 - Create User
+POST {{ZUMA.API_HostAddress}}/api/{{ApiVersion}}/user
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "userName": "johndoe",
+  "password": "SecurePassword123!"
+}
+
+###
+
+### Version 2.0 - Create User (Enhanced)
+POST {{ZUMA.API_HostAddress}}/api/v2/user
+Content-Type: application/json
+
+{
+  "name": "Jane Doe",
+  "email": "jane@example.com",
+  "userName": "janedoe",
+  "password": "SecurePassword123!"
+}
+
+###
+
+### Version 1.0 - Update User
+PUT {{ZUMA.API_HostAddress}}/api/{{ApiVersion}}/user/1
+Content-Type: application/json
+
+{
+  "name": "Jane Doe",
+  "email": "jane@example.com",
+  "userName": "janedoe",
+  "password": "NewPassword123!"
+}
+
+###
+
+### Version 2.0 - Update User
+PUT {{ZUMA.API_HostAddress}}/api/v2/user/1
+Content-Type: application/json
+
+{
+  "name": "Jane Doe Updated",
+  "email": "jane.updated@example.com",
+  "userName": "janedoe",
+  "password": "NewPassword123!"
+}
+
+###
+
+### Version 1.0 & 2.0 - Delete User
+DELETE {{ZUMA.API_HostAddress}}/api/{{ApiVersion}}/user/1
 Accept: application/json

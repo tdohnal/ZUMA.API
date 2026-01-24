@@ -6,6 +6,6 @@ namespace ZUMA.API.REST.Base;
 [Produces("application/json")]
 [Consumes("application/json")]
 [Route("api/v{version:apiVersion}/[controller]")]
-public class ZumaBaseController
+public class BaseController : ControllerBase
 {
 }

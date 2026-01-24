@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ZUMA.BussinessLogic.Infrastructure.Contexts.Customer;
 using ZUMA.BussinessLogic.Repositories.User;
 using ZUMA.BussinessLogic.Services.User;
 
@@ -10,14 +11,19 @@ public static class DIContainer
 {
     public static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
     {
-        #region User
+        // ✅ Přidej logging support
+        services.AddLogging();
 
+        // Zaregistruj DbContext
         services.AddDbContext<CustomerDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("CustomerDb")));
+            options.UseSqlServer(
+                configuration.GetConnectionString("CustomerDb")
+                ?? throw new InvalidOperationException("ConnectionString 'CustomerDb' not found.")));
 
+        // Zaregistruj Repositories
         services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IUserService, UserService>();
 
-        #endregion
+        // Zaregistruj Services
+        services.AddScoped<IUserService, UserService>();
     }
 }

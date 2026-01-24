@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using ZUMA.BussinessLogic.Infrastructure.Contexts.Customer;
 
 namespace ZUMA.BussinessLogic.Infrastructure.Entities.Customer;
 

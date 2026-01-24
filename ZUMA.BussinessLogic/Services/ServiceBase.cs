@@ -44,10 +44,18 @@ namespace ZUMA.BussinessLogic.Services
 
         #region Hooks (virtual)
 
-        protected virtual Task BeforeCreateAsync(T entity, CancellationToken cancellationToken) => Task.CompletedTask;
+        protected virtual Task BeforeCreateAsync(T entity, CancellationToken cancellationToken)
+        {
+            entity.Created = DateTime.UtcNow;
+            return Task.CompletedTask;
+        }
         protected virtual Task AfterCreateAsync(T entity, CancellationToken cancellationToken) => Task.CompletedTask;
 
-        protected virtual Task BeforeUpdateAsync(T entity, CancellationToken cancellationToken) => Task.CompletedTask;
+        protected virtual Task BeforeUpdateAsync(T entity, CancellationToken cancellationToken)
+        {
+            entity.Updated = DateTime.UtcNow;
+            return Task.CompletedTask;
+        }
         protected virtual Task AfterUpdateAsync(T entity, CancellationToken cancellationToken) => Task.CompletedTask;
 
         protected virtual Task BeforeDeleteAsync(int id, CancellationToken cancellationToken) => Task.CompletedTask;
