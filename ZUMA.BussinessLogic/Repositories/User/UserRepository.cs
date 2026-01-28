@@ -14,7 +14,7 @@ internal class UserRepository : RepositoryBase<UserEntity>, IUserRepository
         ILogger<UserRepository> logger,
         CustomerDbContext dbContext
         )
-      : base(dbContext)
+      : base(dbContext, logger)
     {
         _dbContext = dbContext;
         _logger = logger;

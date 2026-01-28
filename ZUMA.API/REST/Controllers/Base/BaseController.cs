@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace ZUMA.API.REST.Base;
+namespace ZUMA.API.REST.Controllers.Base;
 
 [ApiController]
 [Produces("application/json")]

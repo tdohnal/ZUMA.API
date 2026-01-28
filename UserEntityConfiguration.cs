@@ -12,10 +12,8 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<UserEntity>
 {
     public void Configure(EntityTypeBuilder<UserEntity> builder)
     {
-        // Primární klíč
         builder.HasKey(u => u.Id);
 
-        // Sloupce
         builder.Property(u => u.Name)
             .IsRequired()
             .HasMaxLength(256)
@@ -36,7 +34,6 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<UserEntity>
             .HasMaxLength(256)
             .HasColumnType("nvarchar(256)");
 
-        // Audit pole
         builder.Property(u => u.Created)
             .IsRequired()
             .HasDefaultValueSql("GETUTCDATE()")
@@ -48,7 +45,6 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<UserEntity>
         builder.Property(u => u.Deleted)
             .HasColumnType("datetime2");
 
-        // Indexy
         builder.HasIndex(u => u.Email)
             .IsUnique()
             .HasName("IX_Users_Email_Unique");
@@ -60,7 +56,6 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<UserEntity>
         builder.HasIndex(u => u.Deleted)
             .HasName("IX_Users_Deleted");
 
-        // Tabulka a schéma
         builder.ToTable("Users", "dbo");
     }
 }

@@ -10,14 +10,14 @@ namespace ZUMA.Unittests
     public class UserServiceTests
     {
         private Mock<IUserRepository> _userRepoMock = null!;
-        private Mock<ILogger<UserService>> _loggerMock = null!;
-        private IUserService _userService = null!;
+        private Mock<ILogger<RegistrationService>> _loggerMock = null!;
+        private IRegistrationService _userService = null!;
 
         [SetUp]
         public void Setup()
         {
             _userRepoMock = new Mock<IUserRepository>();
-            _loggerMock = new Mock<ILogger<UserService>>();
+            _loggerMock = new Mock<ILogger<RegistrationService>>();
             _userService = new UserService(_userRepoMock.Object, _loggerMock.Object);
         }
 

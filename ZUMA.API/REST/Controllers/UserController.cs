@@ -1,14 +1,13 @@
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
-using ZUMA.API.REST.Base;
-using ZUMA.API.REST.DTOs;
+using ZUMA.API.REST.Controllers.Base;
+using ZUMA.API.REST.DTOs.User;
 using ZUMA.API.REST.Filters;
-using ZUMA.BussinessLogic.Infrastructure.Entities.Customer;
 using ZUMA.BussinessLogic.Services.User;
 
 namespace ZUMA.API.REST.Controllers;
 
-public class UserController : BaseController
+public class UserController : AuthorizedBaseController
 {
     private readonly IUserService _userService;
 
@@ -19,12 +18,14 @@ public class UserController : BaseController
         _userService = userService;
     }
 
+    #region V1
+
     /// <summary>
     /// Gets a User by their ID.
     /// </summary>
     [HttpGet("{id}")]
     [ApiVersion("1.0")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserEntity))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetUserByIdAsync(int id, CancellationToken cancellationToken = default)
     {
@@ -37,7 +38,7 @@ public class UserController : BaseController
     /// </summary>
     [HttpGet()]
     [ApiVersion("1.0")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserEntity))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetUsersAsync(CancellationToken cancellationToken = default)
     {
@@ -50,13 +51,14 @@ public class UserController : BaseController
     /// </summary>
     [HttpPost]
     [ApiVersion("1.0")]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(UserEntity))]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(long))]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> AddUserAsync([FromBody] UserDto userDto, CancellationToken cancellationToken = default)
     {
-        var created = await _userService.CreateAsync(userDto.ToEntity(), cancellationToken);
-        return created != null ? Ok(created.Id) : NoContent();
+        //var created = await _userService.CreateAsync(userDto.ToEntity(), cancellationToken);
+        //return created != null ? Ok(created.Id) : NoContent();
+        return Ok();
     }
 
     /// <summary>
@@ -64,17 +66,18 @@ public class UserController : BaseController
     /// </summary>
     [HttpPut("{id}")]
     [ApiVersion("1.0")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserEntity))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
     public async Task<IActionResult> UpdateUserAsync(int id, [FromBody] UserDto userDto, CancellationToken cancellationToken = default)
     {
-        var entity = userDto.ToEntity();
-        entity.Id = id; // zajistí update správného záznamu
+        //var entity = userDto.ToEntity();
+        //entity.Id = id; // zajistí update správného záznamu
 
-        var updated = await _userService.UpdateAsync(entity, cancellationToken);
-        return updated == null ? NotFound() : Ok(updated);
+        //var updated = await _userService.UpdateAsync(entity, cancellationToken);
+        //return updated == null ? NotFound() : Ok(updated);
+        return Ok();
     }
 
     /// <summary>
@@ -89,4 +92,7 @@ public class UserController : BaseController
         var success = await _userService.DeleteAsync(id, cancellationToken);
         return success ? NoContent() : NotFound();
     }
+
+    #endregion
+
 }

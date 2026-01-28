@@ -10,8 +10,7 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<UserEntity>
     {
         builder.HasKey(u => u.Id);
 
-        // Sloupce
-        builder.Property(u => u.Name)
+        builder.Property(u => u.FullName)
             .IsRequired()
             .HasMaxLength(256)
             .HasColumnType("nvarchar(256)");
@@ -26,12 +25,11 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<UserEntity>
             .HasMaxLength(128)
             .HasColumnType("nvarchar(128)");
 
-        builder.Property(u => u.Password)
+        builder.Property(u => u.HashedPassword)
             .IsRequired()
             .HasMaxLength(256)
             .HasColumnType("nvarchar(256)");
 
-        // Audit pole
         builder.Property(u => u.Created)
             .IsRequired()
             .HasDefaultValueSql("GETUTCDATE()")
@@ -43,16 +41,21 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<UserEntity>
         builder.Property(u => u.Deleted)
             .HasColumnType("datetime2");
 
+        builder.Property(builder => builder.IsConfirmed)
+            .IsRequired()
+            .HasDefaultValue(false)
+            .HasColumnType("bit");
+
         builder.HasIndex(u => u.Email)
             .IsUnique()
-            .HasName("IX_Users_Email_Unique");
+            .HasDatabaseName("IX_Users_Email_Unique");
 
         builder.HasIndex(u => u.UserName)
             .IsUnique()
-            .HasName("IX_Users_UserName_Unique");
+            .HasDatabaseName("IX_Users_UserName_Unique");
 
         builder.HasIndex(u => u.Deleted)
-            .HasName("IX_Users_Deleted");
+            .HasDatabaseName("IX_Users_Deleted");
 
         builder.ToTable("Users", "dbo");
     }

@@ -11,19 +11,30 @@ public static class DIContainer
 {
     public static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
     {
-        // ✅ Přidej logging support
         services.AddLogging();
 
-        // Zaregistruj DbContext
+        #region Contexts
+
         services.AddDbContext<CustomerDbContext>(options =>
             options.UseSqlServer(
                 configuration.GetConnectionString("CustomerDb")
                 ?? throw new InvalidOperationException("ConnectionString 'CustomerDb' not found.")));
 
-        // Zaregistruj Repositories
-        services.AddScoped<IUserRepository, UserRepository>();
+        #endregion
 
-        // Zaregistruj Services
+        #region User 
+
+        services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUserService, UserService>();
+
+        #endregion
+
+        #region Registration 
+
+        services.AddScoped<IRegistrationRepository, RegistrationRepository>();
+        services.AddScoped<IRegistrationService, RegistrationService>();
+
+        #endregion
+
     }
 }

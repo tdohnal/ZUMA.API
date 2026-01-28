@@ -10,7 +10,7 @@ namespace ZUMA.Unittests.Integration
     public class UserServiceIntegrationTests : DatabaseFixture
     {
         private IUserRepository _userRepository = null!;
-        private IUserService _userService = null!;
+        private IRegistrationService _userService = null!;
 
         [SetUp]
         public override void SetupDatabase()
@@ -18,7 +18,7 @@ namespace ZUMA.Unittests.Integration
             base.SetupDatabase();
 
             _userRepository = GetService<IUserRepository>();
-            _userService = GetService<IUserService>();
+            _userService = GetService<IRegistrationService>();
         }
 
         #region CreateAsync Tests
@@ -234,10 +234,10 @@ namespace ZUMA.Unittests.Integration
         [Test]
         public void DIContainer_ShouldResolveUserService()
         {
-            var service = GetService<IUserService>();
+            var service = GetService<IRegistrationService>();
 
             Assert.That(service, Is.Not.Null);
-            Assert.That(service, Is.InstanceOf<IUserService>());
+            Assert.That(service, Is.InstanceOf<IRegistrationService>());
         }
 
         [Test]
@@ -246,8 +246,8 @@ namespace ZUMA.Unittests.Integration
             using var scope1 = ServiceProvider.CreateScope();
             using var scope2 = ServiceProvider.CreateScope();
 
-            var service1 = scope1.ServiceProvider.GetRequiredService<IUserService>();
-            var service2 = scope2.ServiceProvider.GetRequiredService<IUserService>();
+            var service1 = scope1.ServiceProvider.GetRequiredService<IRegistrationService>();
+            var service2 = scope2.ServiceProvider.GetRequiredService<IRegistrationService>();
 
             Assert.That(service1, Is.Not.SameAs(service2));
         }

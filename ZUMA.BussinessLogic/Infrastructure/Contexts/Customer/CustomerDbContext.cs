@@ -10,6 +10,7 @@ public class CustomerDbContext : DbContext
     }
 
     public DbSet<UserEntity> Users { get; set; } = null!;
+    public DbSet<RegistrationEntity> Registrations { get; set; } = null!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -19,6 +20,14 @@ public class CustomerDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(CustomerDbContext).Assembly);
+
+        modelBuilder.Entity<RegistrationEntity>(entity =>
+        {
+            entity.HasOne(x => x.User)
+                  .WithOne()
+                 .HasForeignKey<RegistrationEntity>(x => x.UserId);
+        });
+
         base.OnModelCreating(modelBuilder);
     }
 }

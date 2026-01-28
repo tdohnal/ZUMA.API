@@ -1,8 +1,8 @@
-﻿using ZUMA.API.REST.Mappers;
-using ZUMA.BussinessLogic.Infrastructure.Entities.Customer;
+﻿using ZUMA.BussinessLogic.Infrastructure.Entities.Customer;
 
-namespace ZUMA.API.REST.DTOs;
+namespace ZUMA.API.REST.DTOs.User;
 
+[GenerateMapping(typeof(UserEntity))]
 public class UserDto
 {
     public int Id { get; set; }
@@ -12,9 +12,5 @@ public class UserDto
     public DateTime Created { get; set; }
     public DateTime? Updated { get; set; }
     public DateTime? Deleted { get; set; }
-
-    public UserEntity ToEntity()
-    {
-        return UserMapper.ToEntity(this);
-    }
+    public bool IsConfirmed { get; set; }
 }

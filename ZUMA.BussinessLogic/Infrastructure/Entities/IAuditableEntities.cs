@@ -2,7 +2,7 @@
 
 public interface IAuditableEntities
 {
-    int Id { get; set; }
+    long Id { get; set; }
 
     DateTime Created { get; set; }
     DateTime? Updated { get; set; }

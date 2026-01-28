@@ -7,15 +7,17 @@ namespace ZUMA.BussinessLogic.Infrastructure.Entities.Customer;
 public class UserEntity : IAuditableEntities
 {
     [Key]
-    public int Id { get; set; }
+    public long Id { get; set; }
 
-    public required string Name { get; set; }
+    public string FullName { get; set; }
 
-    public required string Email { get; set; }
+    public string Email { get; set; }
 
-    public required string Password { get; set; }
+    public string HashedPassword { get; set; }
 
-    public required string UserName { get; set; }
+    public string UserName { get; set; }
+
+    public bool IsConfirmed { get; set; }
 
     public DateTime Created { get; set; }
     public DateTime? Updated { get; set; }

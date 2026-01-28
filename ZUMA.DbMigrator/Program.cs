@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ZUMA.BusinessLogic.Configuration;
+using ZUMA.BussinessLogic.Infrastructure.Contexts.Customer;
 
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration((hostingContext, config) =>
@@ -23,10 +24,10 @@ var host = Host.CreateDefaultBuilder(args)
     })
     .ConfigureServices((context, services) =>
     {
-        // DI + DbContext + služby
         DIContainer.ConfigureServices(services, context.Configuration);
     })
     .Build();
+
 using var scope = host.Services.CreateScope();
 var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 
