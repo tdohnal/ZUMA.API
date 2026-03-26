@@ -14,6 +14,20 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<UserEntity>
             .IsRequired()
             .HasColumnType("uniqueidentifier");
 
+        builder.Property(u => u.Created)
+    .IsRequired()
+    .HasDefaultValueSql("GETUTCDATE()")
+    .HasColumnType("datetime2");
+
+        builder.Property(u => u.Updated)
+            .HasColumnType("datetime2");
+
+        builder.Property(u => u.Deleted)
+            .HasColumnType("datetime2");
+
+        builder.HasIndex(u => u.Deleted)
+    .HasDatabaseName("IX_Users_Deleted");
+
         builder.Property(u => u.FullName)
             .IsRequired()
             .HasMaxLength(256)
@@ -29,35 +43,17 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<UserEntity>
             .HasMaxLength(128)
             .HasColumnType("nvarchar(128)");
 
-        builder.Property(u => u.Token)
-        .HasMaxLength(50)
-        .HasColumnType("nvarchar(50)");
-
         builder.Property(u => u.AuthCode)
                .HasMaxLength(12)
                .HasColumnType("nvarchar(12)");
 
         builder.Property(u => u.AuthCodeExpiration)
-        .HasDefaultValueSql("GETUTCDATE()")
+        .HasDefaultValueSql("NULL")
         .HasColumnType("datetime2");
-
-        builder.Property(u => u.Created)
-            .IsRequired()
-            .HasDefaultValueSql("GETUTCDATE()")
-            .HasColumnType("datetime2");
-
-        builder.Property(u => u.Updated)
-            .HasColumnType("datetime2");
-
-        builder.Property(u => u.Deleted)
-            .HasColumnType("datetime2");
 
         builder.HasIndex(u => u.Email)
             .IsUnique()
             .HasDatabaseName("IX_Users_Email_Unique");
-
-        builder.HasIndex(u => u.Deleted)
-            .HasDatabaseName("IX_Users_Deleted");
 
         builder.ToTable("Users", "dbo");
     }

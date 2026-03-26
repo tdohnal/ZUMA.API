@@ -12,6 +12,7 @@ public class CustomerDbContext : DbContext
 
     public DbSet<UserEntity> Users { get; set; } = null!;
     public DbSet<RegistrationEntity> Registrations { get; set; } = null!;
+    public DbSet<EmailEntity> Emails { get; set; } = null!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -27,6 +28,17 @@ public class CustomerDbContext : DbContext
             entity.HasOne(x => x.User)
                   .WithOne()
                  .HasForeignKey<RegistrationEntity>(x => x.UserId);
+        });
+
+        modelBuilder.Entity<EmailEntity>(entity =>
+        {
+            entity.HasKey(x => x.InternalId);
+
+            // Definice vztahu: Jeden email má jednoho příjemce (User)
+            entity.HasOne(x => x.Recipient)
+                  .WithMany() // Pokud uživatel nemá v sobě kolekci List<EmailEntity> Emails
+                  .HasForeignKey(x => x.RecipientId)
+                  .OnDelete(DeleteBehavior.Cascade); // Pokud smažeš uživatele, smažou se i jeho záznamy o emailech
         });
 
         base.OnModelCreating(modelBuilder);

@@ -1,4 +1,20 @@
 services:
+  rabbitmq:
+      image: rabbitmq:3-management
+      environment:
+      - RABBITMQ_DEFAULT_USER=zuma_admin
+      - RABBITMQ_DEFAULT_PASS=moje_tajne_heslo_123
+      ports:
+      - "5672:5672"   
+      - "15672:15672" # Webové rozhraní (uvidíš tam maily ve frontě)
+  email-worker:
+    build:
+      context: .
+      dockerfile: ZUMA.EmailService/Dockerfile
+    depends_on:
+      - rabbitmq
+    environment:
+      - ConnectionStrings__RabbitMq=rabbitmq://rabbitmq
   zuma.api:
     image: ${DOCKER_REGISTRY-}zumaapi
     build:

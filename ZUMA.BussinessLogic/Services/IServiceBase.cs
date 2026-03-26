@@ -9,5 +9,5 @@ public interface IServiceBase<T> where T : IAuditableEntities
     Task<IList<T>> GetAllAsync(CancellationToken cancellationToken = default);
     Task<T?> CreateAsync(T entity, CancellationToken cancellationToken = default);
     Task<T?> UpdateAsync(T entity, CancellationToken cancellationToken = default);
-    Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default);
+    Task<bool> DeleteAsync(long id, CancellationToken cancellationToken = default);
 }

@@ -37,7 +37,7 @@ public class ServiceBase<T> : IServiceBase<T> where T : IAuditableEntities
         return result;
     }
 
-    public virtual async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default)
+    public virtual async Task<bool> DeleteAsync(long id, CancellationToken cancellationToken = default)
     {
         await BeforeDeleteAsync(id, cancellationToken);
         var result = await _repository.DeleteAsync(id, cancellationToken);
@@ -61,8 +61,8 @@ public class ServiceBase<T> : IServiceBase<T> where T : IAuditableEntities
     }
     protected virtual Task AfterUpdateAsync(T entity, CancellationToken cancellationToken) => Task.CompletedTask;
 
-    protected virtual Task BeforeDeleteAsync(int id, CancellationToken cancellationToken) => Task.CompletedTask;
-    protected virtual Task AfterDeleteAsync(int id, CancellationToken cancellationToken) => Task.CompletedTask;
+    protected virtual Task BeforeDeleteAsync(long id, CancellationToken cancellationToken) => Task.CompletedTask;
+    protected virtual Task AfterDeleteAsync(long id, CancellationToken cancellationToken) => Task.CompletedTask;
 
     #endregion
 }

@@ -1,4 +1,5 @@
 ﻿using ZUMA.BussinessLogic.Entities.Customer;
+using ZUMA.BussinessLogic.Models;
 
 namespace ZUMA.BussinessLogic.Services.User;
 
@@ -6,5 +7,7 @@ public interface IUserService : IServiceBase<UserEntity>
 {
     Task<long?> GetIdByEmailAsync(string email, CancellationToken cancellationToken = default);
 
-    Task<string> GetAuthorizationCodeAsync(long id, CancellationToken cancellationToken = default);
+    Task GetAuthorizationCodeAsync(long id, CancellationToken cancellationToken = default);
+
+    Task<ValidationResult<UserEntity>> VerificateAuthorizationCode(string code, string email, CancellationToken cancellationToken = default);
 }

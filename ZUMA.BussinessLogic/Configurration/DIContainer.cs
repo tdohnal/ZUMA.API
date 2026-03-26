@@ -2,14 +2,16 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ZUMA.BussinessLogic.Infrastructure.Contexts.Customer;
+using ZUMA.BussinessLogic.Repositories.Email;
 using ZUMA.BussinessLogic.Repositories.User;
+using ZUMA.BussinessLogic.Services.Email;
 using ZUMA.BussinessLogic.Services.User;
 
 namespace ZUMA.BusinessLogic.Configuration;
 
 public static class DIContainer
 {
-    public static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+    public static void ConfigureServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddLogging();
 
@@ -26,6 +28,13 @@ public static class DIContainer
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUserService, UserService>();
+
+        #endregion
+
+        #region Email 
+
+        services.AddScoped<IEmailRepository, EmailRepository>();
+        services.AddScoped<IEmailService, EmailService>();
 
         #endregion
 

@@ -16,8 +16,6 @@ public class UserEntity : IAuditableEntities
 
     public string UserName { get; set; } = string.Empty;
 
-    public string Token { get; set; } = string.Empty;
-
     public string? AuthCode { get; set; } = string.Empty;
 
     public DateTime? AuthCodeExpiration { get; set; }

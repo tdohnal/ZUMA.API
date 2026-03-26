@@ -2,12 +2,14 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using ZUMA.API.REST.Controllers.Base;
 using ZUMA.API.REST.DTOs.User;
+using ZUMA.API.REST.DTOs.User.Requests;
 using ZUMA.API.REST.Filters;
+using ZUMA.BussinessLogic.Entities.Customer;
 using ZUMA.BussinessLogic.Services.User;
 
 namespace ZUMA.API.REST.Controllers;
 
-public class UserController : BaseController
+public class UserController : AuthorizedBaseController
 {
     private readonly IUserService _userService;
 
@@ -23,13 +25,13 @@ public class UserController : BaseController
     /// <summary>
     /// Gets a User by their ID.
     /// </summary>
-    [HttpGet("{id}")]
+    [HttpGet("{publicId}")]
     [ApiVersion("1.0")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetUserByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetUserByIdAsync(Guid publicId, CancellationToken cancellationToken = default)
     {
-        var user = await _userService.GetByIdAsync(id, cancellationToken);
+        var user = await _userService.GetByPublicIdAsync(publicId, cancellationToken);
         return user == null ? NotFound() : Ok(user);
     }
 
@@ -51,26 +53,31 @@ public class UserController : BaseController
     /// </summary>
     [HttpPost]
     [ApiVersion("1.0")]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(long))]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Guid))]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
-    public async Task<IActionResult> AddUserAsync([FromBody] UserDto userDto, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> AddUserAsync([FromBody] UserCreateRequest request, CancellationToken cancellationToken = default)
     {
-        //var created = await _userService.CreateAsync(userDto.ToEntity(), cancellationToken);
-        //return created != null ? Ok(created.Id) : NoContent();
-        return Ok();
+        var entity = new UserEntity
+        {
+            FullName = request.FullName,
+            UserName = request.Username,
+            Email = request.Email
+        };
+        var created = await _userService.CreateAsync(entity, cancellationToken);
+        return created != null ? Ok(created.PublicId) : NoContent();
     }
 
     /// <summary>
     /// Updates an existing User.
     /// </summary>
-    [HttpPut("{id}")]
+    [HttpPut("{publicId}")]
     [ApiVersion("1.0")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     [ServiceFilter(typeof(ValidationFilterAttribute))]
-    public async Task<IActionResult> UpdateUserAsync(int id, [FromBody] UserDto userDto, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> UpdateUserAsync(Guid publicIdid, [FromBody] UserDto userDto, CancellationToken cancellationToken = default)
     {
         //var entity = userDto.ToEntity();
         //entity.Id = id; // zajistí update správného záznamu
@@ -83,13 +90,19 @@ public class UserController : BaseController
     /// <summary>
     /// Deletes a User with the specified ID.
     /// </summary>
-    [HttpDelete("{id}")]
+    [HttpDelete("{publicId}")]
     [ApiVersion("1.0")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteUserAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> DeleteUserAsync(Guid publicId, CancellationToken cancellationToken = default)
     {
-        var success = await _userService.DeleteAsync(id, cancellationToken);
+        var ret = await _userService.GetByPublicIdAsync(publicId, cancellationToken);
+        if (ret == null)
+        {
+            return NotFound();
+        }
+
+        var success = await _userService.DeleteAsync(ret.InternalId, cancellationToken);
         return success ? NoContent() : NotFound();
     }
 
