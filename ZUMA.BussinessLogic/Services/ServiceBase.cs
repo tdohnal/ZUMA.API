@@ -1,4 +1,4 @@
-﻿using ZUMA.BussinessLogic.Infrastructure.Entities;
+﻿using ZUMA.BussinessLogic.Entities;
 using ZUMA.BussinessLogic.Repositories;
 
 namespace ZUMA.BussinessLogic.Services;
@@ -12,8 +12,11 @@ public class ServiceBase<T> : IServiceBase<T> where T : IAuditableEntities
         _repository = repository;
     }
 
-    public virtual async Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    public virtual async Task<T?> GetByIdAsync(long id, CancellationToken cancellationToken = default)
         => await _repository.GetByIdAsync(id, cancellationToken);
+
+    public virtual async Task<T?> GetByPublicIdAsync(Guid publicId, CancellationToken cancellationToken = default)
+        => await _repository.GetByPublicIdAsync(publicId, cancellationToken);
 
     public virtual async Task<IList<T>> GetAllAsync(CancellationToken cancellationToken = default)
         => await _repository.GetAllAsync(cancellationToken);

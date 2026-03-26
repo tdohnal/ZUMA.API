@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ZUMA.BussinessLogic.Infrastructure.Contexts.Customer;
 
@@ -11,9 +12,11 @@ using ZUMA.BussinessLogic.Infrastructure.Contexts.Customer;
 namespace ZUMA.BussinessLogic.Migrations
 {
     [DbContext(typeof(CustomerDbContext))]
-    partial class CustomerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260326164201_UpdateModels")]
+    partial class UpdateModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,11 +27,11 @@ namespace ZUMA.BussinessLogic.Migrations
 
             modelBuilder.Entity("ZUMA.BussinessLogic.Entities.Customer.RegistrationEntity", b =>
                 {
-                    b.Property<long>("InternalId")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("InternalId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("ActivationCode")
                         .IsRequired()
@@ -46,16 +49,13 @@ namespace ZUMA.BussinessLogic.Migrations
                     b.Property<DateTime>("ExpirationCodeDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("PublicId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime?>("Updated")
                         .HasColumnType("datetime2");
 
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
-                    b.HasKey("InternalId");
+                    b.HasKey("Id");
 
                     b.HasIndex("Deleted")
                         .HasDatabaseName("IX_Registrations_Deleted");
@@ -68,11 +68,11 @@ namespace ZUMA.BussinessLogic.Migrations
 
             modelBuilder.Entity("ZUMA.BussinessLogic.Entities.Customer.UserEntity", b =>
                 {
-                    b.Property<long>("InternalId")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("InternalId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("AuthCode")
                         .HasMaxLength(12)
@@ -101,9 +101,6 @@ namespace ZUMA.BussinessLogic.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<Guid>("PublicId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Token")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -117,7 +114,7 @@ namespace ZUMA.BussinessLogic.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
-                    b.HasKey("InternalId");
+                    b.HasKey("Id");
 
                     b.HasIndex("Deleted")
                         .HasDatabaseName("IX_Users_Deleted");

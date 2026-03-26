@@ -1,13 +1,13 @@
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
-using System.Diagnostics;
 using System.Text;
 using ZUMA.API.Configuration;
 using ZUMA.API.Middleware;
 using ZUMA.BusinessLogic.Configuration;
-using ZUMA.BussinessLogic.Plugins;
+using ZUMA.BussinessLogic.Infrastructure.Contexts.Customer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -88,6 +88,22 @@ ApiDiContainer.ConfigureServices(builder.Services);
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<CustomerDbContext>();
+        context.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Při migraci databáze nastala chyba.");
+    }
+}
+
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -101,31 +117,14 @@ if (app.Environment.IsDevelopment())
     });
 
     app.MapOpenApi();
-    ConsoleManager.Show();
 
     var launchUrl = "http://localhost:5044";
-    Task.Run(() =>
-    {
-        System.Threading.Thread.Sleep(1000);
-        try
-        {
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = launchUrl,
-                UseShellExecute = true
-            });
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Nelze automaticky otevřít prohlížeč: {ex.Message}");
-        }
-    });
+
+    app.UseRequestResponseLogging();
+    app.UseHttpsRedirection();
+    app.UseAuthentication();
+    app.UseAuthorization();
+    app.MapControllers();
+
+    app.Run();
 }
-
-app.UseRequestResponseLogging();
-app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapControllers();
-
-app.Run();

@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using ZUMA.BussinessLogic.Infrastructure.Entities.Customer;
+using ZUMA.BussinessLogic.Entities.Customer;
 
 namespace ZUMA.BussinessLogic.Infrastructure.Configurations;
 
@@ -8,7 +8,12 @@ public class RegistrationEntityConfiguration : IEntityTypeConfiguration<Registra
 {
     public void Configure(EntityTypeBuilder<RegistrationEntity> builder)
     {
-        builder.HasKey(u => u.Id);
+        builder.HasKey(u => u.InternalId);
+
+        builder.Property(u => u.PublicId)
+            .IsRequired()
+            .HasColumnType("uniqueidentifier");
+
 
         builder.Property(u => u.Created)
             .IsRequired()

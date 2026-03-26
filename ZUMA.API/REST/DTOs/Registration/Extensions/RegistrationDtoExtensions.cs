@@ -1,5 +1,5 @@
 ﻿using ZUMA.API.REST.DTOs.Registration.Requests;
-using ZUMA.BussinessLogic.Infrastructure.Entities.Customer;
+using ZUMA.BussinessLogic.Entities.Customer;
 
 namespace ZUMA.API.REST.DTOs.Registration.Extensions;
 

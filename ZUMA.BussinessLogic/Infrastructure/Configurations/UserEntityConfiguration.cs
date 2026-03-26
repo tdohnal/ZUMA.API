@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using ZUMA.BussinessLogic.Infrastructure.Entities.Customer;
+using ZUMA.BussinessLogic.Entities.Customer;
 
 namespace ZUMA.BussinessLogic.Infrastructure.Configurations;
 
@@ -8,7 +8,11 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<UserEntity>
 {
     public void Configure(EntityTypeBuilder<UserEntity> builder)
     {
-        builder.HasKey(u => u.Id);
+        builder.HasKey(u => u.InternalId);
+
+        builder.Property(u => u.PublicId)
+            .IsRequired()
+            .HasColumnType("uniqueidentifier");
 
         builder.Property(u => u.FullName)
             .IsRequired()
@@ -25,10 +29,17 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<UserEntity>
             .HasMaxLength(128)
             .HasColumnType("nvarchar(128)");
 
-        builder.Property(u => u.HashedPassword)
-            .IsRequired()
-            .HasMaxLength(256)
-            .HasColumnType("nvarchar(256)");
+        builder.Property(u => u.Token)
+        .HasMaxLength(50)
+        .HasColumnType("nvarchar(50)");
+
+        builder.Property(u => u.AuthCode)
+               .HasMaxLength(12)
+               .HasColumnType("nvarchar(12)");
+
+        builder.Property(u => u.AuthCodeExpiration)
+        .HasDefaultValueSql("GETUTCDATE()")
+        .HasColumnType("datetime2");
 
         builder.Property(u => u.Created)
             .IsRequired()
@@ -41,18 +52,9 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<UserEntity>
         builder.Property(u => u.Deleted)
             .HasColumnType("datetime2");
 
-        builder.Property(builder => builder.IsConfirmed)
-            .IsRequired()
-            .HasDefaultValue(false)
-            .HasColumnType("bit");
-
         builder.HasIndex(u => u.Email)
             .IsUnique()
             .HasDatabaseName("IX_Users_Email_Unique");
-
-        builder.HasIndex(u => u.UserName)
-            .IsUnique()
-            .HasDatabaseName("IX_Users_UserName_Unique");
 
         builder.HasIndex(u => u.Deleted)
             .HasDatabaseName("IX_Users_Deleted");

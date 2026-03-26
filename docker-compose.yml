@@ -1,0 +1,15 @@
+services:
+  zuma.api:
+    image: ${DOCKER_REGISTRY-}zumaapi
+    build:
+      context: .
+      dockerfile: ZUMA.API/Dockerfile
+  zuma-db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    restart: unless-stopped
+    environment:
+      MSSQL_SA_PASSWORD: "ZumaStrongPassword2026!"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+      

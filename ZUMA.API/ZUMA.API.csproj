@@ -1,19 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-	<OutputType>Library</OutputType>
-	<LangVersion>preview</LangVersion>
-  </PropertyGroup>
-
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<LangVersion>preview</LangVersion>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
+	</PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.2" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.15.0" />
     <PackageReference Include="Microsoft.IO.RecyclableMemoryStream" Version="3.0.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.0" />
     <Content Remove="Middlewares\**" />
     <EmbeddedResource Remove="Middlewares\**" />
@@ -21,8 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
-	  <ProjectReference Include="..\ZUMA.API.Mapping\ZUMA.API.Mapping.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
-	  <ProjectReference Include="..\ZUMA.BussinessLogic\ZUMA.BussinessLogic.csproj"/>
+	  <ProjectReference Include="..\ZUMA.API.Mapping\ZUMA.API.Mapping.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+	  <ProjectReference Include="..\ZUMA.BussinessLogic\ZUMA.BussinessLogic.csproj" />
   </ItemGroup>
 
   <ItemGroup>

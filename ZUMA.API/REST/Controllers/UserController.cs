@@ -7,7 +7,7 @@ using ZUMA.BussinessLogic.Services.User;
 
 namespace ZUMA.API.REST.Controllers;
 
-public class UserController : AuthorizedBaseController
+public class UserController : BaseController
 {
     private readonly IUserService _userService;
 

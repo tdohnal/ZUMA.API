@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ZUMA.BussinessLogic.Infrastructure.Entities.Customer;
+using ZUMA.BussinessLogic.Entities.Customer;
+
 namespace ZUMA.BussinessLogic.Infrastructure.Contexts.Customer;
 
 public class CustomerDbContext : DbContext

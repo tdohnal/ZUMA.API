@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Moq;
-using ZUMA.BussinessLogic.Infrastructure.Entities.Customer;
+using ZUMA.BussinessLogic.Entities.Customer;
 using ZUMA.BussinessLogic.Repositories.User;
 using ZUMA.BussinessLogic.Services.User;
 

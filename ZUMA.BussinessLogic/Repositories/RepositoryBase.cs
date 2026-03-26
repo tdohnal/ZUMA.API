@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using ZUMA.BussinessLogic.Infrastructure.Entities;
+using ZUMA.BussinessLogic.Entities;
 
 namespace ZUMA.BussinessLogic.Repositories;
 
@@ -17,10 +17,16 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class, IA
         _logger = logger;
     }
 
-    public virtual async Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    public virtual async Task<T?> GetByIdAsync(long id, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Getting entity of type {EntityType} with ID {EntityId}", typeof(T).Name, id);
-        return await _dbSet.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+        return await _dbSet.SingleOrDefaultAsync(x => x.InternalId == id, cancellationToken);
+    }
+
+    public virtual async Task<T?> GetByPublicIdAsync(Guid publicId, CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Getting entity of type {EntityType} with ID {EntityId}", typeof(T).Name, publicId);
+        return await _dbSet.SingleOrDefaultAsync(x => x.PublicId == publicId, cancellationToken);
     }
 
     public virtual async Task<IList<T>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -39,14 +45,14 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class, IA
 
     public virtual async Task<T?> UpdateAsync(T entity, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Updating entity of type {EntityType} with ID {EntityId}", typeof(T).Name, entity.Id);
+        _logger.LogInformation("Updating entity of type {EntityType} with ID {EntityId}", typeof(T).Name, entity.InternalId);
         _dbSet.Attach(entity);
         _dbContext.Entry(entity).State = EntityState.Modified;
         await _dbContext.SaveChangesAsync(cancellationToken);
         return entity;
     }
 
-    public virtual async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default)
+    public virtual async Task<bool> DeleteAsync(long id, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Deleting entity of type {EntityType} with ID {EntityId}", typeof(T).Name, id);
         var entity = await GetByIdAsync(id, cancellationToken);

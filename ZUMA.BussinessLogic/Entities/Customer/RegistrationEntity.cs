@@ -1,13 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ZUMA.BussinessLogic.Infrastructure.Entities.Customer
+namespace ZUMA.BussinessLogic.Entities.Customer
 {
     [Table("Registrations")]
     public class RegistrationEntity : IAuditableEntities
     {
         [Key]
-        public long Id { get; set; }
+        public long InternalId { get; set; }
+        public Guid PublicId { get; set; } = Guid.CreateVersion7();
 
         public string? ActivationCode { get; set; }
 

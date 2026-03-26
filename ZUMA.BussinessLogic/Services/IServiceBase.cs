@@ -1,10 +1,11 @@
-﻿using ZUMA.BussinessLogic.Infrastructure.Entities;
+﻿using ZUMA.BussinessLogic.Entities;
 
 namespace ZUMA.BussinessLogic.Services;
 
 public interface IServiceBase<T> where T : IAuditableEntities
 {
-    Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+    Task<T?> GetByIdAsync(long id, CancellationToken cancellationToken = default);
+    Task<T?> GetByPublicIdAsync(Guid publicId, CancellationToken cancellationToken = default);
     Task<IList<T>> GetAllAsync(CancellationToken cancellationToken = default);
     Task<T?> CreateAsync(T entity, CancellationToken cancellationToken = default);
     Task<T?> UpdateAsync(T entity, CancellationToken cancellationToken = default);

@@ -1,8 +1,9 @@
-﻿namespace ZUMA.BussinessLogic.Infrastructure.Entities;
+﻿namespace ZUMA.BussinessLogic.Entities;
 
 public interface IAuditableEntities
 {
-    long Id { get; set; }
+    long InternalId { get; set; }
+    Guid PublicId { get; set; }
 
     DateTime Created { get; set; }
     DateTime? Updated { get; set; }

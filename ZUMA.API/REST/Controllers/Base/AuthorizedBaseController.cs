@@ -10,4 +10,5 @@ namespace ZUMA.API.REST.Controllers.Base;
 [Route("api/v{version:apiVersion}/[controller]")]
 public class AuthorizedBaseController : ControllerBase
 {
+
 }
