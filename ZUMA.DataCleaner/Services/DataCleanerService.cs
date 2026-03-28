@@ -4,7 +4,7 @@ using ZUMA.BussinessLogic.Services;
 
 namespace ZUMA.DataCleaner.Services
 {
-    internal class DataCleanerService<T> : ServiceBase<T> where T : IAuditableEntities
+    public class DataCleanerService<T> : ServiceBase<T> where T : IAuditableEntities
     {
         public DataCleanerService(IRepositoryBase<T> repository) : base(repository)
         {
@@ -14,11 +14,10 @@ namespace ZUMA.DataCleaner.Services
         {
             var thresholdDate = DateTime.UtcNow.AddMonths(-3);
 
-            var queryEntity = _repository.GetQueryable();
-
-            // Teprve tady v C# filtrujeme
-            var entitiesToDelete = queryEntity
-                .Where(e => e.Deleted.HasValue && e.Deleted.Value <= thresholdDate).ToList();
+            var entitiesToDelete = await _repository.GetItemsByQueryAsync(
+                e => e.Deleted.HasValue && e.Deleted.Value <= thresholdDate,
+                cancellationToken
+            );
 
             foreach (var entity in entitiesToDelete)
             {

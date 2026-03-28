@@ -1,4 +1,5 @@
-﻿using ZUMA.BussinessLogic.Entities;
+﻿using System.Linq.Expressions;
+using ZUMA.BussinessLogic.Entities;
 
 namespace ZUMA.BussinessLogic.Repositories;
 
@@ -12,6 +13,5 @@ public interface IRepositoryBase<T> where T : IAuditableEntities
     Task<T?> CreateAsync(T entity, CancellationToken cancellationToken = default);
     Task<bool> ExistsAsync(long id, CancellationToken cancellationToken = default);
     Task<bool> ExistsByPublicIdAsync(Guid publicId, CancellationToken cancellationToken = default);
-    IQueryable<T> GetQueryable();
-    Task<IReadOnlyList<T>> GetItemsByQueryAsync(IQueryable<T> query, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<T>> GetItemsByQueryAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default);
 }

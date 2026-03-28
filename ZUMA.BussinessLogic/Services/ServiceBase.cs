@@ -1,4 +1,5 @@
-﻿using ZUMA.BussinessLogic.Entities;
+﻿using System.Linq.Expressions;
+using ZUMA.BussinessLogic.Entities;
 using ZUMA.BussinessLogic.Repositories;
 
 namespace ZUMA.BussinessLogic.Services;
@@ -18,10 +19,8 @@ public class ServiceBase<T> : IServiceBase<T> where T : IAuditableEntities
     public virtual async Task<bool> ExistsByPublicIdAsync(Guid publicId, CancellationToken cancellationToken = default)
         => await _repository.ExistsByPublicIdAsync(publicId, cancellationToken);
 
-    public virtual IQueryable<T> GetQueryable() => _repository.GetQueryable();
-
-    public virtual async Task<IReadOnlyList<T>> GetItemsByQueryAsync(IQueryable<T> query, CancellationToken cancellationToken = default)
-        => await _repository.GetItemsByQueryAsync(query, cancellationToken);
+    public virtual async Task<IReadOnlyList<T>> GetItemsByQueryAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default)
+         => await _repository.GetItemsByQueryAsync(expression, cancellationToken);
 
     public virtual async Task<T?> GetByIdAsync(long id, CancellationToken cancellationToken = default)
         => await _repository.GetByIdAsync(id, cancellationToken);

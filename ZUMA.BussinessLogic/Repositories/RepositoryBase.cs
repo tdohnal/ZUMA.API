@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Linq.Expressions;
 using ZUMA.BussinessLogic.Entities;
 
 namespace ZUMA.BussinessLogic.Repositories;
@@ -30,11 +31,15 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class, IA
         return await _dbSet.AnyAsync(x => x.PublicId == publicId && !x.Deleted.HasValue, cancellationToken);
     }
 
-    public virtual IQueryable<T> GetQueryable() => _dbSet.AsNoTracking().AsQueryable();
-
-    public virtual async Task<IReadOnlyList<T>> GetItemsByQueryAsync(IQueryable<T> query, CancellationToken cancellationToken = default)
+    public virtual async Task<IReadOnlyList<T>> GetItemsByQueryAsync(
+      Expression<Func<T, bool>> expression,
+      CancellationToken cancellationToken = default)
     {
-        var items = await query.ToListAsync(cancellationToken);
+        var items = await _dbSet
+            .AsNoTracking()
+            .Where(expression)
+            .ToListAsync(cancellationToken);
+
         return items.AsReadOnly();
     }
 

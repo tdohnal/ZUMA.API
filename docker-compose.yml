@@ -37,10 +37,15 @@ services:
  
   zuma-db:
     image: mcr.microsoft.com/mssql/server:2019-latest
+    volumes:
+      - mssql_data:/var/opt/mssql
     restart: unless-stopped
     environment:
       MSSQL_SA_PASSWORD: "ZumaStrongPassword2026!"
       ACCEPT_EULA: "Y"
     ports:
       - "1433:1433"
+
+volumes:
+  mssql_data:
       
