@@ -12,6 +12,17 @@ public class ServiceBase<T> : IServiceBase<T> where T : IAuditableEntities
         _repository = repository;
     }
 
+    public virtual async Task<bool> ExistsAsync(long id, CancellationToken cancellationToken = default)
+        => await _repository.ExistsAsync(id, cancellationToken);
+
+    public virtual async Task<bool> ExistsByPublicIdAsync(Guid publicId, CancellationToken cancellationToken = default)
+        => await _repository.ExistsByPublicIdAsync(publicId, cancellationToken);
+
+    public virtual IQueryable<T> GetQueryable() => _repository.GetQueryable();
+
+    public virtual async Task<IReadOnlyList<T>> GetItemsByQueryAsync(IQueryable<T> query, CancellationToken cancellationToken = default)
+        => await _repository.GetItemsByQueryAsync(query, cancellationToken);
+
     public virtual async Task<T?> GetByIdAsync(long id, CancellationToken cancellationToken = default)
         => await _repository.GetByIdAsync(id, cancellationToken);
 

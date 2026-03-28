@@ -17,6 +17,27 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class, IA
         _logger = logger;
     }
 
+    public virtual async Task<bool> ExistsAsync(long id, CancellationToken cancellationToken = default)
+    {
+
+        _logger.LogInformation("Checking existence of entity of type {EntityType} with ID {EntityId}", typeof(T).Name, id);
+        return await _dbSet.AnyAsync(x => x.InternalId == id && !x.Deleted.HasValue, cancellationToken);
+    }
+
+    public virtual async Task<bool> ExistsByPublicIdAsync(Guid publicId, CancellationToken cancellationToken = default)
+    {
+        _logger.LogInformation("Checking existence of entity of type {EntityType} with PublicId {publicId}", typeof(T).Name, publicId);
+        return await _dbSet.AnyAsync(x => x.PublicId == publicId && !x.Deleted.HasValue, cancellationToken);
+    }
+
+    public virtual IQueryable<T> GetQueryable() => _dbSet.AsNoTracking().AsQueryable();
+
+    public virtual async Task<IReadOnlyList<T>> GetItemsByQueryAsync(IQueryable<T> query, CancellationToken cancellationToken = default)
+    {
+        var items = await query.ToListAsync(cancellationToken);
+        return items.AsReadOnly();
+    }
+
     public virtual async Task<T?> GetByIdAsync(long id, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Getting entity of type {EntityType} with ID {EntityId}", typeof(T).Name, id);
