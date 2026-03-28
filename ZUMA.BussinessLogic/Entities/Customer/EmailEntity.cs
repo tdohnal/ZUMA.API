@@ -17,5 +17,6 @@ public class EmailEntity : IAuditableEntities
 
     public required string Subject { get; set; }
     public required string Body { get; set; }
+    public required EmailTemplateType EmailTemplateType { get; set; }
     public DateTime? Sent { get; set; }
 }

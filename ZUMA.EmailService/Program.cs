@@ -7,6 +7,8 @@ var builder = Host.CreateApplicationBuilder(args);
 // Pokud tvoje ConfigureServices registruje IEmailService a DB, nech to tu
 builder.Services.ConfigureServices(builder.Configuration);
 
+builder.Services.AddHealthChecks();
+
 builder.Services.AddMassTransit(x =>
 {
     x.AddConsumer<EmailConsumer>();
@@ -29,6 +31,8 @@ builder.Services.AddMassTransit(x =>
         });
     });
 });
+
+builder.Services.AddHostedService<TcpHealthCheckListener>();
 
 var host = builder.Build();
 host.Run();

@@ -12,16 +12,24 @@ services:
     build:
       context: .
       dockerfile: ZUMA.EmailService/Dockerfile
+    ports:
+     - "8082:8080"
     depends_on:
       - rabbitmq
     environment:
       - ConnectionStrings__RabbitMq=rabbitmq://rabbitmq
       - MT_LICENSE=community
+      - ASPNETCORE_HTTP_PORTS=8080
 
   data-cleaner-worker:
     build:
       context: .
       dockerfile: ZUMA.EmailService/Dockerfile
+    ports:
+     - "8081:8080"
+    environment:
+     - MT_LICENSE=community
+     - ASPNETCORE_HTTP_PORTS=8080
 
   zuma.api:
     image: ${DOCKER_REGISTRY-}zumaapi

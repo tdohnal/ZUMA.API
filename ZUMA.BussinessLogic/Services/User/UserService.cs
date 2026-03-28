@@ -106,7 +106,8 @@ internal class UserService : ServiceBase<UserEntity>, IUserService
                 Recipient = user,
                 RecipientId = user.InternalId,
                 Subject = "ZUMA - Your Authorization Code",
-                Body = $"Your authorization code is: {code}"
+                Body = $"Your authorization code is: {code}",
+                EmailTemplateType = EmailTemplateType.Authorization
             }, cancellationToken);
         }
         catch (Exception ex)

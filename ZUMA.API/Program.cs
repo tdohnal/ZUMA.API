@@ -143,6 +143,23 @@ builder.Services.AddApiVersioning(options =>
 DIContainer.ConfigureServices(builder.Services, builder.Configuration);
 ApiDiContainer.ConfigureServices(builder.Services);
 
+builder.Services.AddHealthChecks()
+    // 1. Kontrola Databáze
+    .AddSqlServer(
+        connectionString: builder.Configuration.GetConnectionString("DefaultConnection"),
+        name: "SQL Database",
+        tags: new[] { "infrastructure" })
+
+    // 2. Kontrola Email Workeru (přes ten TCP port 8081, co jsme dělali)
+    .AddTcpHealthCheck(setup => setup.AddHost("email-worker", 8081),
+        name: "Email Service",
+        tags: new[] { "workers" })
+
+    // 3. Kontrola Cleaner Workeru (přes TCP port 8082)
+    .AddTcpHealthCheck(setup => setup.AddHost("data-cleaner", 8082),
+        name: "Cleanup Service",
+        tags: new[] { "workers" });
+
 var app = builder.Build();
 
 #region EF Migration

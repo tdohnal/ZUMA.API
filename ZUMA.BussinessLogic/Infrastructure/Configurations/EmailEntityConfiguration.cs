@@ -19,6 +19,10 @@ public class EmailEntityConfiguration : IEntityTypeConfiguration<EmailEntity>
     .HasDefaultValueSql("GETUTCDATE()")
     .HasColumnType("datetime2");
 
+        builder.Property(u => u.EmailTemplateType)
+   .IsRequired()
+   .HasColumnType("int");
+
         builder.Property(u => u.Updated)
             .HasColumnType("datetime2");
 

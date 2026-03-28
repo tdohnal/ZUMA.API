@@ -57,6 +57,8 @@ internal class RegistrationService : ServiceBase<RegistrationEntity>, IRegistrat
             RecipientId = entity.InternalId,
             Subject = "Your Registration was successed",
             Body = $"Welcome in ZUMA team!",
+            EmailTemplateType = EmailTemplateType.RegistrationVerify
+
         }, cancellationToken).Wait();
 
         return base.AfterCreateAsync(entity, cancellationToken);

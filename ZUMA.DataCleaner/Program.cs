@@ -3,6 +3,7 @@ using Quartz;
 using ZUMA.BusinessLogic.Configuration;
 using ZUMA.DataCleaner.Configuration;
 using ZUMA.DataCleaner.Jobs;
+using ZUMA.EmailService;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -60,5 +61,8 @@ builder.Services.AddQuartzHostedService(options =>
 {
     options.WaitForJobsToComplete = true;
 });
+
+builder.Services.AddHostedService<TcpHealthCheckListener>();
+
 var host = builder.Build();
 host.Run();

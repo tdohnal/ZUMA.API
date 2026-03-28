@@ -7,6 +7,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Templates\Authorization.html" />
+    <None Remove="Templates\RegistrationVerify.html" />
+    <None Remove="Templates\Welcome.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Templates\Authorization.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\RegistrationVerify.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Templates\Welcome.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MailKit" Version="4.15.1" />
     <PackageReference Include="MassTransit" Version="8.2.5" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.9" />

@@ -28,4 +28,20 @@ internal class RegistrationRepository : RepositoryBase<RegistrationEntity>, IReg
                                .Include(x => x.UserId)
                                .ToListAsync(cancellationToken);
     }
+
+    public override async Task<RegistrationEntity?> GetByPublicIdAsync(Guid publicId, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Registrations
+                               .Where(x => x.PublicId == publicId && !x.Deleted.HasValue)
+                               .Include(x => x.UserId)
+                               .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public override async Task<RegistrationEntity?> GetByIdAsync(long id, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Registrations
+                               .Where(x => x.InternalId == id && !x.Deleted.HasValue)
+                               .Include(x => x.UserId)
+                               .FirstOrDefaultAsync(cancellationToken);
+    }
 }
