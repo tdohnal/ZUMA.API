@@ -13,10 +13,12 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="MassTransit.RabbitMQ" Version="9.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.3" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="MassTransit" Version="8.2.5" />
+		<PackageReference Include="MassTransit.RabbitMQ" Version="8.2.5" />
+		<PackageReference Include="MassTransit.Quartz" Version="8.2.5" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.3" />
+	</ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ZUMA.BussinessLogic\ZUMA.BussinessLogic.csproj" />

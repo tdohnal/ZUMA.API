@@ -3,14 +3,18 @@ using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi;
+using Microsoft.OpenApi.Models;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using ZUMA.API.Configuration;
 using ZUMA.API.Middleware;
 using ZUMA.BusinessLogic.Configuration;
 using ZUMA.BussinessLogic.Infrastructure.Contexts.Customer;
 
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 var builder = WebApplication.CreateBuilder(args);
+
+#region Controllers & Auth
 
 builder.Services.AddControllers();
 
@@ -20,17 +24,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
             ValidateIssuer = true,
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidateAudience = true,
             ValidAudience = builder.Configuration["Jwt:Audience"],
             ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero // Token vyprší přesně v daný čas (bez 5min rezervy)
+            ClockSkew = TimeSpan.Zero
         };
     });
 
 builder.Services.AddAuthorization();
+
+#endregion
 
 #region RabbitMQ
 
@@ -38,7 +45,6 @@ builder.Services.AddMassTransit(x =>
 {
     x.UsingRabbitMq((context, cfg) =>
     {
-
         var rabbitHost = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "rabbitmq";
 
         cfg.Host(rabbitHost, "/", h =>
@@ -51,9 +57,10 @@ builder.Services.AddMassTransit(x =>
 
 #endregion
 
+#region Swagger
+
 builder.Services.AddSwaggerGen(options =>
 {
-    // 1. Definice v1 dokumentace
     options.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "ZUMA API",
@@ -72,7 +79,6 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 
-    // 2. Definice v2 dokumentace
     options.SwaggerDoc("v2", new OpenApiInfo
     {
         Title = "ZUMA API",
@@ -86,9 +92,6 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 
-    // --- ZAČÁTEK KONFIGURACE PRO JWT ---
-
-    // 3. Definice bezpečnostního schématu (To vytvoří tlačítko Authorize)
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -99,31 +102,15 @@ builder.Services.AddSwaggerGen(options =>
         Description = "Zadejte pouze samotný JWT token. Systém automaticky doplní 'Bearer ' před něj."
     });
 
-    // 4. Globální požadavek na zabezpečení (Přidá ikonku zámku ke všem endpointům)
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            Array.Empty<string>()
-        }
-    });
+    options.OperationFilter<AuthorizeCheckOperationFilter>();
 
-    // --- KONEC KONFIGURACE PRO JWT ---
-
-    // 5. Načtení XML komentářů (pokud existují)
     var xmlFile = Path.Combine(AppContext.BaseDirectory, "ZUMA.API.xml");
     if (File.Exists(xmlFile))
-    {
         options.IncludeXmlComments(xmlFile);
-    }
 });
+
+#endregion
+
 #region CORS
 
 builder.Services.AddCors(options =>
@@ -142,7 +129,7 @@ builder.Services.AddCors(options =>
 
 #endregion
 
-builder.Services.AddOpenApi();
+#region API Versioning
 
 builder.Services.AddApiVersioning(options =>
 {
@@ -150,6 +137,8 @@ builder.Services.AddApiVersioning(options =>
     options.AssumeDefaultVersionWhenUnspecified = true;
     options.ReportApiVersions = true;
 });
+
+#endregion
 
 DIContainer.ConfigureServices(builder.Services, builder.Configuration);
 ApiDiContainer.ConfigureServices(builder.Services);
@@ -175,7 +164,7 @@ using (var scope = app.Services.CreateScope())
 
 #endregion
 
-#region Swagger
+#region Middleware & Pipeline
 
 if (app.Environment.IsDevelopment())
 {
@@ -188,18 +177,15 @@ if (app.Environment.IsDevelopment())
         options.DefaultModelsExpandDepth(2);
         options.DefaultModelExpandDepth(2);
     });
-
-    app.MapOpenApi();
 }
-
-#endregion
 
 app.UseRequestResponseLogging();
 app.UseHttpsRedirection();
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-app.UseCors();
+
+#endregion
 
 app.Run();
-

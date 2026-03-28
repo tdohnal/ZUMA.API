@@ -6,7 +6,8 @@ services:
       - RABBITMQ_DEFAULT_PASS=moje_tajne_heslo_123
       ports:
       - "5672:5672"   
-      - "15672:15672" # Webové rozhraní (uvidíš tam maily ve frontě)
+      - "15672:15672"
+
   email-worker:
     build:
       context: .
@@ -15,11 +16,25 @@ services:
       - rabbitmq
     environment:
       - ConnectionStrings__RabbitMq=rabbitmq://rabbitmq
+      - MT_LICENSE=community
+
+  data-cleaner-worker:
+    build:
+      context: .
+      dockerfile: ZUMA.EmailService/Dockerfile
+
   zuma.api:
     image: ${DOCKER_REGISTRY-}zumaapi
     build:
       context: .
       dockerfile: ZUMA.API/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+     - ASPNETCORE_ENVIRONMENT=Development
+     - MT_LICENSE=community
+    restart: always
+ 
   zuma-db:
     image: mcr.microsoft.com/mssql/server:2019-latest
     restart: unless-stopped

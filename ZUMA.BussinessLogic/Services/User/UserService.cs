@@ -95,7 +95,7 @@ internal class UserService : ServiceBase<UserEntity>, IUserService
             var user = await _userRepository.GetByIdAsync(id, cancellationToken);
             if (user == null) return;
 
-            var code = CodeGenerator.GenerateNumericCode(8);
+            var code = CodeGenerator.GenerateNumericCode(6);
             user.AuthCode = code;
             user.AuthCodeExpiration = DateTime.UtcNow.AddMinutes(15);
 

@@ -13,7 +13,6 @@ builder.Services.AddMassTransit(x =>
 
     x.UsingRabbitMq((context, cfg) =>
     {
-        // DŮLEŽITÉ: V Dockeru musí být "rabbitmq", pro lokální ladění bez Dockeru "localhost"
         var host = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "rabbitmq";
 
         cfg.Host(host, "/", h =>

@@ -10,7 +10,7 @@ using ZUMA.BussinessLogic.Services.User;
 
 namespace ZUMA.API.REST.Controllers
 {
-    public class RegistrationController : AuthorizedBaseController
+    public class RegistrationController : BaseController
     {
         private readonly IRegistrationService _registrationService;
 
@@ -24,7 +24,7 @@ namespace ZUMA.API.REST.Controllers
         /// <summary>
         /// Adds a new Registration.
         /// </summary>
-        [HttpPost]
+        [HttpPost("registrate")]
         [ApiVersion("1.0")]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(RegistrationDto))]
