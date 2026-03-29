@@ -2,9 +2,8 @@
   <Project Path="docker-compose.dcproj">
     <Build />
   </Project>
-  <Project Path="ZUMA.API.Mapping/ZUMA.API.Mapping.csproj" Id="6dc293cb-d453-42eb-9324-0246431f693f" />
   <Project Path="ZUMA.API/ZUMA.API.csproj" />
   <Project Path="ZUMA.BussinessLogic/ZUMA.BussinessLogic.csproj" Id="e3f16f3b-25d5-4cf6-87d5-cb2136cf3bfb" />
-  <Project Path="ZUMA.DataCleaner/ZUMA.DataCleaner.csproj" Id="f28c73e9-d77d-4921-8f00-21871c21b341" />
-  <Project Path="ZUMA.EmailService/ZUMA.EmailService.csproj" />
+  <Project Path="ZUMA.CommunicationService/ZUMA.CommunicationService.csproj" />
+  <Project Path="ZUMA.CustomerService/ZUMA.CustomerService.csproj" />
 </Solution>

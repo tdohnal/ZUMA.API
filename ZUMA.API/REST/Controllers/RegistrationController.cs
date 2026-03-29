@@ -1,24 +1,24 @@
 ﻿using Asp.Versioning;
+using MassTransit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ZUMA.API.REST.Controllers.Base;
-using ZUMA.API.REST.DTOs.Registration;
-using ZUMA.API.REST.DTOs.Registration.Extensions;
 using ZUMA.API.REST.DTOs.Registration.Requests;
 using ZUMA.API.REST.Filters;
-using ZUMA.BussinessLogic.Services.User;
+using ZUMA.BussinessLogic.Messagges.Registrate.Request;
+using ZUMA.BussinessLogic.Messagges.Registrate.Response;
 
 namespace ZUMA.API.REST.Controllers
 {
     public class RegistrationController : BaseController
     {
-        private readonly IRegistrationService _registrationService;
+        private readonly IRequestClient<ISendRegistrationCreateRequest> _registerClient;
 
         public RegistrationController(
-            IRegistrationService registrationService
+            IRequestClient<ISendRegistrationCreateRequest> registerClient
             )
         {
-            _registrationService = registrationService;
+            _registerClient = registerClient;
         }
 
         /// <summary>
@@ -27,13 +27,25 @@ namespace ZUMA.API.REST.Controllers
         [HttpPost("registrate")]
         [ApiVersion("1.0")]
         [AllowAnonymous]
-        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(RegistrationDto))]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> NewRegistrationAsync([FromBody] CreateRegistrationRequestDto request, CancellationToken cancellationToken = default)
         {
-            var created = await _registrationService.CreateAsync(request.ToEntity(), cancellationToken);
-            return Created();
+            var response = await _registerClient.GetResponse<RegistrateSuccess, RegistrateFailed>(new
+            {
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                Email = request.Email,
+                Username = request.Username,
+            }, cancellationToken);
+
+            if (response.Is(out Response<RegistrateSuccess> success))
+            {
+                return Created();
+            }
+
+            return NotFound(new { message = response.Message }); // Vrátí 404
         }
     }
 }

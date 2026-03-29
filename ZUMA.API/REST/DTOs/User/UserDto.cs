@@ -1,8 +1,5 @@
-﻿using ZUMA.BussinessLogic.Entities.Customer;
+﻿namespace ZUMA.API.REST.DTOs.User;
 
-namespace ZUMA.API.REST.DTOs.User;
-
-[GenerateMapping(typeof(UserEntity))]
 public class UserDto
 {
     public Guid PublicId { get; set; }

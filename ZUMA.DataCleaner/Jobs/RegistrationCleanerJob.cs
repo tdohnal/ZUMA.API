@@ -1,5 +1,4 @@
 ﻿using Quartz;
-using ZUMA.BussinessLogic.Entities.Customer;
 using ZUMA.DataCleaner.Services;
 
 namespace ZUMA.DataCleaner.Jobs

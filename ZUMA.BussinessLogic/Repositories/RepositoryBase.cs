@@ -22,7 +22,7 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class, IA
     {
 
         _logger.LogInformation("Checking existence of entity of type {EntityType} with ID {EntityId}", typeof(T).Name, id);
-        return await _dbSet.AnyAsync(x => x.InternalId == id && !x.Deleted.HasValue, cancellationToken);
+        return await _dbSet.AnyAsync(x => x.Id == id && !x.Deleted.HasValue, cancellationToken);
     }
 
     public virtual async Task<bool> ExistsByPublicIdAsync(Guid publicId, CancellationToken cancellationToken = default)
@@ -46,7 +46,7 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class, IA
     public virtual async Task<T?> GetByIdAsync(long id, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Getting entity of type {EntityType} with ID {EntityId}", typeof(T).Name, id);
-        return await _dbSet.SingleOrDefaultAsync(x => x.InternalId == id, cancellationToken);
+        return await _dbSet.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 
     public virtual async Task<T?> GetByPublicIdAsync(Guid publicId, CancellationToken cancellationToken = default)
@@ -71,7 +71,7 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class, IA
 
     public virtual async Task<T?> UpdateAsync(T entity, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Updating entity of type {EntityType} with ID {EntityId}", typeof(T).Name, entity.InternalId);
+        _logger.LogInformation("Updating entity of type {EntityType} with ID {EntityId}", typeof(T).Name, entity.Id);
         _dbSet.Attach(entity);
         _dbContext.Entry(entity).State = EntityState.Modified;
         await _dbContext.SaveChangesAsync(cancellationToken);

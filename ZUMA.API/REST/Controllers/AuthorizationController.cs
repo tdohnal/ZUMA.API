@@ -1,19 +1,27 @@
 ﻿using Asp.Versioning;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
+using ZUMA.API.Messages;
 using ZUMA.API.REST.Controllers.Base;
 using ZUMA.API.REST.DTOs.Authorization.Requests;
 using ZUMA.API.REST.DTOs.Authorization.Responses;
-using ZUMA.BussinessLogic.Services.User;
+using ZUMA.BussinessLogic.Messagges.Authorize.Request;
+using ZUMA.BussinessLogic.Messagges.Verification.Response;
 
 namespace ZUMA.API.REST.Controllers
 {
     public class AuthorizationController : BaseController
     {
-        private readonly IUserService _userService;
+        private readonly IRequestClient<ISendVerifyCodeRequest> _verifyClient;
+        private readonly IRequestClient<ISendAuthorizeUserRequest> _authorizeClient;
 
-        public AuthorizationController(IUserService userService)
+        public AuthorizationController(
+            IRequestClient<ISendVerifyCodeRequest> verifyClient,
+            IRequestClient<ISendAuthorizeUserRequest> authorizeClient
+            )
         {
-            _userService = userService;
+            _verifyClient = verifyClient;
+            _authorizeClient = authorizeClient;
         }
 
         #region v1
@@ -37,15 +45,17 @@ namespace ZUMA.API.REST.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Authorize(AuthorizationRequestDto request, CancellationToken cancellationToken = default)
         {
-            var ret = await _userService.GetIdByEmailAsync(request.Email, cancellationToken);
-            if (ret == null)
+            var response = await _authorizeClient.GetResponse<AuthorizeUserSuccess, AuthorizeUserFailed>(new
             {
-                return NotFound("Authorization email was sent");
+                Email = request.Email,
+            });
+
+            if (response.Is(out Response<AuthorizeUserSuccess> success))
+            {
+                return Ok();
             }
 
-            await _userService.GetAuthorizationCodeAsync(ret.Value, cancellationToken);
-
-            return Ok();
+            return NotFound(new { message = response.Message }); // Vrátí 404
         }
 
         [HttpPost("verification")]
@@ -54,25 +64,31 @@ namespace ZUMA.API.REST.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> VerificateAuthorizationCode(VerificationRequest request, CancellationToken cancellationToken = default)
         {
-            var ret = await _userService.VerificateAuthorizationCode(request.Code, request.Email, cancellationToken);
-
-            if (ret.IsValid == false)
+            var response = await _verifyClient.GetResponse<VerificationSuccess, VerificationFailed>(new
             {
-                return NotFound(ret.ErrorMessage);
+                Email = request.Email,
+                Code = request.Code,
+            });
+
+            if (response.Is(out Response<VerificationSuccess> success))
+            {
+                return Ok(new VerificationResponse
+                {
+                    User = new DTOs.User.UserDto
+                    {
+                        PublicId = success.Message.PublicId,
+                        UserName = success.Message.UserName,
+                        Name = success.Message.Name,
+                        Email = success.Message.Email,
+                        Created = success.Message.Created,
+                        Updated = success.Message.Updated,
+                        Deleted = success.Message.Deleted,
+                    },
+                    Token = success.Message.Token,
+                });
             }
 
-            return Ok(new VerificationResponse
-            {
-                Token = ret.Token,
-                User = new DTOs.User.UserDto
-                {
-                    Created = ret.Entity.Created,
-                    Email = ret.Entity.Email,
-                    Name = ret.Entity.FullName,
-                    PublicId = ret.Entity.PublicId,
-                    UserName = ret.Entity.UserName,
-                }
-            });
+            return NotFound(new { message = "Neplatný kód nebo uživatel nenalezen" }); // Vrátí 404
         }
 
         #endregion;

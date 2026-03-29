@@ -13,6 +13,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="Asp.Versioning.Mvc" Version="8.1.1" />
+		<PackageReference Include="AspNetCore.HealthChecks.Network" Version="9.0.0" />
+		<PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="9.0.0" />
 		<PackageReference Include="MassTransit.RabbitMQ" Version="8.2.5" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.2" />
 		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.15.0" />
@@ -22,8 +24,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\ZUMA.API.Mapping\ZUMA.API.Mapping.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 		<ProjectReference Include="..\ZUMA.BussinessLogic\ZUMA.BussinessLogic.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Messages\" />
 	</ItemGroup>
 
 </Project>

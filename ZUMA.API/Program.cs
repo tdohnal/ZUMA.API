@@ -1,15 +1,18 @@
 using Asp.Versioning;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using ZUMA.API.Configuration;
+using ZUMA.API.Messages;
 using ZUMA.API.Middleware;
 using ZUMA.BusinessLogic.Configuration;
-using ZUMA.BussinessLogic.Infrastructure.Contexts.Customer;
+using ZUMA.BussinessLogic.Messagges.Authorize.Request;
+using ZUMA.BussinessLogic.Messagges.Registrate.Request;
 
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 var builder = WebApplication.CreateBuilder(args);
@@ -43,6 +46,10 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddMassTransit(x =>
 {
+    x.AddRequestClient<ISendVerifyCodeRequest>();
+    x.AddRequestClient<ISendAuthorizeUserRequest>();
+    x.AddRequestClient<ISendRegistrationCreateRequest>();
+
     x.UsingRabbitMq((context, cfg) =>
     {
         var rabbitHost = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "rabbitmq";
@@ -52,6 +59,8 @@ builder.Services.AddMassTransit(x =>
             h.Username("zuma_admin");
             h.Password("moje_tajne_heslo_123");
         });
+
+        cfg.ConfigureEndpoints(context);
     });
 });
 
@@ -140,46 +149,45 @@ builder.Services.AddApiVersioning(options =>
 
 #endregion
 
-DIContainer.ConfigureServices(builder.Services, builder.Configuration);
+DIContainer.ConfigureBaseServices(builder.Services, builder.Configuration);
 ApiDiContainer.ConfigureServices(builder.Services);
 
+var connectionString = builder.Configuration.GetConnectionString("CustomerDb");
+
 builder.Services.AddHealthChecks()
-    // 1. Kontrola Databáze
     .AddSqlServer(
-        connectionString: builder.Configuration.GetConnectionString("DefaultConnection"),
-        name: "SQL Database",
-        tags: new[] { "infrastructure" })
+        connectionString: connectionString ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found!"),
+        name: "SQL Database")
+    .AddTcpHealthCheck(opt =>
+    {
+        opt.AddHost("email-worker", 8081); // Interní port v Dockeru je 8081
+    }, name: "Email Service");
 
-    // 2. Kontrola Email Workeru (přes ten TCP port 8081, co jsme dělali)
-    .AddTcpHealthCheck(setup => setup.AddHost("email-worker", 8081),
-        name: "Email Service",
-        tags: new[] { "workers" })
-
-    // 3. Kontrola Cleaner Workeru (přes TCP port 8082)
-    .AddTcpHealthCheck(setup => setup.AddHost("data-cleaner", 8082),
-        name: "Cleanup Service",
-        tags: new[] { "workers" });
 
 var app = builder.Build();
 
-#region EF Migration
-
-using (var scope = app.Services.CreateScope())
+app.MapHealthChecks("/api/system-status", new HealthCheckOptions
 {
-    var services = scope.ServiceProvider;
-    try
+    ResponseWriter = async (context, report) =>
     {
-        var context = services.GetRequiredService<CustomerDbContext>();
-        context.Database.Migrate();
-    }
-    catch (Exception ex)
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError("Migration Failed", ex);
-    }
-}
+        context.Response.ContentType = "application/json";
 
-#endregion
+        var response = new
+        {
+            OverallStatus = report.Status.ToString(),
+            TotalChecksDuration = report.TotalDuration.TotalMilliseconds,
+            Services = report.Entries.Select(e => new
+            {
+                Name = e.Key,
+                Status = e.Value.Status.ToString(),
+                Duration = e.Value.Duration.TotalMilliseconds,
+                Description = e.Value.Description
+            })
+        };
+
+        await System.Text.Json.JsonSerializer.SerializeAsync(context.Response.Body, response);
+    }
+});
 
 #region Middleware & Pipeline
 
