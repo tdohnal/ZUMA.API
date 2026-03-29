@@ -160,8 +160,12 @@ builder.Services.AddHealthChecks()
         name: "SQL Database")
     .AddTcpHealthCheck(opt =>
     {
-        opt.AddHost("email-worker", 8081); // Interní port v Dockeru je 8081
-    }, name: "Email Service");
+        opt.AddHost("communication-service", 8081);
+    }, name: "Communication Service")
+    .AddTcpHealthCheck(opt =>
+    {
+        opt.AddHost("customer-service", 8082);
+    }, name: "Customer Service");
 
 
 var app = builder.Build();
