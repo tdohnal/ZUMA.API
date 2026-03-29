@@ -45,8 +45,9 @@ namespace ZUMA.CommunicationService.Migrations
                     b.Property<Guid>("PublicId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("RecipientId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Recipient")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("Sent")
                         .HasColumnType("datetime2");

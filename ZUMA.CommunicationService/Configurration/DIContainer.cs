@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ZUMA.CommunicationService.Repositories;
 using ZUMA.CommunicationService.Services.Email;
+using ZUMA.CommunicationService.Services.EventPublisher;
 
 namespace ZUMA.BusinessLogic.Configuration;
 
@@ -26,5 +27,6 @@ public static class DIContainer
 
         #endregion
 
+        services.AddSingleton<IEventPublisherService, EventPublisherService>();
     }
 }

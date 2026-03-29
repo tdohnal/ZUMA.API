@@ -1,6 +1,4 @@
-﻿using ZUMA.BussinessLogic.Messagges;
-
-namespace ZUMA.API.Messages
+﻿namespace ZUMA.BussinessLogic.Messagges.Reuqests.Authorize.Response
 {
     public class AuthorizeUserSuccess : SuccessResponseBase
     {

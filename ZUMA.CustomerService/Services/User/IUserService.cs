@@ -9,5 +9,5 @@ public interface IUserService : IServiceBase<UserEntity>
 
     Task GetAuthorizationCodeAsync(long id, CancellationToken cancellationToken = default);
 
-    Task<UserEntity> VerificateAuthorizationCode(string code, string email, CancellationToken cancellationToken = default);
+    Task<VerificationResult> VerificateAuthorizationCode(string code, string email, CancellationToken cancellationToken = default);
 }

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ZUMA.CommunicationService.Migrations
 {
     [DbContext(typeof(CommunicationDbContext))]
-    [Migration("20260329042547_init")]
+    [Migration("20260329172932_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -48,8 +48,9 @@ namespace ZUMA.CommunicationService.Migrations
                     b.Property<Guid>("PublicId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("RecipientId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Recipient")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("Sent")
                         .HasColumnType("datetime2");

@@ -3,6 +3,7 @@ using ZUMA.BusinessLogic.Configuration;
 using ZUMA.BussinessLogic.Infrastructure.Contexts.Customer;
 using ZUMA.CustomerService.Repositories.Registration;
 using ZUMA.CustomerService.Repositories.User;
+using ZUMA.CustomerService.Services.Messaging;
 using ZUMA.CustomerService.Services.Registration;
 using ZUMA.CustomerService.Services.User;
 
@@ -37,5 +38,6 @@ public static class DIContainer
 
         #endregion
 
+        services.AddSingleton<IEventPublisherService, EventPublisherService>();
     }
 }

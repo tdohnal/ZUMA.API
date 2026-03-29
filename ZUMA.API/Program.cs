@@ -8,11 +8,8 @@ using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using ZUMA.API.Configuration;
-using ZUMA.API.Messages;
 using ZUMA.API.Middleware;
 using ZUMA.BusinessLogic.Configuration;
-using ZUMA.BussinessLogic.Messagges.Authorize.Request;
-using ZUMA.BussinessLogic.Messagges.Registrate.Request;
 
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 var builder = WebApplication.CreateBuilder(args);
@@ -46,10 +43,6 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddMassTransit(x =>
 {
-    x.AddRequestClient<ISendVerifyCodeRequest>();
-    x.AddRequestClient<ISendAuthorizeUserRequest>();
-    x.AddRequestClient<ISendRegistrationCreateRequest>();
-
     x.UsingRabbitMq((context, cfg) =>
     {
         var rabbitHost = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "rabbitmq";

@@ -23,6 +23,10 @@ public class EmailEntityConfiguration : IEntityTypeConfiguration<EmailEntity>
    .IsRequired()
    .HasColumnType("int");
 
+        builder.Property(u => u.Recipient)
+.IsRequired()
+.HasColumnType("nvarchar(200)");
+
         builder.Property(u => u.Updated)
             .HasColumnType("datetime2");
 

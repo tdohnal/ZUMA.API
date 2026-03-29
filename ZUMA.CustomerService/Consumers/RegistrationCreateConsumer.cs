@@ -1,12 +1,12 @@
 ﻿using MassTransit;
-using ZUMA.BussinessLogic.Messagges.Registrate.Request;
-using ZUMA.BussinessLogic.Messagges.Registrate.Response;
+using ZUMA.BussinessLogic.Messagges.Requests.Authorization.Request.SendRegistrationCreateRequest;
+using ZUMA.BussinessLogic.Messagges.Requests.Authorization.Response;
 using ZUMA.CustomerService.Entities;
 using ZUMA.CustomerService.Services.Registration;
 
 namespace ZUMA.CustomerService.Consumers;
 
-public class RegistrationCreateConsumer : IConsumer<ISendRegistrationCreateRequest>
+public class RegistrationCreateConsumer : IConsumer<SendRegistrationCreateRequest>
 {
     private readonly IRegistrationService _registrationService;
     private readonly ILogger<RegistrationCreateConsumer> _logger;
@@ -19,7 +19,7 @@ public class RegistrationCreateConsumer : IConsumer<ISendRegistrationCreateReque
         _logger = logger;
     }
 
-    public async Task Consume(ConsumeContext<ISendRegistrationCreateRequest> context)
+    public async Task Consume(ConsumeContext<SendRegistrationCreateRequest> context)
     {
         var msg = context.Message;
         _logger.LogInformation("Processing registration request for email: {Email}", msg.Email);

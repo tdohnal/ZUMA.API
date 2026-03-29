@@ -2,6 +2,7 @@ using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using ZUMA.BusinessLogic.Configuration;
 using ZUMA.CommunicationService;
+using ZUMA.CommunicationService.Consumers;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -9,24 +10,23 @@ builder.Services.ConfigureServices(builder.Configuration);
 
 
 builder.Services.AddHealthChecks();
+
 builder.Services.AddMassTransit(x =>
 {
-    x.AddConsumer<EmailConsumer>();
+    x.AddConsumers(typeof(EmailConsumer).Assembly);
 
     x.UsingRabbitMq((context, cfg) =>
     {
-        var host = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "rabbitmq";
+        var rabbitHost = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "rabbitmq";
 
-        cfg.Host(host, "/", h =>
+        cfg.Host(rabbitHost, "/", h =>
         {
             h.Username("zuma_admin");
             h.Password("moje_tajne_heslo_123");
         });
 
-        cfg.ReceiveEndpoint("email-service-queue", e =>
-        {
-            e.ConfigureConsumer<EmailConsumer>(context);
-        });
+        cfg.ConfigureEndpoints(context);
+        cfg.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
     });
 });
 

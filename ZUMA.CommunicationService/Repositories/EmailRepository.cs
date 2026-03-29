@@ -1,4 +1,5 @@
-﻿using ZUMA.BussinessLogic.Entities.Customer;
+﻿using Microsoft.EntityFrameworkCore;
+using ZUMA.BussinessLogic.Entities.Customer;
 using ZUMA.BussinessLogic.Repositories;
 
 namespace ZUMA.CommunicationService.Repositories;
@@ -17,5 +18,5 @@ internal class EmailRepository : RepositoryBase<EmailEntity>, IEmailRepository
         _logger = logger;
     }
 
-    //public async Task<IList<EmailEntity>> GetPendingEmailsAsync(CancellationToken cancellationToken = default) => await _dbSet.Include(x => x.Recipient).Where(x => !x.Sent.HasValue).ToListAsync(cancellationToken);
+    public async Task<IList<EmailEntity>> GetPendingEmailsAsync(CancellationToken cancellationToken = default) => await _dbSet.Where(x => !x.Sent.HasValue).ToListAsync(cancellationToken);
 }

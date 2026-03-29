@@ -2,5 +2,5 @@
 
 namespace ZUMA.API.REST.DTOs.Authorization.Requests;
 
-public record class AuthorizationRequestDto([EmailAddress] string Email);
+public record class AuthorizationRequest([EmailAddress] string Email);
 

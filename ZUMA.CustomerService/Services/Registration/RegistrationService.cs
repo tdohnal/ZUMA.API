@@ -2,6 +2,7 @@
 using ZUMA.BussinessLogic.Utils;
 using ZUMA.CustomerService.Entities;
 using ZUMA.CustomerService.Repositories.Registration;
+using ZUMA.CustomerService.Services.Messaging;
 using ZUMA.CustomerService.Services.User;
 
 namespace ZUMA.CustomerService.Services.Registration;
@@ -10,11 +11,13 @@ internal class RegistrationService : ServiceBase<RegistrationEntity>, IRegistrat
 {
     private readonly ILogger<RegistrationService> _logger;
     private readonly IRegistrationRepository _registrationRepository;
+    private readonly IEventPublisherService _eventPublisherService;
     private readonly IUserService _userService;
 
     public RegistrationService
         (
         IRegistrationRepository registrationRepository,
+        IEventPublisherService eventPublisherService,
         IUserService userService,
         ILogger<RegistrationService> logger
         ) : base(registrationRepository)
@@ -22,6 +25,7 @@ internal class RegistrationService : ServiceBase<RegistrationEntity>, IRegistrat
         _logger = logger;
         _userService = userService;
         _registrationRepository = registrationRepository;
+        _eventPublisherService = eventPublisherService;
     }
 
     protected override Task BeforeCreateAsync(RegistrationEntity entity, CancellationToken cancellationToken)
@@ -45,19 +49,18 @@ internal class RegistrationService : ServiceBase<RegistrationEntity>, IRegistrat
         return base.BeforeCreateAsync(entity, cancellationToken);
     }
 
-    protected override Task AfterCreateAsync(RegistrationEntity entity, CancellationToken cancellationToken)
+    protected override async Task AfterCreateAsync(RegistrationEntity entity, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Registration created with Id:{id} for user with email: {email}", entity.Id, entity.User.Email);
-        //_emailService.CreateAsync(new EmailEntity
-        //{
-        //    Recipient = entity.User,
-        //    RecipientId = entity.Id,
-        //    Subject = "Your Registration was successed",
-        //    Body = $"Welcome in ZUMA team!",
-        //    EmailTemplateType = EmailTemplateType.RegistrationVerify
-
-        //}, cancellationToken).Wait();
-
-        return base.AfterCreateAsync(entity, cancellationToken);
+        await _eventPublisherService.PublishCreateEmailEventAsync(
+                new BussinessLogic.Messagges.Events.CreateEmailEvent
+                {
+                    UserId = entity.User.PublicId,
+                    Subject = "Welcome in Zuma",
+                    FullName = entity.User.FullName,
+                    Email = entity.User.Email,
+                    Code = entity.User.AuthCode,
+                    EmailTemplateType = EmailTemplateType.RegistrationVerify,
+                }, cancellationToken);
     }
 }

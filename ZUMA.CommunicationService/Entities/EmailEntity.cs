@@ -11,7 +11,7 @@ public class EmailEntity : IAuditableEntities
     public DateTime? Updated { get; set; }
     public DateTime? Deleted { get; set; }
 
-    public Guid RecipientId { get; set; }
+    public string Recipient { get; set; }
 
     public required string Subject { get; set; }
     public required string Body { get; set; }

@@ -21,7 +21,7 @@ namespace ZUMA.CommunicationService.Migrations
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Updated = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Deleted = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    RecipientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Recipient = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Subject = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Body = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EmailTemplateType = table.Column<int>(type: "int", nullable: false),

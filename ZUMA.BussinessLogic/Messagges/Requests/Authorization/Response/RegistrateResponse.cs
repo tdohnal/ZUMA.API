@@ -1,4 +1,4 @@
-﻿namespace ZUMA.BussinessLogic.Messagges.Registrate.Response
+﻿namespace ZUMA.BussinessLogic.Messagges.Requests.Authorization.Response
 {
     public class RegistrateSuccess : SuccessResponseBase
     {

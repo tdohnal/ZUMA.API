@@ -6,22 +6,40 @@ using ZUMA.BussinessLogic.Services;
 using ZUMA.BussinessLogic.Utils;
 using ZUMA.CustomerService.Entities;
 using ZUMA.CustomerService.Repositories.User;
+using ZUMA.CustomerService.Services.Messaging;
 
 namespace ZUMA.CustomerService.Services.User;
+
+public class VerificationResult
+{
+    public VerificationResult(string errorMessage = "")
+    {
+        ErrorMessage = errorMessage;
+    }
+
+    public UserEntity User { get; set; }
+    public string Token { get; set; }
+    public string? ErrorMessage { get; set; }
+
+    public bool IsSuccess => string.IsNullOrEmpty(ErrorMessage);
+}
 
 internal class UserService : ServiceBase<UserEntity>, IUserService
 {
     private readonly ILogger<UserService> _logger;
     private readonly IUserRepository _userRepository;
+    private readonly IEventPublisherService _eventPublisherService;
     private readonly IConfiguration _config;
 
     public UserService(
         IUserRepository userRepository,
+        IEventPublisherService eventPublisherService,
         ILogger<UserService> logger,
         IConfiguration config
         ) : base(userRepository)
     {
         _userRepository = userRepository;
+        _eventPublisherService = eventPublisherService;
         _logger = logger;
         _config = config;
     }
@@ -51,35 +69,35 @@ internal class UserService : ServiceBase<UserEntity>, IUserService
         }
     }
 
-    public async Task<UserEntity> VerificateAuthorizationCode(string code, string email, CancellationToken cancellationToken = default)
+    public async Task<VerificationResult> VerificateAuthorizationCode(string code, string email, CancellationToken cancellationToken = default)
     {
-        //if (string.IsNullOrWhiteSpace(code)) throw new ArgumentNullException(nameof(code));
-        //if (string.IsNullOrWhiteSpace(email)) throw new ArgumentNullException(nameof(email));
+        if (string.IsNullOrWhiteSpace(code)) throw new ArgumentNullException(nameof(code));
+        if (string.IsNullOrWhiteSpace(email)) throw new ArgumentNullException(nameof(email));
 
-        //try
-        //{
-        //    var user = await _userRepository.GetByEmailAsync(email, cancellationToken);
+        try
+        {
+            var user = await _userRepository.GetByEmailAsync(email, cancellationToken);
 
-        //    if (user == null) return new ValidationResult<UserEntity>("User not found");
+            if (user == null) return new VerificationResult("User not found");
 
-        //    if (user.AuthCode != code) return new ValidationResult<UserEntity>("Invalid authorization code");
+            if (user.AuthCode != code) return new VerificationResult("Invalid authorization code");
 
-        //    if (user.AuthCodeExpiration < DateTime.UtcNow) return new ValidationResult<UserEntity>("Authorization code expired");
+            if (user.AuthCodeExpiration < DateTime.UtcNow) return new VerificationResult("Authorization code expired");
 
-        //    var token = CreateJwtToken(user);
+            var token = CreateJwtToken(user);
 
-        //    user.AuthCode = null;
-        //    user.AuthCodeExpiration = null;
+            user.AuthCode = null;
+            user.AuthCodeExpiration = null;
 
-        //    await _userRepository.UpdateAsync(user, cancellationToken);
+            await _userRepository.UpdateAsync(user, cancellationToken);
 
-        //    return new ValidationResult<UserEntity> { Entity = user, Token = token };
-        //}
-        //catch (Exception ex)
-        //{
-        //    _logger.LogError(ex, "Verification failed for email {Email}", email);
-        //    throw;
-        //}
+            return new VerificationResult { User = user, Token = token };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Verification failed for email {Email}", email);
+            throw;
+        }
 
         throw new NotImplementedException();
     }
@@ -97,14 +115,16 @@ internal class UserService : ServiceBase<UserEntity>, IUserService
 
             await _userRepository.UpdateAsync(user, cancellationToken);
 
-            //await _emailService.CreateAsync(new EmailEntity
-            //{
-            //    Recipient = user,
-            //    RecipientId = user.Id,
-            //    Subject = "ZUMA - Your Authorization Code",
-            //    Body = $"Your authorization code is: {code}",
-            //    EmailTemplateType = EmailTemplateType.Authorization
-            //}, cancellationToken);
+            await _eventPublisherService.PublishCreateEmailEventAsync(
+                 new BussinessLogic.Messagges.Events.CreateEmailEvent
+                 {
+                     UserId = user.PublicId,
+                     Email = user.Email,
+                     Subject = "Zuma - Authorization code",
+                     FullName = user.FullName,
+                     Code = code,
+                     EmailTemplateType = EmailTemplateType.Authorization,
+                 }, cancellationToken);
         }
         catch (Exception ex)
         {
