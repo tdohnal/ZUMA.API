@@ -7,7 +7,7 @@ namespace ZUMA.API.REST.Controllers.Base;
 [Authorize]
 [Produces("application/json")]
 [Consumes("application/json")]
-[Route("api/v{version:apiVersion}/[controller]")]
+[Route("api/v1/[controller]")]
 public class AuthorizedBaseController : ControllerBase
 {
 

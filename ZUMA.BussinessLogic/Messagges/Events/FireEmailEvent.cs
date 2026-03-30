@@ -1,6 +1,8 @@
-﻿namespace ZUMA.BussinessLogic.Messagges.Events;
+﻿using ZUMA.BussinessLogic.Messagges.Base;
 
-public class FireEmailEvent
+namespace ZUMA.BussinessLogic.Messagges.Events;
+
+public class FireEmailEvent : IEvent
 {
     public Guid EmailId { get; set; }
     public string Email { get; set; }

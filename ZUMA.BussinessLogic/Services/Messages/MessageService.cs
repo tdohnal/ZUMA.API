@@ -1,4 +1,5 @@
 ﻿using MassTransit;
+using ZUMA.BussinessLogic.Messagges.Base;
 
 public class MessageService : IMessageService
 {
@@ -12,10 +13,11 @@ public class MessageService : IMessageService
     public async Task<BusinessResult<TSuccess, TFailure>> SendAsync<TRequest, TSuccess, TFailure>(
         TRequest message,
         CancellationToken ct = default)
-        where TRequest : class
-        where TSuccess : class
-        where TFailure : class
+        where TRequest : class, IRequestEvent
+        where TSuccess : class, ISuccessResponse
+        where TFailure : class, IFailedResponse
     {
+        // MassTransit vyžaduje, aby TRequest byl referenční typ
         var client = _bus.CreateRequestClient<TRequest>();
 
         var response = await client.GetResponse<TSuccess, TFailure>(message, ct);

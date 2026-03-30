@@ -3,15 +3,30 @@ using ZUMA.API.REST.DTOs.Authorization.Requests;
 using ZUMA.API.REST.DTOs.Authorization.Responses;
 using ZUMA.API.REST.DTOs.Registration.Requests;
 using ZUMA.API.REST.DTOs.User;
-using ZUMA.BussinessLogic.Messagges.Requests.Authorization.Request.SendRegistrationCreateRequest;
-using ZUMA.BussinessLogic.Messagges.Requests.Authorization.Response;
-using ZUMA.BussinessLogic.Messagges.Reuqests.Authorize.Request;
+using ZUMA.BussinessLogic.Messagges.Contracts.Authorization;
+using ZUMA.BussinessLogic.Messagges.Contracts.Users;
 
 namespace ZUMA.API.REST.Mappers;
 
 [Mapper]
 public partial class MessageMapper
 {
+    #region Users (Requests)
+
+
+    public partial UserDto MapUserMessageModelToUserDto(UserMessageModel model);
+    private partial List<UserDto> MapUserList(List<UserMessageModel> users);
+    public List<UserDto> MapSendGetUsersSuccessToUserDto(SendGetUsersSuccess success)
+    {
+        if (success?.User == null) return new List<UserDto>();
+
+        return MapUserList(success.User);
+    }
+
+    public partial UserDto MapSendGetUserByIdSuccessToUserDto(SendGetUserByIdSuccess success);
+
+    #endregion
+
     #region Authorization (Requests)
 
     public partial SendRegistrationCreateRequest MapCreateRegistrationDtoToSendRequest(CreateRegistrationRequestDto dto);
@@ -22,12 +37,7 @@ public partial class MessageMapper
 
     #region Authorization (Responses)
 
-    // Hlavní mapování pro endpoint
     public partial VerificationResponse MapVerificationSuccessToResponse(VerificationSuccess success);
-
-
-    [MapProperty(nameof(VerificationUserMessage.FullName), nameof(UserDto.Name))]
-    private partial UserDto MapVerificationUserMessageToUserDto(VerificationUserMessage message);
 
     #endregion
 

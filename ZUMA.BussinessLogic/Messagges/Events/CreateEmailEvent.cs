@@ -1,6 +1,8 @@
-﻿namespace ZUMA.BussinessLogic.Messagges.Events;
+﻿using ZUMA.BussinessLogic.Messagges.Base;
 
-public class CreateEmailEvent
+namespace ZUMA.BussinessLogic.Messagges.Events;
+
+public class CreateEmailEvent : IEvent
 {
     public required Guid UserId { get; set; }
     public string Code { get; set; }

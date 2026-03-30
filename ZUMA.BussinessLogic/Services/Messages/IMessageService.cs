@@ -1,9 +1,11 @@
-﻿public interface IMessageService
+﻿using ZUMA.BussinessLogic.Messagges.Base;
+
+public interface IMessageService
 {
     Task<BusinessResult<TSuccess, TFailure>> SendAsync<TRequest, TSuccess, TFailure>(
         TRequest message,
         CancellationToken ct = default)
-        where TRequest : class
-        where TSuccess : class
-        where TFailure : class;
+        where TRequest : class, IRequestEvent
+        where TSuccess : class, ISuccessResponse
+        where TFailure : class, IFailedResponse;
 }

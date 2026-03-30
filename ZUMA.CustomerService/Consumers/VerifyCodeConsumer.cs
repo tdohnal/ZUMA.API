@@ -1,6 +1,5 @@
 ﻿using MassTransit;
-using ZUMA.BussinessLogic.Messagges.Requests.Authorization.Request;
-using ZUMA.BussinessLogic.Messagges.Requests.Authorization.Response;
+using ZUMA.BussinessLogic.Messagges.Contracts.Authorization;
 using ZUMA.CustomerService.Services.User;
 
 namespace ZUMA.CustomerService.Consumers;

@@ -139,28 +139,25 @@ internal class UserService : ServiceBase<UserEntity>, IUserService
     private string CreateJwtToken(UserEntity user)
     {
         var claims = new List<Claim>
-        {
-            new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Unikátní ID tokenu
-        };
+    {
+        new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
+        new Claim(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+        new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
+    };
 
-        // Načtení klíče z konfigurace
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddHours(2), // Platnost 2 hodiny
-            SigningCredentials = creds,
-            Issuer = _config["Jwt:Issuer"],
-            Audience = _config["Jwt:Audience"]
-        };
+        var token = new JwtSecurityToken(
+            issuer: _config["Jwt:Issuer"],
+            audience: _config["Jwt:Audience"],
+            claims: claims,
+            notBefore: DateTime.UtcNow, // Tímto tam přidáš claim 'nbf'
+            expires: DateTime.UtcNow.AddHours(2),
+            signingCredentials: creds
+        );
 
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-
-        return tokenHandler.WriteToken(token);
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }

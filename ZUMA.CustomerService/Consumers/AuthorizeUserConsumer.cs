@@ -1,6 +1,5 @@
 ﻿using MassTransit;
-using ZUMA.BussinessLogic.Messagges.Reuqests.Authorize.Request;
-using ZUMA.BussinessLogic.Messagges.Reuqests.Authorize.Response;
+using ZUMA.BussinessLogic.Messagges.Contracts.Authorization;
 using ZUMA.CustomerService.Services.User;
 
 namespace ZUMA.CustomerService.Consumers;
@@ -33,6 +32,7 @@ public class AuthorizeUserConsumer : IConsumer<SendAuthorizeUserRequest>
                 {
                     ErrorMessage = $"Not found by {msg.Email}"
                 });
+                return;
             }
 
             if (id.HasValue)

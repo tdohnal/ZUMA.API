@@ -1,6 +1,5 @@
 ﻿using MassTransit;
-using ZUMA.BussinessLogic.Messagges.Requests.Authorization.Request.SendRegistrationCreateRequest;
-using ZUMA.BussinessLogic.Messagges.Requests.Authorization.Response;
+using ZUMA.BussinessLogic.Messagges.Contracts.Authorization;
 using ZUMA.CustomerService.Entities;
 using ZUMA.CustomerService.Services.Registration;
 
