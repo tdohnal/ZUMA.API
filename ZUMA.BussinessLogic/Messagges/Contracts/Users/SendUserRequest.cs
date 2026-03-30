@@ -40,33 +40,37 @@ public class UserMessageModel
 #region Create User
 public record SendCreateUserRequest : IRequestEvent
 {
-
+    public string Username { get; set; }
+    public string FullName { get; set; }
+    public string Email { get; set; }
 }
 public record SendCreateUserSuccess : ISuccessResponse
 {
-
+    public UserMessageModel User { get; set; }
 }
 #endregion
 
 #region Update User
 public record SendUpdateUserRequest : IRequestEvent
 {
-
+    public Guid PublicId { get; set; }
+    public string Username { get; set; }
+    public string FullName { get; set; }
+    public string Email { get; set; }
 }
 public record SendUpdateUserSuccess : ISuccessResponse
 {
-
+    public UserMessageModel User { get; set; }
 }
 #endregion
 
 #region Delete User
 public record SendDeleteUserRequest : IRequestEvent
 {
-
+    public Guid PublicId { get; set; }
 }
 public record SendDeleteUserSuccess : ISuccessResponse
 {
-
 }
 #endregion
 

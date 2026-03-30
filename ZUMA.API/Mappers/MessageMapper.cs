@@ -25,6 +25,10 @@ public partial class MessageMapper
 
     public partial UserDto MapSendGetUserByIdSuccessToUserDto(SendGetUserByIdSuccess success);
 
+    public partial UserDto MapSendCreateUserSuccessToUserDto(SendCreateUserSuccess success);
+
+    public partial UserDto MapSendUpdateUserSuccessToUserDto(SendUpdateUserSuccess success);
+
     #endregion
 
     #region Authorization (Requests)
