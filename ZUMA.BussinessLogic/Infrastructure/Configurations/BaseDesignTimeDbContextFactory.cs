@@ -9,10 +9,8 @@ public abstract class BaseDesignTimeDbContextFactory<T> : IDesignTimeDbContextFa
 
     public T CreateDbContext(string[] args)
     {
-        // 1. Vezme aktuální složku (tam kde je ten projekt/Context)
         string basePath = Directory.GetCurrentDirectory();
 
-        // 2. Sestavení konfigurace z lokálního souboru dané služby
         IConfigurationRoot configuration = new ConfigurationBuilder()
             .SetBasePath(basePath)
             .AddJsonFile("appsettings.json", optional: false)
@@ -23,12 +21,10 @@ public abstract class BaseDesignTimeDbContextFactory<T> : IDesignTimeDbContextFa
 
         if (string.IsNullOrEmpty(connectionString))
         {
-            // Debug info, aby ses v konzoli hned dozvěděl, kde to hledalo
             throw new InvalidOperationException(
                 $"Error: ConnectionString '{ConnectionStringName}' not found in {Path.Combine(basePath, "appsettings.json")}");
         }
 
-        // Hostname transformace (zuma-db -> localhost)
         var localConnectionString = connectionString.Contains("zuma-db")
             ? connectionString.Replace("zuma-db", "localhost")
             : connectionString;
