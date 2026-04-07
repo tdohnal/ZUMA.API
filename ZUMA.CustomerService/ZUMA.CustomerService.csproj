@@ -9,18 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Templates\Authorization.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Templates\RegistrationVerify.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Templates\Welcome.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -33,6 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ZUMA.SharedKernel\ZUMA.SharedKernel.csproj" />
+    <ProjectReference Include="..\ZUMA.Customer.Infrastructure\ZUMA.Customer.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

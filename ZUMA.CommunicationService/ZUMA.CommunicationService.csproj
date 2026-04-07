@@ -22,9 +22,6 @@
 		  <PrivateAssets>all</PrivateAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.3" />
+		<PackageReference Include="MimeKit" Version="4.15.1" />
 	</ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\ZUMA.SharedKernel\ZUMA.SharedKernel.csproj" />
-  </ItemGroup>
 </Project>

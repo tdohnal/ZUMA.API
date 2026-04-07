@@ -1,13 +1,12 @@
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
-using ZUMA.SharedKernel.Infrastructure.Contexts.Customer;
 using ZUMA.CommunicationService;
-using ZUMA.CustomerService.Configurration;
+using ZUMA.Customer.Infrastructure.Configuration;
 using ZUMA.CustomerService.Consumers;
 
 var builder = Host.CreateApplicationBuilder(args);
 
-builder.Services.ConfigureServices(builder.Configuration);
+builder.Services.AddInfrastructure(builder.Configuration);
 
 
 builder.Services.AddHealthChecks();

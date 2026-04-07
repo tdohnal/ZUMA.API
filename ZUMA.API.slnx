@@ -1,9 +1,23 @@
 <Solution>
+  <Folder Name="/Services/" />
+  <Folder Name="/Services/Communication/">
+    <Project Path="ZUMA.CommunicationService/ZUMA.CommunicationService.csproj" />
+  </Folder>
+  <Folder Name="/Services/Communication/Layers/">
+    <Project Path="../ZUMA.Communication.Application/ZUMA.Communication.Application.csproj" Id="1126c1b2-e90d-47e1-8857-8378b78fc003" />
+    <Project Path="../ZUMA.Communication.Domain/ZUMA.Communication.Domain.csproj" Id="aa3a3a02-fe95-4052-acd9-554a07554e1f" />
+    <Project Path="../ZUMA.Communication.Infrastructure/ZUMA.Communication.Infrastructure.csproj" Id="1f30b897-d955-4c91-a1de-646a3d910733" />
+  </Folder>
+  <Folder Name="/Services/Customer/">
+    <Project Path="ZUMA.CustomerService/ZUMA.CustomerService.csproj" />
+  </Folder>
+  <Folder Name="/Services/Customer/Layers/">
+    <Project Path="../ZUMA.Customer.Application/ZUMA.Customer.Application.csproj" Id="4c51f44d-bd5b-45bc-b572-80fb0b1de93c" />
+    <Project Path="Zuma.Customer.Domain/Zuma.Customer.Domain.csproj" Id="43e03307-c5d1-4009-96e9-ee0a3e8ec871" />
+    <Project Path="ZUMA.Customer.Infrastructure/ZUMA.Customer.Infrastructure.csproj" Id="fd469af0-0487-4d19-b21f-cd7e8912ec5b" />
+  </Folder>
   <Project Path="docker-compose.dcproj">
     <Build />
   </Project>
   <Project Path="ZUMA.API/ZUMA.API.csproj" />
-  <Project Path="ZUMA.CommunicationService/ZUMA.CommunicationService.csproj" />
-  <Project Path="ZUMA.CustomerService/ZUMA.CustomerService.csproj" />
-  <Project Path="ZUMA.SharedKernel/ZUMA.SharedKernel.csproj" />
 </Solution>
