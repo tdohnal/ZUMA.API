@@ -5,13 +5,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>dotnet-ZUMA.CommunicationService-bfe02083-e058-46c8-9401-bc7ba5284df7</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="..\.dockerignore" Link=".dockerignore">
-      <DependentUpon>$(DockerDefaultDockerfile)</DependentUpon>
-    </None>
-  </ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="MassTransit" Version="8.2.5" />
@@ -22,6 +17,7 @@
 		  <PrivateAssets>all</PrivateAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.3" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
 		<PackageReference Include="MimeKit" Version="4.15.1" />
 	</ItemGroup>
 

@@ -10,7 +10,11 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+COPY ["nuget.config", "."]
 COPY ["ZUMA.CustomerService/ZUMA.CustomerService.csproj", "ZUMA.CustomerService/"]
+COPY ["ZUMA.Customer.Infrastructure/ZUMA.Customer.Infrastructure.csproj", "ZUMA.Customer.Infrastructure/"]
+COPY ["ZUMA.Customer.Application/ZUMA.Customer.Application.csproj", "ZUMA.Customer.Application/"]
+COPY ["Zuma.Customer.Domain/Zuma.Customer.Domain.csproj", "Zuma.Customer.Domain/"]
 RUN dotnet restore "./ZUMA.CustomerService/ZUMA.CustomerService.csproj"
 COPY . .
 WORKDIR "/src/ZUMA.CustomerService"

@@ -74,9 +74,9 @@ DIContainer.ConfigureBaseServices(builder.Services, builder.Configuration);
 ApiDiContainer.ConfigureServices(builder.Services);
 
 // Health Checks
-var connectionString = builder.Configuration.GetConnectionString("CustomerDb");
+var connectionString = builder.Configuration.GetConnectionString("DbConnection");
 builder.Services.AddHealthChecks()
-    .AddSqlServer(connectionString!, name: "SQL Database")
+    .AddSqlServer(connectionString!, name: "PostgreSQL Databases")
     .AddTcpHealthCheck(opt => opt.AddHost("communication-service", 8081), name: "Communication Service")
     .AddTcpHealthCheck(opt => opt.AddHost("customer-service", 8082), name: "Customer Service");
 

@@ -11,6 +11,7 @@ EXPOSE 8080
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+COPY ["nuget.config", "."]
 COPY ["ZUMA.API/ZUMA.API.csproj", "ZUMA.API/"]
 RUN dotnet restore "./ZUMA.API/ZUMA.API.csproj"
 COPY . .
