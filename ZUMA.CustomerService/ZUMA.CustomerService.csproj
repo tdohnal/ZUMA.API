@@ -21,6 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Layers\ZUMA.Customer.Infrastructure\ZUMA.Customer.Infrastructure.csproj" />
+    <ProjectReference Include="..\ZUMA.Customer.Infrastructure\ZUMA.Customer.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

@@ -26,6 +26,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Layers\ZUMA.Communication.Infrastructure\ZUMA.Communication.Infrastructure.csproj" />
+	  <ProjectReference Include="..\ZUMA.Communication.Infrastructure\ZUMA.Communication.Infrastructure.csproj" />
 	</ItemGroup>
 </Project>

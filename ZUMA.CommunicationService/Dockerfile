@@ -10,9 +10,6 @@ WORKDIR /src
 
 # Tady kopírujeme jen to, co EmailService potřebuje
 COPY ["ZUMA.CommunicationService/ZUMA.CommunicationService.csproj", "ZUMA.CommunicationService/"]
-# Pokud EmailService využívá tvou BussinessLogic, přidej i tenhle řádek:
-COPY ["ZUMA.SharedKernel/ZUMA.SharedKernel.csproj", "ZUMA.SharedKernel/"]
-
 RUN dotnet restore "./ZUMA.CommunicationService/ZUMA.CommunicationService.csproj"
 COPY . .
 WORKDIR "/src/ZUMA.CommunicationService"
