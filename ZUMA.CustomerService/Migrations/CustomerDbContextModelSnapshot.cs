@@ -2,9 +2,9 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using ZUMA.BussinessLogic.Infrastructure.Contexts.Customer;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using ZUMA.SharedKernel.Infrastructure.Contexts.Customer;
 
 #nullable disable
 
@@ -18,9 +18,9 @@ namespace ZUMA.CustomerService.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "10.0.5")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("ZUMA.CustomerService.Entities.RegistrationEntity", b =>
                 {
@@ -28,29 +28,29 @@ namespace ZUMA.CustomerService.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("ActivationCode")
                         .IsRequired()
                         .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("varchar(10)");
 
                     b.Property<DateTime>("Created")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("now()");
 
                     b.Property<DateTime?>("Deleted")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("ExpirationCodeDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("PublicId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime?>("Updated")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
@@ -63,7 +63,7 @@ namespace ZUMA.CustomerService.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Registrations", "dbo");
+                    b.ToTable("Registrations", "public");
                 });
 
             modelBuilder.Entity("ZUMA.CustomerService.Entities.UserEntity", b =>
@@ -72,45 +72,45 @@ namespace ZUMA.CustomerService.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("AuthCode")
                         .HasMaxLength(12)
-                        .HasColumnType("nvarchar(12)");
+                        .HasColumnType("varchar(12)");
 
                     b.Property<DateTime?>("AuthCodeExpiration")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NULL");
 
                     b.Property<DateTime>("Created")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("now()");
 
                     b.Property<DateTime?>("Deleted")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("varchar(256)");
 
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("varchar(256)");
 
                     b.Property<Guid>("PublicId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime?>("Updated")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("varchar(128)");
 
                     b.HasKey("Id");
 
@@ -121,7 +121,7 @@ namespace ZUMA.CustomerService.Migrations
                         .IsUnique()
                         .HasDatabaseName("IX_Users_Email_Unique");
 
-                    b.ToTable("Users", "dbo");
+                    b.ToTable("Users", "public");
                 });
 
             modelBuilder.Entity("ZUMA.CustomerService.Entities.RegistrationEntity", b =>
@@ -133,6 +133,41 @@ namespace ZUMA.CustomerService.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ZUMA.CustomerService.Entities.UserEntity", b =>
+                {
+                    b.OwnsOne("ZUMA.CustomerService.ValueObjects.Address", "Address", b1 =>
+                        {
+                            b1.Property<long>("UserEntityId");
+
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasMaxLength(100);
+
+                            b1.Property<string>("Country")
+                                .IsRequired();
+
+                            b1.Property<string>("Street")
+                                .IsRequired()
+                                .HasMaxLength(200);
+
+                            b1.Property<string>("ZipCode")
+                                .IsRequired();
+
+                            b1.HasKey("UserEntityId");
+
+                            b1.ToTable("Users", "public");
+
+                            b1
+                                .ToJson("Address")
+                                .HasColumnType("jsonb");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserEntityId");
+                        });
+
+                    b.Navigation("Address");
                 });
 #pragma warning restore 612, 618
         }

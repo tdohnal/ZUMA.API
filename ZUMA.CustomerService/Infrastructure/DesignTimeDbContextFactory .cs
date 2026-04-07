@@ -1,4 +1,4 @@
-﻿using ZUMA.BussinessLogic.Infrastructure.Contexts.Customer;
+﻿using ZUMA.SharedKernel.Infrastructure.Contexts.Customer;
 
 public class CustomerDbContextFactory : BaseDesignTimeDbContextFactory<CustomerDbContext>
 {

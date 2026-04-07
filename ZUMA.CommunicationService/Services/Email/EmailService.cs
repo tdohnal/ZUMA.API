@@ -1,9 +1,9 @@
 ﻿using MailKit.Net.Smtp;
 using MassTransit;
 using MimeKit;
-using ZUMA.BussinessLogic.Entities.Customer;
-using ZUMA.BussinessLogic.Messagges.Events;
-using ZUMA.BussinessLogic.Services;
+using ZUMA.SharedKernel.Entities.Customer;
+using ZUMA.SharedKernel.Messagges.Events;
+using ZUMA.SharedKernel.Services;
 using ZUMA.CommunicationService.Repositories;
 
 namespace ZUMA.CommunicationService.Services.Email;
@@ -13,7 +13,6 @@ internal class EmailService : ServiceBase<EmailEntity>, IEmailService
     private readonly ILogger<EmailService> _logger;
     private readonly IEmailRepository _emailRepository;
     private readonly IPublishEndpoint _publishEndpoint;
-    private readonly string _templatePath;
 
     public EmailService(
         IEmailRepository emailRepository,

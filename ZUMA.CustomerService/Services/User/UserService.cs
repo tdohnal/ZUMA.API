@@ -2,11 +2,11 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using ZUMA.BussinessLogic.Services;
-using ZUMA.BussinessLogic.Utils;
 using ZUMA.CustomerService.Entities;
 using ZUMA.CustomerService.Repositories.User;
 using ZUMA.CustomerService.Services.Messaging;
+using ZUMA.SharedKernel.Services;
+using ZUMA.SharedKernel.Utils;
 
 namespace ZUMA.CustomerService.Services.User;
 
@@ -116,7 +116,7 @@ internal class UserService : ServiceBase<UserEntity>, IUserService
             await _userRepository.UpdateAsync(user, cancellationToken);
 
             await _eventPublisherService.PublishCreateEmailEventAsync(
-                 new BussinessLogic.Messagges.Events.CreateEmailEvent
+                 new SharedKernel.Messagges.Events.CreateEmailEvent
                  {
                      UserId = user.PublicId,
                      Email = user.Email,

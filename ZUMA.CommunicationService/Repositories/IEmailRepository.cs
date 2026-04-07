@@ -1,5 +1,5 @@
-﻿using ZUMA.BussinessLogic.Entities.Customer;
-using ZUMA.BussinessLogic.Repositories;
+﻿using ZUMA.SharedKernel.Entities.Customer;
+using ZUMA.SharedKernel.Repositories;
 
 namespace ZUMA.CommunicationService.Repositories;
 

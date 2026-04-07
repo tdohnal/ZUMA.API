@@ -1,5 +1,5 @@
 ﻿using MassTransit;
-using ZUMA.BussinessLogic.Messagges.Events;
+using ZUMA.SharedKernel.Messagges.Events;
 
 namespace ZUMA.CommunicationService.Services.EventPublisher
 {

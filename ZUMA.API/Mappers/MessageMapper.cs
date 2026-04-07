@@ -3,8 +3,8 @@ using ZUMA.API.REST.DTOs.Authorization.Requests;
 using ZUMA.API.REST.DTOs.Authorization.Responses;
 using ZUMA.API.REST.DTOs.Registration.Requests;
 using ZUMA.API.REST.DTOs.User;
-using ZUMA.BussinessLogic.Messagges.Contracts.Authorization;
-using ZUMA.BussinessLogic.Messagges.Contracts.Users;
+using ZUMA.SharedKernel.Messagges.Contracts.Authorization;
+using ZUMA.SharedKernel.Messagges.Contracts.Users;
 
 namespace ZUMA.API.REST.Mappers;
 

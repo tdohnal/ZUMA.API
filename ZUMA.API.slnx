@@ -3,7 +3,7 @@
     <Build />
   </Project>
   <Project Path="ZUMA.API/ZUMA.API.csproj" />
-  <Project Path="ZUMA.BussinessLogic/ZUMA.BussinessLogic.csproj" Id="e3f16f3b-25d5-4cf6-87d5-cb2136cf3bfb" />
   <Project Path="ZUMA.CommunicationService/ZUMA.CommunicationService.csproj" />
   <Project Path="ZUMA.CustomerService/ZUMA.CustomerService.csproj" />
+  <Project Path="ZUMA.SharedKernel/ZUMA.SharedKernel.csproj" />
 </Solution>

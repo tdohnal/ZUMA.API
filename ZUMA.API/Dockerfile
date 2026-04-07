@@ -13,7 +13,7 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["ZUMA.API/ZUMA.API.csproj", "ZUMA.API/"]
 COPY ["ZUMA.API.Mapping/ZUMA.API.Mapping.csproj", "ZUMA.API.Mapping/"]
-COPY ["ZUMA.BussinessLogic/ZUMA.BussinessLogic.csproj", "ZUMA.BussinessLogic/"]
+COPY ["ZUMA.SharedKernel/ZUMA.SharedKernel.csproj", "ZUMA.SharedKernel/"]
 RUN dotnet restore "./ZUMA.API/ZUMA.API.csproj"
 COPY . .
 WORKDIR "/src/ZUMA.API"

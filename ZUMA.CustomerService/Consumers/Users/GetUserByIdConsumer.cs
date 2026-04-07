@@ -1,5 +1,5 @@
 ﻿using MassTransit;
-using ZUMA.BussinessLogic.Messagges.Contracts.Users;
+using ZUMA.SharedKernel.Messagges.Contracts.Users;
 using ZUMA.CustomerService.Services.User;
 
 namespace ZUMA.CustomerService.Consumers.Users;

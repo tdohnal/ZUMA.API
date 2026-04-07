@@ -1,5 +1,5 @@
 ﻿using MassTransit;
-using ZUMA.BussinessLogic.Messagges.Events;
+using ZUMA.SharedKernel.Messagges.Events;
 using ZUMA.CustomerService.Utils;
 
 namespace ZUMA.CustomerService.Services.Messaging

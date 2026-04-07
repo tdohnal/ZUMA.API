@@ -25,6 +25,6 @@
 	</ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ZUMA.BussinessLogic\ZUMA.BussinessLogic.csproj" />
+    <ProjectReference Include="..\ZUMA.SharedKernel\ZUMA.SharedKernel.csproj" />
   </ItemGroup>
 </Project>

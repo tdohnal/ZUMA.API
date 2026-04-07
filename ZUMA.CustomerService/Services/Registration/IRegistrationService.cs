@@ -1,4 +1,4 @@
-﻿using ZUMA.BussinessLogic.Services;
+﻿using ZUMA.SharedKernel.Services;
 using ZUMA.CustomerService.Entities;
 
 namespace ZUMA.CustomerService.Services.Registration;

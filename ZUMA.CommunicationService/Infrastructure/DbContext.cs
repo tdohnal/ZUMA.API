@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ZUMA.BussinessLogic.Entities.Customer;
+using ZUMA.SharedKernel.Entities.Customer;
 
 public class CommunicationDbContext : Microsoft.EntityFrameworkCore.DbContext
 {

@@ -1,6 +1,6 @@
 ﻿using MassTransit;
-using ZUMA.BussinessLogic.Entities.Customer;
-using ZUMA.BussinessLogic.Messagges.Events;
+using ZUMA.SharedKernel.Entities.Customer;
+using ZUMA.SharedKernel.Messagges.Events;
 using ZUMA.CommunicationService.Services.Email;
 
 namespace ZUMA.CommunicationService.Consumers;

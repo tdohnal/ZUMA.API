@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using ZUMA.BussinessLogic.Entities;
+using ZUMA.CustomerService.ValueObjects;
+using ZUMA.SharedKernel.Entities;
 
 namespace ZUMA.CustomerService.Entities;
 
@@ -18,6 +19,7 @@ public class UserEntity : IAuditableEntities
     public string UserName { get; set; } = string.Empty;
 
     public string? AuthCode { get; set; } = string.Empty;
+    public Address? Address { get; set; }
 
     public DateTime? AuthCodeExpiration { get; set; }
 

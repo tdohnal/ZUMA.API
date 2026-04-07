@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ZUMA.BussinessLogic.Infrastructure.Contexts.Customer;
-using ZUMA.BussinessLogic.Repositories;
+using ZUMA.SharedKernel.Infrastructure.Contexts.Customer;
+using ZUMA.SharedKernel.Repositories;
 using ZUMA.CustomerService.Entities;
 using ZUMA.CustomerService.Repositories.User;
 

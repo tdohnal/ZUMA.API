@@ -1,5 +1,5 @@
-﻿using ZUMA.BussinessLogic.Entities.Customer;
-using ZUMA.BussinessLogic.Services;
+﻿using ZUMA.SharedKernel.Entities.Customer;
+using ZUMA.SharedKernel.Services;
 
 namespace ZUMA.CommunicationService.Services.Email;
 

@@ -1,4 +1,4 @@
-﻿using ZUMA.BussinessLogic.Repositories;
+﻿using ZUMA.SharedKernel.Repositories;
 using ZUMA.CustomerService.Entities;
 
 namespace ZUMA.CustomerService.Repositories.User;

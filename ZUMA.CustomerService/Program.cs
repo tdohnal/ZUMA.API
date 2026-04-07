@@ -1,6 +1,6 @@
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
-using ZUMA.BussinessLogic.Infrastructure.Contexts.Customer;
+using ZUMA.SharedKernel.Infrastructure.Contexts.Customer;
 using ZUMA.CommunicationService;
 using ZUMA.CustomerService.Configurration;
 using ZUMA.CustomerService.Consumers;

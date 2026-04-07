@@ -4,7 +4,7 @@ using ZUMA.API.REST.Controllers.Base;
 using ZUMA.API.REST.DTOs.User;
 using ZUMA.API.REST.DTOs.User.Requests;
 using ZUMA.API.REST.Mappers;
-using ZUMA.BussinessLogic.Messagges.Contracts.Users;
+using ZUMA.SharedKernel.Messagges.Contracts.Users;
 
 namespace ZUMA.API.REST.Controllers;
 

@@ -5,7 +5,7 @@ using ZUMA.API.REST.DTOs.Authorization.Requests;
 using ZUMA.API.REST.DTOs.Authorization.Responses;
 using ZUMA.API.REST.DTOs.Registration.Requests;
 using ZUMA.API.REST.Mappers;
-using ZUMA.BussinessLogic.Messagges.Contracts.Authorization;
+using ZUMA.SharedKernel.Messagges.Contracts.Authorization;
 
 namespace ZUMA.API.REST.Controllers
 {

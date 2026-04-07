@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ZUMA.BussinessLogic.Entities.Customer;
+namespace ZUMA.SharedKernel.Entities.Customer;
 
 [Table("Emails")]
 public class EmailEntity : IAuditableEntities
