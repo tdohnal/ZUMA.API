@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-ZUMA.CommunicationService-bfe02083-e058-46c8-9401-bc7ba5284df7</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\.dockerignore" Link=".dockerignore">
+      <DependentUpon>$(DockerDefaultDockerfile)</DependentUpon>
+    </None>
+  </ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MassTransit" Version="8.2.5" />
+		<PackageReference Include="MassTransit.RabbitMQ" Version="8.2.5" />
+		<PackageReference Include="MassTransit.Quartz" Version="8.2.5" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5">
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		  <PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.3" />
+		<PackageReference Include="MimeKit" Version="4.15.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Layers\ZUMA.Communication.Infrastructure\ZUMA.Communication.Infrastructure.csproj" />
+	</ItemGroup>
+</Project>
