@@ -1,8 +1,8 @@
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
-using ZUMA.Communication.Infrastructure.Configuration;
 using ZUMA.CommunicationService;
-using ZUMA.CommunicationService.Consumers;
+using ZUMA.CommunicationService.Application.Consumers;
+using ZUMA.CommunicationService.Infrastructure.Configuration;
 
 var builder = Host.CreateApplicationBuilder(args);
 

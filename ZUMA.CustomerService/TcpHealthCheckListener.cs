@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-namespace ZUMA.CommunicationService;
+namespace ZUMA.CustomerService;
 
 public class TcpHealthCheckListener : BackgroundService
 {

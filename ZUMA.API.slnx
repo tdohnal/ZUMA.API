@@ -1,15 +1,6 @@
 <Solution>
-  <Folder Name="/Services/" />
-  <Folder Name="/Services/Communication/">
-    <Project Path="ZUMA.Communication.Application/ZUMA.Communication.Application.csproj" />
-    <Project Path="ZUMA.Communication.Domain/ZUMA.Communication.Domain.csproj" />
-    <Project Path="ZUMA.Communication.Infrastructure/ZUMA.Communication.Infrastructure.csproj" />
+  <Folder Name="/Services/">
     <Project Path="ZUMA.CommunicationService/ZUMA.CommunicationService.csproj" />
-  </Folder>
-  <Folder Name="/Services/Customer/">
-    <Project Path="ZUMA.Customer.Application/ZUMA.Customer.Application.csproj" />
-    <Project Path="Zuma.Customer.Domain/Zuma.Customer.Domain.csproj" />
-    <Project Path="ZUMA.Customer.Infrastructure/ZUMA.Customer.Infrastructure.csproj" />
     <Project Path="ZUMA.CustomerService/ZUMA.CustomerService.csproj" />
   </Folder>
   <Project Path="docker-compose.dcproj">
