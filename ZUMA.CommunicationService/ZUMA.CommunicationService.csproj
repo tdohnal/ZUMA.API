@@ -19,9 +19,6 @@
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.3" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
 		<PackageReference Include="MimeKit" Version="4.15.1" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\ZUMA.Communication.Infrastructure\ZUMA.Communication.Infrastructure.csproj" />
+		<PackageReference Include="ZUMA.SharedKernel" Version="2026.4.7.7" />
 	</ItemGroup>
 </Project>
