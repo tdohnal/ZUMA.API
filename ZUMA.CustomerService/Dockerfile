@@ -5,17 +5,27 @@ FROM mcr.microsoft.com/dotnet/runtime:10.0 AS base
 USER $APP_UID
 WORKDIR /app
 
+# --- Tady ARG být nemusí, pokud ho v runtime nepotřebuješ ---
 
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
+
+# --- TADY TO MUSÍ BÝT: Definice pro build stage ---
+ARG GH_TOKEN
+ENV GH_TOKEN=$GH_TOKEN
+# --------------------------------------------------
+
 WORKDIR /src
 COPY ["nuget.config", "."]
 COPY ["ZUMA.CustomerService/ZUMA.CustomerService.csproj", "ZUMA.CustomerService/"]
 COPY ["ZUMA.Customer.Infrastructure/ZUMA.Customer.Infrastructure.csproj", "ZUMA.Customer.Infrastructure/"]
 COPY ["ZUMA.Customer.Application/ZUMA.Customer.Application.csproj", "ZUMA.Customer.Application/"]
 COPY ["Zuma.Customer.Domain/Zuma.Customer.Domain.csproj", "Zuma.Customer.Domain/"]
-RUN dotnet restore "./ZUMA.CustomerService/ZUMA.CustomerService.csproj"
+
+# NuGet teď uvidí proměnnou GH_TOKEN nastavenou výše
+RUN dotnet restore "./ZUMA.CustomerService/ZUMA.CustomerService.csproj" --configfile nuget.config
+
 COPY . .
 WORKDIR "/src/ZUMA.CustomerService"
 RUN dotnet build "./ZUMA.CustomerService.csproj" -c $BUILD_CONFIGURATION -o /app/build
