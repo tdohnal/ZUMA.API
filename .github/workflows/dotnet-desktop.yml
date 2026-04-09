@@ -13,23 +13,26 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Build and restart Docker locally
-      bash: powershell -ExecutionPolicy Bypass -Command "{0}"
+      shell: bash
       env:
-        # Tady vytáhneme tajný token ze secrets do proměnné prostředí workflow
+        # Definice tokenu pro použití uvnitř scriptu
         MY_TOKEN: ${{ secrets.NUGET_GITHUB_TOKEN }}
       run: |
-        cd $GITHUB_WORKSPACE
+        # Přejdeme do pracovního adresáře (volitelné, obvykle tam už jsi)
+        cd "$GITHUB_WORKSPACE"
 
-        if [ $(docker ps -aq -f name=mk-app) ]; then
+        # 1. Odstranění starého kontejneru, pokud existuje
+        if [ "$(docker ps -aq -f name=mk-app)" ]; then
           echo "Stopping and removing old container..."
           docker stop mk-app || true
           docker rm mk-app || true
         fi
 
+        # 2. Build obrazu s předáním tokenu (pro privátní NuGet balíčky)
         echo "Building Docker image..."
-        # PŘIDÁNO: --build-arg posílá token do Dockerfile
-        docker build --build-arg GH_TOKEN=${{ secrets.NUGET_GITHUB_TOKEN }} -t eshop_mk .
+        docker build --build-arg GH_TOKEN="${MY_TOKEN}" -t eshop_mk .
 
+        # 3. Spuštění nového kontejneru
         echo "Starting Docker container..."
         docker run -d --restart always --name mk-app -p 5000:80 eshop_mk
 
