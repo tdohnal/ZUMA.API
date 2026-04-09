@@ -1,8 +1,8 @@
-name: Deploy to VM
+name: Deploy to host
 
 on:
   push:
-    branches: [ master ]  
+    branches: [ master ]
 
 jobs:
   deploy:
@@ -13,24 +13,24 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Build and restart Docker locally
+      env:
+        # Tady vytáhneme tajný token ze secrets do proměnné prostředí workflow
+        MY_TOKEN: ${{ secrets.NUGET_GITHUB_TOKEN }}
       run: |
-        cd $GITHUB_WORKSPACE   # složka, kde runner checkoutnul repo
+        cd $GITHUB_WORKSPACE
 
-        # zastavit a smazat starý kontejner, pokud existuje
         if [ $(docker ps -aq -f name=mk-app) ]; then
           echo "Stopping and removing old container..."
           docker stop mk-app || true
           docker rm mk-app || true
         fi
 
-        # build image
         echo "Building Docker image..."
-        docker build -t eshop_mk .
+        # PŘIDÁNO: --build-arg posílá token do Dockerfile
+        docker build --build-arg GH_TOKEN=${{ secrets.NUGET_GITHUB_TOKEN }} -t eshop_mk .
 
-        # spustit nový kontejner na portu 5000
         echo "Starting Docker container..."
         docker run -d --restart always --name mk-app -p 5000:80 eshop_mk
 
     - name: Verify container is running
-      run: |
-        docker ps
+      run: docker ps
