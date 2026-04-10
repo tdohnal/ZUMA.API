@@ -8,16 +8,14 @@ EXPOSE 8080
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 
-# --- TADY JE TA ZMĚNA ---
-# Musíš ARG definovat uvnitř fáze, kde se používá (build)
 ARG GH_TOKEN
-# Nastavíme ji jako ENV, aby ji viděl proces dotnet restore
-ENV GH_TOKEN=$GH_TOKEN
-# ------------------------
 
 WORKDIR /src
 # Nejdřív kopírujeme config a csproj
 COPY ["nuget.config", "."]
+
+RUN dotnet nuget add source --username tdohnal --password ${GH_TOKEN} --store-password-in-clear-text --name github_temp "https://nuget.pkg.github.com/tdohnal/index.json"
+
 COPY ["ZUMA.API/ZUMA.API.csproj", "ZUMA.API/"]
 
 # Teď už dotnet restore uvidí tvůj token z ENV
