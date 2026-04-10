@@ -80,7 +80,7 @@ jobs:
             
             # Vytvoření .env souboru z tvých Environment Secrets
             echo "DB_USER=${{ secrets.DB_USER }}" > .env
-            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+            echo "DB_PASS=${{ secrets.DB_PASS }}" >> .env
             echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
             echo "RABBIT_USER=${{ secrets.RABBIT_USER }}" >> .env
             echo "RABBIT_PASS=${{ secrets.RABBIT_PASS }}" >> .env
