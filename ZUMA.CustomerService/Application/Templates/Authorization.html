@@ -4,8 +4,11 @@
     <meta charset="utf-8">
 </head>
 <body style="font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f0f9; margin: 0; padding: 0;">
-    <div style="max-width: 600px; margin: 40px auto; background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); border-radius: 20px; padding: 2px;">
+    <div style="display: none; max-height: 0px; overflow: hidden;">
+        Váš ověřovací kód pro přístup k účtu ZUMA je {{Code}}. Platnost kódu vyprší za 10 minut.
+    </div>
 
+    <div style="max-width: 600px; margin: 40px auto; background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); border-radius: 20px; padding: 2px;">
         <div style="background-color: rgba(255, 255, 255, 0.92); border-radius: 18px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
 
             <div style="background: linear-gradient(to right, #6d28d9, #4f46e5); color: #ffffff; padding: 30px; text-align: center;">
@@ -14,30 +17,40 @@
             </div>
 
             <div style="padding: 40px; text-align: center;">
-                <p style="font-size: 16px; color: #444; text-align: left;">Hello <strong>{{Name}}</strong>,</p>
-                <p style="font-size: 16px; color: #666; text-align: left; margin-bottom: 35px;">
-                    Please use the following secure verification code to access your ZUMA account:
+                <p style="font-size: 16px; color: #444; text-align: left;">Dobrý den, <strong>{{Name}}</strong>,</p>
+                <p style="font-size: 15px; color: #666; text-align: left; line-height: 1.5;">
+                    Obdrželi jsme žádost o přístup k vašemu zabezpečenému rozhraní v rámci infrastruktury ZUMA. Pro dokončení autorizace použijte prosím níže uvedený jednorázový kód.
                 </p>
 
-                <div style="display: inline-block; background: rgba(109, 40, 217, 0.05); border: 1px solid rgba(109, 40, 217, 0.2); padding: 25px 50px; border-radius: 15px; box-shadow: inset 0 0 15px rgba(109, 40, 217, 0.05);">
-                    <span style="font-family: 'Monaco', 'Consolas', monospace; font-size: 42px; font-weight: 900; color: #6d28d9; letter-spacing: 12px; text-shadow: 1px 1px 0px rgba(255,255,255,0.5);">
+                <div style="margin: 30px 0; display: inline-block; background: rgba(109, 40, 217, 0.05); border: 1px solid rgba(109, 40, 217, 0.2); padding: 25px 50px; border-radius: 15px;">
+                    <span style="font-family: 'Monaco', 'Consolas', monospace; font-size: 42px; font-weight: 900; color: #6d28d9; letter-spacing: 12px;">
                         {{Code}}
                     </span>
                 </div>
 
-                <div style="margin-top: 40px; padding: 20px; border-radius: 10px; background-color: #fdfcff; text-align: left;">
+                <div style="text-align: left; background-color: #f8f9fa; border-left: 4px solid #6d28d9; padding: 15px; margin-bottom: 25px;">
+                    <p style="margin: 0; font-size: 14px; color: #555; font-weight: bold;">Bezpečnostní instrukce:</p>
+                    <ul style="margin: 10px 0 0 0; padding-left: 20px; font-size: 13px; color: #777; line-height: 1.6;">
+                        <li>Nikdy nesdělujte tento kód třetím osobám, ani podpoře ZUMA.</li>
+                        <li>Kód je vygenerován speciálně pro vaši IP adresu a relaci.</li>
+                        <li>Pokud jste o kód nežádali, doporučujeme provést kontrolu zabezpečení vašeho účtu.</li>
+                    </ul>
+                </div>
+
+                <div style="padding: 20px; border-radius: 10px; background-color: #fdfcff; text-align: left;">
                     <p style="margin: 0; font-size: 13px; color: #888;">
-                        <span style="color: #6d28d9; font-weight: bold;">&#9202;</span> This code expires in <strong>10 minutes</strong>.
+                        <span style="color: #6d28d9; font-weight: bold;">&#9202;</span> Platnost tohoto kódu je omezena na <strong>10 minut</strong>.
                     </p>
                     <p style="margin: 10px 0 0 0; font-size: 13px; color: #888;">
-                        If you didn't request this, your account might be at risk. <a href="#" style="color: #6d28d9; text-decoration: none; font-weight: bold;">Secure it here.</a>
+                        Potřebujete pomoci? Kontaktujte naši technickou podporu na <a href="mailto:support@zumalab.site" style="color: #6d28d9; text-decoration: none;">support@zumalab.site</a>.
                     </p>
                 </div>
             </div>
 
             <div style="padding: 25px; text-align: center; border-top: 1px solid #f0edf5; background-color: rgba(249, 247, 252, 0.5);">
                 <p style="font-size: 11px; color: #b0a8c0; margin: 0; text-transform: uppercase; letter-spacing: 1px;">
-                    &copy; 2026 ZUMA System &bull; Intelligent Infrastructure
+                    Tento e-mail byl automaticky vygenerován systémem ZUMA.<br>
+                    &copy; 2026 ZUMA System &bull; Intelligent Infrastructure &bull; zumalab.site
                 </p>
             </div>
         </div>
