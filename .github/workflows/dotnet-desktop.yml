@@ -25,6 +25,8 @@ jobs:
           context: .
           file: ZUMA.API/Dockerfile
           push: true
+          build-args: |
+            GH_TOKEN=${{ secrets.GITHUB_TOKEN }}
           tags: ghcr.io/${{ github.repository_owner }}/zuma-api:latest
 
       - name: Build and push Communication Service
