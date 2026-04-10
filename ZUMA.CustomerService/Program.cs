@@ -27,7 +27,7 @@ builder.Services.AddMassTransit(x =>
         {
             // Sjednocené s API a Communication
             h.Username(builder.Configuration["RabbitMQ__Username"] ?? "guest");
-            h.PASS(builder.Configuration["RabbitMQ__PASS"] ?? "guest");
+            h.Password(builder.Configuration["RabbitMQ__PASS"] ?? "guest");
         });
 
         cfg.ConfigureEndpoints(context);
