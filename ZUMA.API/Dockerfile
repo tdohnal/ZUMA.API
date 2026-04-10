@@ -14,7 +14,7 @@ WORKDIR /src
 # Nejdřív kopírujeme config a csproj
 COPY ["nuget.config", "."]
 
-RUN dotnet nuget add source --username tdohnal --password ${GH_TOKEN} --store-password-in-clear-text --name github_temp "https://nuget.pkg.github.com/tdohnal/index.json"
+RUN dotnet nuget update source github --username tdohnal --password ${GH_TOKEN} --store-password-in-clear-text
 
 COPY ["ZUMA.API/ZUMA.API.csproj", "ZUMA.API/"]
 

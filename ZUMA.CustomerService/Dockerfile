@@ -13,13 +13,12 @@ ARG BUILD_CONFIGURATION=Release
 
 # --- TADY TO MUSÍ BÝT: Definice pro build stage ---
 ARG GH_TOKEN
-ENV GH_TOKEN=$GH_TOKEN
 # --------------------------------------------------
 
 WORKDIR /src
 COPY ["nuget.config", "."]
 
-RUN dotnet nuget add source --username tdohnal --password ${GH_TOKEN} --store-password-in-clear-text --name github_temp "https://nuget.pkg.github.com/tdohnal/index.json"
+RUN dotnet nuget update source github --username tdohnal --password ${GH_TOKEN} --store-password-in-clear-text
 
 COPY ["ZUMA.CustomerService/ZUMA.CustomerService.csproj", "ZUMA.CustomerService/"]
 

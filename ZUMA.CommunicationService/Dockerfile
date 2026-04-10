@@ -11,15 +11,13 @@ ARG BUILD_CONFIGURATION=Release
 
 # DŮLEŽITÉ: Definice argumentu uvnitř buildu
 ARG GH_TOKEN
-# Převod na ENV, aby to viděl NuGet klient
-ENV GH_TOKEN=$GH_TOKEN
 
 WORKDIR /src
 
 # Kopírujeme nuget.config a všechny projekty pro restore
 COPY ["nuget.config", "."]
 
-RUN dotnet nuget add source --username tdohnal --password ${GH_TOKEN} --store-password-in-clear-text --name github_temp "https://nuget.pkg.github.com/tdohnal/index.json"
+RUN dotnet nuget update source github --username tdohnal --password ${GH_TOKEN} --store-password-in-clear-text
 
 COPY ["ZUMA.CommunicationService/ZUMA.CommunicationService.csproj", "ZUMA.CommunicationService/"]
 
