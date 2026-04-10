@@ -26,6 +26,10 @@ public class SmtpEmailClient(IOptions<SmtpOptions> options) : IEmailClient
         email.Headers.Add("Importance", "high");
 
         email.Headers.Add("X-Entity-Ref-ID", Guid.NewGuid().ToString());
+        email.Headers.Add("X-Mailgun-Tag", "transactional");
+        email.Headers.Add("X-Report-Abuse-To", "abuse@zumalab.site");
+        // Odstraní podezření na hromadný mailing u některých filtrů
+        email.Headers.Add("Precedence", "bulk");
 
         using var client = new SmtpClient();
         try
