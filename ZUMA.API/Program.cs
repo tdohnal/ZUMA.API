@@ -62,8 +62,8 @@ builder.Services.AddMassTransit(x =>
         var rabbitHost = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "rabbitmq";
         cfg.Host(rabbitHost, "/", h =>
         {
-            h.Username(builder.Configuration["RabbitMQ__Username"] ?? "guest");
-            h.Password(builder.Configuration["RabbitMQ__PASS"] ?? "guest");
+            h.Username(builder.Configuration["RabbitMQ__USERNAME"] ?? "guest");
+            h.Password(builder.Configuration["RABBITMQ__PASSWORD"] ?? "guest");
         });
         cfg.ConfigureEndpoints(context);
     });
