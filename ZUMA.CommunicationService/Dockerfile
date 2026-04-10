@@ -17,7 +17,7 @@ WORKDIR /src
 # Kopírujeme nuget.config a všechny projekty pro restore
 COPY ["nuget.config", "."]
 
-RUN dotnet nuget add source "https://nuget.pkg.github.com/tdohnal/index.json" \
+RUN dotnet nuget update source "https://nuget.pkg.github.com/tdohnal/index.json" \
     --name "github_final" \
     --username "tdohnal" \
     --password "${GH_TOKEN}" \
