@@ -18,6 +18,9 @@ WORKDIR /src
 
 # Kopírujeme nuget.config a všechny projekty pro restore
 COPY ["nuget.config", "."]
+
+RUN dotnet nuget add source --username tdohnal --password ${GH_TOKEN} --store-password-in-clear-text --name github_temp "https://nuget.pkg.github.com/tdohnal/index.json"
+
 COPY ["ZUMA.CommunicationService/ZUMA.CommunicationService.csproj", "ZUMA.CommunicationService/"]
 
 # Restore s použitím tvého tokenu z ENV
