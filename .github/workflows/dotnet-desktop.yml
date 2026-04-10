@@ -1,40 +1,88 @@
-name: Deploy to host
+name: Production Deploy
 
 on:
   push:
-    branches: [ master ]
+    branches: [ "main" ]
 
 jobs:
-  deploy:
-    runs-on: self-hosted
-
+  build-and-push:
+    runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Build and restart Docker locally
-      # Na Windows self-hosted nepoužíváme "shell: bash", 
-      # abychom nevyžadovali WSL. PowerShell je výchozí.
-      env:
-        MY_TOKEN: ${{ secrets.NUGET_GITHUB_TOKEN }}
-      run: |
-        # 1. Zjistíme, jestli kontejner běží (PowerShell syntax)
-        $container = docker ps -aq -f "name=mk-app"
-        
-        if ($container) {
-            Write-Host "Stopping and removing old container..."
-            # Zastavíme a smažeme (chyby ignorujeme přes SilentlyContinue)
-            docker stop mk-app 2>$null
-            docker rm mk-app 2>$null
-        }
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-        # 2. Build obrazu
-        Write-Host "Building Docker image..."
-        docker build --build-arg GH_TOKEN="${env:MY_TOKEN}" -t eshop_mk .
+      - name: Build and push API
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ZUMA.API/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository }}/zuma-api:latest
 
-        # 3. Spuštění nového kontejneru
-        Write-Host "Starting Docker container..."
-        docker run -d --restart always --name mk-app -p 5000:80 eshop_mk
+      - name: Build and push Communication Service
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ZUMA.CommunicationService/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository }}/communication-service:latest
 
-    - name: Verify container is running
-      run: docker ps
+      - name: Build and push Customer Service
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ZUMA.CustomerService/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository }}/customer-service:latest
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Copy docker-compose to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          source: "docker-compose.yml"
+          target: "~/zuma"
+
+      - name: Run Docker Compose via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            cd ~/zuma
+            
+            # Vytvoření .env souboru z GitHub Secrets
+            echo "DB_USER=${{ secrets.DB_USER }}" > .env
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+            echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+            echo "RABBIT_USER=${{ secrets.RABBIT_USER }}" >> .env
+            echo "RABBIT_PASSWORD=${{ secrets.RABBIT_PASSWORD }}" >> .env
+            echo "PGADMIN_EMAIL=${{ secrets.PGADMIN_EMAIL }}" >> .env
+            echo "PGADMIN_PASSWORD=${{ secrets.PGADMIN_PASSWORD }}" >> .env
+            echo "APP_ENV=Production" >> .env
+            # Převedení názvu repa na malá písmena pro Docker image
+            echo "GITHUB_REPO_LOWER=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> .env
+
+            # Přihlášení k registru
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            
+            # Spuštění
+            docker network create proxy-nw || true
+            docker compose pull
+            docker compose up -d
