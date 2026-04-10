@@ -8,7 +8,8 @@ var builder = Host.CreateApplicationBuilder(args);
 
 builder.Services.AddInfrastructure(builder.Configuration);
 
-builder.Services.AddHealthChecks();
+builder.Services.AddHealthChecks()
+    .AddNpgSql(builder.Configuration.GetConnectionString("DbConnection")!, name: "Customer DB");
 
 builder.Services.AddMassTransit(x =>
 {
@@ -20,8 +21,8 @@ builder.Services.AddMassTransit(x =>
 
         cfg.Host(rabbitHost, "/", h =>
         {
-            h.Username("zuma_admin");
-            h.Password("moje_tajne_heslo_123");
+            h.Username(builder.Configuration["RabbitMQ__Username"] ?? "guest");
+            h.Password(builder.Configuration["RabbitMQ__Password"] ?? "guest");
         });
 
         cfg.ConfigureEndpoints(context);
@@ -46,7 +47,8 @@ using (var scope = host.Services.CreateScope())
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError("Migration Failed", ex);
+        logger.LogError(ex, "An error occurred while migrating the database.");
+        throw;
     }
 }
 

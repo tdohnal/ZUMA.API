@@ -7,11 +7,14 @@ using ZUMA.CustomerService.Infrastructure.Persistence;
 
 var builder = Host.CreateApplicationBuilder(args);
 
+// 1. Infrastruktura
 builder.Services.AddInfrastructure(builder.Configuration);
 
+// 2. Health Checks (Nezapomeň nainstalovat balíček AspNetCore.HealthChecks.NpgSql)
+builder.Services.AddHealthChecks()
+    .AddNpgSql(builder.Configuration.GetConnectionString("DbConnection")!, name: "Customer DB");
 
-builder.Services.AddHealthChecks();
-
+// 3. MassTransit - RabbitMQ dynamicky
 builder.Services.AddMassTransit(x =>
 {
     x.AddConsumers(typeof(RegistrationCreateConsumer).Assembly);
@@ -22,8 +25,9 @@ builder.Services.AddMassTransit(x =>
 
         cfg.Host(rabbitHost, "/", h =>
         {
-            h.Username("zuma_admin");
-            h.Password("moje_tajne_heslo_123");
+            // Sjednocené s API a Communication
+            h.Username(builder.Configuration["RabbitMQ__Username"] ?? "guest");
+            h.Password(builder.Configuration["RabbitMQ__Password"] ?? "guest");
         });
 
         cfg.ConfigureEndpoints(context);
@@ -31,13 +35,11 @@ builder.Services.AddMassTransit(x =>
     });
 });
 
-
 builder.Services.AddHostedService<TcpHealthCheckListener>();
 
 var host = builder.Build();
 
 #region EF Migration
-
 using (var scope = host.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -45,14 +47,15 @@ using (var scope = host.Services.CreateScope())
     {
         var context = services.GetRequiredService<CustomerDbContext>();
         context.Database.Migrate();
+        Console.WriteLine("[Migration] Success: Customer Database is up to date.");
     }
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError("Migration Failed", ex);
+        logger.LogError(ex, "Migration Failed");
+        throw;
     }
 }
-
 #endregion
 
 host.Run();

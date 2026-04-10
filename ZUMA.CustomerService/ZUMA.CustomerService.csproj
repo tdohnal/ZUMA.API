@@ -21,6 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AspNetCore.HealthChecks.Network" Version="9.0.0" />
+    <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -30,7 +32,7 @@
 	  <PackageReference Include="MassTransit.RabbitMQ" Version="8.2.5" />
 	  <PackageReference Include="MassTransit.Quartz" Version="8.2.5" />
 	  <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.17.0" />
-	  <PackageReference Include="ZUMA.ArchitectureAnalyzer" Version="2026.4.9.19" />
-	  <PackageReference Include="ZUMA.SharedKernel" Version="2026.4.9.19" />
+	  <PackageReference Include="ZUMA.ArchitectureAnalyzer" Version="2026.4.10.20" />
+	  <PackageReference Include="ZUMA.SharedKernel" Version="2026.4.10.20" />
   </ItemGroup>
 </Project>

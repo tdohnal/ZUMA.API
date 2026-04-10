@@ -12,6 +12,8 @@
   </PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="AspNetCore.HealthChecks.Network" Version="9.0.0" />
+		<PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
 		<PackageReference Include="MailKit" Version="4.15.1" />
 		<PackageReference Include="MassTransit" Version="8.2.5" />
 		<PackageReference Include="MassTransit.RabbitMQ" Version="8.2.5" />
@@ -24,10 +26,10 @@
 		<PackageReference Include="Microsoft.Extensions.Http" Version="10.0.5" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
 		<PackageReference Include="MimeKit" Version="4.15.1" />
-		<PackageReference Include="ZUMA.ArchitectureAnalyzer" Version="2026.4.9.19">
+		<PackageReference Include="ZUMA.ArchitectureAnalyzer" Version="2026.4.10.20">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
-		<PackageReference Include="ZUMA.SharedKernel" Version="2026.4.9.19" />
+		<PackageReference Include="ZUMA.SharedKernel" Version="2026.4.10.20" />
 	</ItemGroup>
 </Project>

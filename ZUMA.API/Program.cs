@@ -62,8 +62,8 @@ builder.Services.AddMassTransit(x =>
         var rabbitHost = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "rabbitmq";
         cfg.Host(rabbitHost, "/", h =>
         {
-            h.Username("zuma_admin");
-            h.Password("moje_tajne_heslo_123");
+            h.Username(builder.Configuration["RabbitMQ__Username"] ?? "guest");
+            h.Password(builder.Configuration["RabbitMQ__Password"] ?? "guest");
         });
         cfg.ConfigureEndpoints(context);
     });
@@ -76,7 +76,7 @@ ApiDiContainer.ConfigureServices(builder.Services);
 // Health Checks
 var connectionString = builder.Configuration.GetConnectionString("DbConnection");
 builder.Services.AddHealthChecks()
-    .AddSqlServer(connectionString!, name: "PostgreSQL Databases")
+    .AddNpgSql(connectionString!, name: "PostgreSQL Database")
     .AddTcpHealthCheck(opt => opt.AddHost("communication-service", 8081), name: "Communication Service")
     .AddTcpHealthCheck(opt => opt.AddHost("customer-service", 8082), name: "Customer Service");
 
@@ -133,16 +133,13 @@ var app = builder.Build();
 
 #region Middleware Pipeline
 
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(options =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(options =>
-    {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "ZUMA API v1.0");
-        options.SwaggerEndpoint("/swagger/v2/swagger.json", "ZUMA API v2.0");
-        options.RoutePrefix = string.Empty;
-    });
-}
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "ZUMA API v1.0");
+    options.SwaggerEndpoint("/swagger/v2/swagger.json", "ZUMA API v2.0");
+    options.RoutePrefix = string.Empty;
+});
 
 // Pořadí je důležité!
 app.UseHttpsRedirection();
