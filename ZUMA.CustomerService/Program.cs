@@ -21,13 +21,24 @@ builder.Services.AddMassTransit(x =>
 
     x.UsingRabbitMq((context, cfg) =>
     {
-        var rabbitHost = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "rabbitmq";
+        var rabbitHost = Environment.GetEnvironmentVariable("RABBITMQ__HOST");
+
+        if (string.IsNullOrWhiteSpace(rabbitHost))
+            throw new Exception("RABBITMQ__HOST IS NULL");
 
         cfg.Host(rabbitHost, "/", h =>
         {
-            // Sjednocené s API a Communication
-            h.Username(builder.Configuration["RabbitMQ__USERNAME"] ?? "guest");
-            h.Password(builder.Configuration["RABBITMQ__PASSWORD"] ?? "guest");
+            var username = builder.Configuration["RabbitMQ__USERNAME"];
+            var password = builder.Configuration["RabbitMQ__PASSWORD"];
+
+            if (string.IsNullOrWhiteSpace(username))
+                throw new Exception("RabbitMQ__USERNAME IS NULL");
+
+            if (string.IsNullOrWhiteSpace(password))
+                throw new Exception("RabbitMQ__PASSWORD IS NULL");
+
+            h.Username(username);
+            h.Password(password);
         });
 
         cfg.ConfigureEndpoints(context);
