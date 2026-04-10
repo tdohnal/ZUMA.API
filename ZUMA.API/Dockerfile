@@ -18,8 +18,8 @@ COPY ["ZUMA.API/ZUMA.API.csproj", "ZUMA.API/"]
 RUN dotnet nuget add source "https://nuget.pkg.github.com/tdohnal/index.json" \
     --name "github_final" \
     --username "tdohnal" \
-    --password "${GH_TOKEN}" \
-    --store-password-in-clear-text
+    --PASS "${GH_TOKEN}" \
+    --store-PASS-in-clear-text
 
 # 3. Restore - teď už to musí brát z toho nového zdroje "github_final"
 RUN dotnet restore "ZUMA.API/ZUMA.API.csproj"

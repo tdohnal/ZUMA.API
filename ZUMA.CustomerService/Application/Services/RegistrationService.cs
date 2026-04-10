@@ -29,7 +29,7 @@ internal class RegistrationService : ServiceBase<RegistrationEntity>, IRegistrat
 
     protected override Task BeforeCreateAsync(RegistrationEntity entity, CancellationToken cancellationToken)
     {
-        entity.ActivationCode = PasswordGenerator.Generate(10);
+        entity.ActivationCode = PASSGenerator.Generate(10);
         entity.ExpirationCodeDate = DateTime.UtcNow.AddHours(24);
 
         var user = new UserEntity

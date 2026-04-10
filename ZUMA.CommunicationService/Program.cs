@@ -22,7 +22,7 @@ builder.Services.AddMassTransit(x =>
         cfg.Host(rabbitHost, "/", h =>
         {
             h.Username(builder.Configuration["RabbitMQ__Username"] ?? "guest");
-            h.Password(builder.Configuration["RabbitMQ__Password"] ?? "guest");
+            h.PASS(builder.Configuration["RabbitMQ__PASS"] ?? "guest");
         });
 
         cfg.ConfigureEndpoints(context);

@@ -27,7 +27,7 @@ Content-Type: application/json
   "name": "John Doe",
   "email": "john@example.com",
   "userName": "johndoe",
-  "password": "SecurePassword123!"
+  "PASS": "SecurePASS123!"
 }
 
 ###
@@ -40,7 +40,7 @@ Content-Type: application/json
   "name": "Jane Doe",
   "email": "jane@example.com",
   "userName": "janedoe",
-  "password": "SecurePassword123!"
+  "PASS": "SecurePASS123!"
 }
 
 ###
@@ -53,7 +53,7 @@ Content-Type: application/json
   "name": "Jane Doe",
   "email": "jane@example.com",
   "userName": "janedoe",
-  "password": "NewPassword123!"
+  "PASS": "NewPASS123!"
 }
 
 ###
@@ -66,7 +66,7 @@ Content-Type: application/json
   "name": "Jane Doe Updated",
   "email": "jane.updated@example.com",
   "userName": "janedoe",
-  "password": "NewPassword123!"
+  "PASS": "NewPASS123!"
 }
 
 ###
