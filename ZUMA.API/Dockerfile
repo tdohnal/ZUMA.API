@@ -15,7 +15,7 @@ COPY ["ZUMA.API/ZUMA.API.csproj", "ZUMA.API/"]
 
 # 2. KOMPLETNÍ CLEAN: Smažeme výchozí configy v Dockeru a přidáme jen to, co chceme
 # Tím zajistíme, že tam nebude žádná špatná URL z tvého nuget.config
-RUN dotnet nuget update source "https://nuget.pkg.github.com/tdohnal/index.json" \
+RUN dotnet nuget add source "https://nuget.pkg.github.com/tdohnal/index.json" \
     --name "github_final" \
     --username "tdohnal" \
     --password "${GH_TOKEN}" \
