@@ -61,7 +61,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=${APP_ENV}
       - ASPNETCORE_HTTP_PORTS=8080 
       - ConnectionStrings__DbConnection=Host=zuma-db;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASS}
-      - RABBITMQ__HOST==${RABBIT_HOST}
+      - RABBITMQ__HOST=${RABBIT_HOST}
       - RABBITMQ__USERNAME=${RABBIT_USER}
       - RABBITMQ__PASSWORD=${RABBIT_PASS} # .NET pravděpodobně chce "Password"
       - Jwt__Key=${JWT_KEY}
@@ -77,7 +77,7 @@ services:
       - rabbitmq
     restart: always
     environment:
-      - RABBITMQ__HOST==${RABBIT_HOST}
+      - RABBITMQ__HOST=${RABBIT_HOST}
       - RABBITMQ__USERNAME=${RABBIT_USER}
       - RABBITMQ__PASSWORD=${RABBIT_PASS}
       - ASPNETCORE_ENVIRONMENT=${APP_ENV}
