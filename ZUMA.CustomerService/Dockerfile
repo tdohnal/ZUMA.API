@@ -18,7 +18,11 @@ ARG GH_TOKEN
 WORKDIR /src
 COPY ["nuget.config", "."]
 
-RUN dotnet nuget update source github --username tdohnal --password ${GH_TOKEN} --store-password-in-clear-text
+RUN dotnet nuget add source "https://nuget.pkg.github.com/tdohnal/index.json" \
+    --name "github_final" \
+    --username "tdohnal" \
+    --password "${GH_TOKEN}" \
+    --store-password-in-clear-text
 
 COPY ["ZUMA.CustomerService/ZUMA.CustomerService.csproj", "ZUMA.CustomerService/"]
 
