@@ -2,7 +2,7 @@
 
 public static class EmailTemplateHelper
 {
-    private static string _templatePath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Templates");
+    private static string _templatePath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Application", "Templates");
 
     public static async Task<string> GetRenderedTemplateAsync(EmailTemplateType templateType, Dictionary<string, string> placeholders)
     {

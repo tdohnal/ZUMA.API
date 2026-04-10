@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ZUMA.CommunicationService.Application.Configuration;
 using ZUMA.CommunicationService.Domain.Interfaces;
+using ZUMA.CommunicationService.Infrastructure.ExternalServices;
 using ZUMA.CommunicationService.Infrastructure.Repositories;
-using ZUMA.Infrastructure.ExternalServices;
 
 namespace ZUMA.CommunicationService.Infrastructure.Configuration;
 

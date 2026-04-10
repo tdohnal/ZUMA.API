@@ -6,7 +6,7 @@ using ZUMA.CommunicationService.Domain.Entities;
 using ZUMA.CommunicationService.Domain.Interfaces;
 using ZUMA.CommunicationService.Infrastructure.Configuration;
 
-namespace ZUMA.Infrastructure.ExternalServices;
+namespace ZUMA.CommunicationService.Infrastructure.ExternalServices;
 
 public class SmtpEmailClient(IOptions<SmtpOptions> options) : IEmailClient
 {
@@ -25,10 +25,8 @@ public class SmtpEmailClient(IOptions<SmtpOptions> options) : IEmailClient
         using var client = new SmtpClient();
         try
         {
-            // Připojení na Brevo (port 587 vyžaduje StartTls)
             await client.ConnectAsync(_options.Host, _options.Port, SecureSocketOptions.StartTls, ct);
 
-            // Autentizace (Username je tvůj email, Password je API klíč z Breva)
             await client.AuthenticateAsync(_options.Username, _options.Password, ct);
 
             await client.SendAsync(email, ct);
@@ -38,7 +36,7 @@ public class SmtpEmailClient(IOptions<SmtpOptions> options) : IEmailClient
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"CHYBA ODESILANI: {ex.Message}");
+            Console.WriteLine($"ERROR: {ex.Message}");
             return false;
         }
     }
