@@ -1,0 +1,8 @@
+[*.cs]
+# ZUMA Architecture Rules
+# -----------------------
+# Vynutí chybu (Error) místo varování (Warning)
+dotnet_diagnostic.ZUMA002.severity = error
+
+# Volitelně: Pokud chceš zakázat i věci, co Visual Studio běžně jen navrhuje
+dotnet_diagnostic.ZUMA001.severity = error

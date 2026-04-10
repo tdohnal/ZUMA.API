@@ -19,9 +19,6 @@ ENV GH_TOKEN=$GH_TOKEN
 WORKDIR /src
 COPY ["nuget.config", "."]
 COPY ["ZUMA.CustomerService/ZUMA.CustomerService.csproj", "ZUMA.CustomerService/"]
-COPY ["ZUMA.Customer.Infrastructure/ZUMA.Customer.Infrastructure.csproj", "ZUMA.Customer.Infrastructure/"]
-COPY ["ZUMA.Customer.Application/ZUMA.Customer.Application.csproj", "ZUMA.Customer.Application/"]
-COPY ["Zuma.Customer.Domain/Zuma.Customer.Domain.csproj", "Zuma.Customer.Domain/"]
 
 # NuGet teď uvidí proměnnou GH_TOKEN nastavenou výše
 RUN dotnet restore "./ZUMA.CustomerService/ZUMA.CustomerService.csproj" --configfile nuget.config

@@ -1,76 +1,89 @@
+version: '3.8'
+
+networks:
+  zuma-network:
+    driver: bridge
+  proxy-nw:
+    external: true
+
 services:
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: zuma-rabbitmq
-    environment:
-      - RABBITMQ_DEFAULT_USER=zuma_admin
-      - RABBITMQ_DEFAULT_PASS=moje_tajne_heslo_123
-    ports:
-      - "5672:5672"   # RabbitMQ port
-      - "15672:15672" # Management UI
-
-  communication-service:
-    build:
-      context: .
-      dockerfile: ZUMA.CommunicationService/Dockerfile
-    container_name: communication-service
-    depends_on:
-      - rabbitmq
-    ports:
-      - "8081:8081"
-    environment:
-      - RABBITMQ_HOST=rabbitmq
-      - ASPNETCORE_ENVIRONMENT=Development
-
-  customer-service:
-    build:
-      context: .
-      dockerfile: ZUMA.CustomerService/Dockerfile
-    container_name: customer-service
-    depends_on:
-      - rabbitmq
-    ports:
-      - "8082:8081"
-    environment:
-      - RABBITMQ_HOST=rabbitmq
-      - ASPNETCORE_ENVIRONMENT=Development
-
-  zuma.api:
-    build:
-      context: .
-      dockerfile: ZUMA.API/Dockerfile
-    container_name: zuma-api
-    ports:
-      - "8080:8080"
-    depends_on:
-      - zuma-db
-      - rabbitmq
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      # TADY SE ZMĚNÍ CONNECTION STRING V APP (předpokládám, že ho bereš z ENV)
-      - ConnectionStrings__PostgresConnection=Host=zuma-db;Database=zuma_db;Username=postgres;Password=ZumaPostgresPassword2026!
-    restart: always
-
   zuma-db:
     image: postgres:latest
     container_name: zuma-db
+    networks:
+      - zuma-network
     volumes:
-      - postgres_data:/var/lib/postgresql
-    restart: unless-stopped
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=ZumaPostgresPassword2026!
-      - POSTGRES_DB=zuma_db
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
     ports:
-      - "5432:5432" # Standardní Postgres port
+      - "5432:5432"
 
-  # BONUS: Webové rozhraní pro DB (něco jako SQL Management Studio, ale v prohlížeči)
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: zuma-rabbitmq
+    networks:
+      - zuma-network
+      - proxy-nw
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBIT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBIT_PASSWORD}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  zuma-api:
+    image: ghcr.io/${GITHUB_REPO_LOWER}/zuma-api:latest
+    container_name: zuma-api
+    networks:
+      - zuma-network
+      - proxy-nw
+    depends_on:
+      - zuma-db
+      - rabbitmq
+    restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${APP_ENV}
+      - ConnectionStrings__PostgresConnection=Host=zuma-db;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD}
+
+  communication-service:
+    image: ghcr.io/${GITHUB_REPO_LOWER}/communication-service:latest
+    container_name: communication-service
+    networks:
+      - zuma-network
+    depends_on:
+      - rabbitmq
+    restart: always
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - ASPNETCORE_ENVIRONMENT=${APP_ENV}
+
+  customer-service:
+    image: ghcr.io/${GITHUB_REPO_LOWER}/customer-service:latest
+    container_name: customer-service
+    networks:
+      - zuma-network
+    depends_on:
+      - rabbitmq
+    restart: always
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - ASPNETCORE_ENVIRONMENT=${APP_ENV}
+
   pgadmin:
     image: dpage/pgadmin4
     container_name: zuma-pgadmin
+    networks:
+      - zuma-network
+      - proxy-nw
+    restart: always
     environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@zuma.cz
-      - PGADMIN_DEFAULT_PASSWORD=admin
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
     ports:
       - "5050:80"
     depends_on:
