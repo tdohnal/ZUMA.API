@@ -26,7 +26,7 @@ RUN dotnet nuget add source "https://nuget.pkg.github.com/tdohnal/index.json" \
 COPY ["ZUMA.CustomerService/ZUMA.CustomerService.csproj", "ZUMA.CustomerService/"]
 
 # NuGet teď uvidí proměnnou GH_TOKEN nastavenou výše
-RUN dotnet restore "./ZUMA.CustomerService/ZUMA.CustomerService.csproj" --configfile nuget.config
+RUN dotnet restore "./ZUMA.CustomerService/ZUMA.CustomerService.csproj"
 
 COPY . .
 WORKDIR "/src/ZUMA.CustomerService"

@@ -23,7 +23,7 @@ RUN dotnet nuget add source "https://nuget.pkg.github.com/tdohnal/index.json" \
 COPY ["ZUMA.CommunicationService/ZUMA.CommunicationService.csproj", "ZUMA.CommunicationService/"]
 
 # Restore s použitím tvého tokenu z ENV
-RUN dotnet restore "./ZUMA.CommunicationService/ZUMA.CommunicationService.csproj" --configfile nuget.config
+RUN dotnet restore "./ZUMA.CommunicationService/ZUMA.CommunicationService.csproj"
 
 COPY . .
 WORKDIR "/src/ZUMA.CommunicationService"
