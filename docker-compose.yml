@@ -13,7 +13,7 @@ services:
     networks:
       - zuma-network
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
     restart: always
     environment:
       - POSTGRES_USER=${DB_USER}
