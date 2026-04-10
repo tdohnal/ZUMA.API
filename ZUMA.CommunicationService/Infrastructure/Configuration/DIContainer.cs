@@ -21,12 +21,12 @@ public static class DIContainer
 
         #endregion
 
-        services.Configure<MailjetOptions>(configuration.GetSection("Mailjet"));
+        services.Configure<SmtpOptions>(configuration.GetSection("Smtp"));
 
         #region Email 
 
         services.AddScoped<IEmailRepository, EmailRepository>();
-        services.AddHttpClient<IEmailClient, MailjetSmtpClient>();
+        services.AddHttpClient<IEmailClient, SmtpEmailClient>();
         #endregion
     }
 }

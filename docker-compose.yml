@@ -5,6 +5,17 @@ networks:
     external: true
 
 services:
+  mailpit:
+    image: axllent/mailpit
+    container_name: zuma-mailpit
+    networks:
+      - zuma-network
+      - proxy-nw
+    ports:
+      - "8025:8025" # Webové rozhraní (tady uvidíš maily)
+      - "1025:1025" # SMTP port
+    restart: always
+
   zuma-db:
     image: postgres:latest
     container_name: zuma-db
@@ -50,7 +61,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=${APP_ENV}
       - ASPNETCORE_HTTP_PORTS=8080 
       - ConnectionStrings__DbConnection=Host=zuma-db;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASS}
-      - RABBITMQ__HOST=zuma-rabbitmq
+      - RABBITMQ__HOST==${RABBIT_HOST}
       - RABBITMQ__USERNAME=${RABBIT_USER}
       - RABBITMQ__PASSWORD=${RABBIT_PASS} # .NET pravděpodobně chce "Password"
       - Jwt__Key=${JWT_KEY}
@@ -66,11 +77,18 @@ services:
       - rabbitmq
     restart: always
     environment:
-      - RABBITMQ__HOST=zuma-rabbitmq
+      - RABBITMQ__HOST==${RABBIT_HOST}
       - RABBITMQ__USERNAME=${RABBIT_USER}
       - RABBITMQ__PASSWORD=${RABBIT_PASS}
       - ASPNETCORE_ENVIRONMENT=${APP_ENV}
       - ConnectionStrings__DbConnection=Host=zuma-db;Port=5432;Database=zuma-communication;Username=${DB_USER};Password=${DB_PASS}
+     # SMTP sekce pro Brevo - Musí sedět na SmtpOptions.cs
+      - Smtp__Host=${SMTP_HOST}
+      - Smtp__Port=${SMTP_PORT}
+      - Smtp__Username=${SMTP_USERNAME}
+      - Smtp__Password=${SMTP_PASS}
+      - Smtp__SenderEmail=${SMTP_SENDER}
+      - Smtp__SenderName=${SMTP_SENDER_NAME}
 
   customer-service:
     image: ghcr.io/${GITHUB_REPO_LOWER}/customer-service:latest
@@ -81,7 +99,7 @@ services:
       - rabbitmq
     restart: always
     environment:
-      - RABBITMQ__HOST=zuma-rabbitmq
+      - RABBITMQ__HOST=${RABBIT_HOST}
       - RABBITMQ__USERNAME=${RABBIT_USER}
       - RABBITMQ__PASSWORD=${RABBIT_PASS}
       - ASPNETCORE_ENVIRONMENT=${APP_ENV}
