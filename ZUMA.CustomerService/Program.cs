@@ -21,28 +21,23 @@ builder.Services.AddMassTransit(x =>
 
     x.UsingRabbitMq((context, cfg) =>
     {
-        var rabbitHost = Environment.GetEnvironmentVariable("RABBITMQ:HOST");
+
+        var rabbitHost = builder.Configuration["RABBITMQ:HOST"];
+        var username = builder.Configuration["RABBITMQ:USERNAME"];
+        var password = builder.Configuration["RABBITMQ:PASSWORD"];
+
+        Console.WriteLine($"DEBUG: Připojuji se k Rabbitu: {rabbitHost} jako {username}");
 
         if (string.IsNullOrWhiteSpace(rabbitHost))
-            throw new Exception("RABBITMQ__HOST IS NULL");
+            throw new Exception("CHYBA: RABBITMQ__HOST nebyl nalezen v konfiguraci!");
 
         cfg.Host(rabbitHost, "/", h =>
         {
-            var username = builder.Configuration["RabbitMQ:USERNAME"];
-            var password = builder.Configuration["RabbitMQ:PASSWORD"];
-
-            if (string.IsNullOrWhiteSpace(username))
-                throw new Exception("RabbitMQ__USERNAME IS NULL");
-
-            if (string.IsNullOrWhiteSpace(password))
-                throw new Exception("RabbitMQ__PASSWORD IS NULL");
-
-            h.Username(username);
-            h.Password(password);
+            h.Username(username ?? "guest");
+            h.Password(password ?? "guest");
         });
 
         cfg.ConfigureEndpoints(context);
-        cfg.UseMessageRetry(r => r.Interval(3, TimeSpan.FromSeconds(5)));
     });
 });
 
