@@ -59,15 +59,15 @@ builder.Services.AddMassTransit(x =>
 {
     x.UsingRabbitMq((context, cfg) =>
     {
-        var rabbitHost = Environment.GetEnvironmentVariable("RABBITMQ__HOST");
+        var rabbitHost = Environment.GetEnvironmentVariable("RABBITMQ:HOST");
 
         if (string.IsNullOrWhiteSpace(rabbitHost))
             throw new Exception("RABBITMQ__HOST IS NULL");
 
         cfg.Host(rabbitHost, "/", h =>
         {
-            var username = builder.Configuration["RabbitMQ__USERNAME"];
-            var password = builder.Configuration["RabbitMQ__PASSWORD"];
+            var username = builder.Configuration["RabbitMQ:USERNAME"];
+            var password = builder.Configuration["RabbitMQ:PASSWORD"];
 
             if (string.IsNullOrWhiteSpace(username))
                 throw new Exception("RabbitMQ__USERNAME IS NULL");
