@@ -28,8 +28,8 @@ services:
       - proxy-nw
     restart: always
     environment:
-      - RABBITMQ__USER=${RABBIT_USER}
-      - RABBITMQ__PASS=${RABBIT_PASS} # Tady stačí PASS, Rabbit to zná
+      - RABBITMQ_DEFAULT_USER=${RABBIT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBIT_PASS} # Tady stačí PASS, Rabbit to zná
     ports:
       - "5672:5672"
       - "15672:15672"
