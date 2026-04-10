@@ -20,11 +20,13 @@ services:
     image: datalust/seq:latest
     container_name: zuma-seq
     ports:
-      - "8090:80"   
-      - "5341:5341"  
+      - "8090:80"    # Používáme tvůj volný port
+      - "5341:5341"  # Port pro příjem logů
     environment:
       - ACCEPT_EULA=Y
     restart: unless-stopped
+    networks:
+      - proxy-nw
     volumes:
       - seq_data:/data
 
@@ -140,3 +142,4 @@ services:
 
 volumes:
   postgres_data:
+  seq_data:

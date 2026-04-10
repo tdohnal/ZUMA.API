@@ -13,7 +13,7 @@ Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .Enrich.FromLogContext()
     .Enrich.WithProperty("Application", "ZUMA.CommunicationService")
-    .WriteTo.Seq(builder.Configuration["Serilog:WriteTo:0:Args:serverUrl"] ?? throw new Exception("key [Serilog:WriteTo:0:Args:serverUrl] IS NOT CONFIGURED!"))
+    .WriteTo.Seq(builder.Configuration["SERILOG:SEQ:URL"] ?? throw new Exception("key [Serilog:WriteTo:0:Args:serverUrl] IS NOT CONFIGURED!"))
     .CreateLogger();
 
 #endregion
