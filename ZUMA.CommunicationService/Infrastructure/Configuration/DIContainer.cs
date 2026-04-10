@@ -26,7 +26,7 @@ public static class DIContainer
         #region Email 
 
         services.AddScoped<IEmailRepository, EmailRepository>();
-        services.AddHttpClient<IEmailClient, SmtpEmailClient>();
+        services.AddScoped<IEmailClient, SmtpEmailClient>();
         #endregion
     }
 }
