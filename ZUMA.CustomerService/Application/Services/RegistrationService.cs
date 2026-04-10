@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using ZUMA.CustomerService.Domain.Entities;
+﻿using ZUMA.CustomerService.Domain.Entities;
 using ZUMA.CustomerService.Domain.Interfaces;
 using ZUMA.SharedKernel.Services;
 using ZUMA.SharedKernel.Utils;
@@ -29,7 +28,7 @@ internal class RegistrationService : ServiceBase<RegistrationEntity>, IRegistrat
 
     protected override Task BeforeCreateAsync(RegistrationEntity entity, CancellationToken cancellationToken)
     {
-        entity.ActivationCode = PASSGenerator.Generate(10);
+        entity.ActivationCode = PasswordGenerator.Generate(10);
         entity.ExpirationCodeDate = DateTime.UtcNow.AddHours(24);
 
         var user = new UserEntity
