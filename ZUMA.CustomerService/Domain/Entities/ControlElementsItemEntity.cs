@@ -1,0 +1,17 @@
+﻿using System.ComponentModel.DataAnnotations;
+using ZUMA.SharedKernel.Entities;
+
+namespace ZUMA.CustomerService.Domain.Entities;
+
+public class ControlElementsItemEntity : IAuditableEntities
+{
+    [Key]
+    public long Id { get; set; }
+    public Guid PublicId { get; set; } = Guid.CreateVersion7();
+    public DateTime Created { get; set; }
+    public DateTime? Updated { get; set; }
+    public DateTime? Deleted { get; set; }
+
+    public required string Content { get; set; }
+    public string? Metadata { get; set; }
+}

@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ZUMA.CustomerService.Domain.Entities;
 
-namespace ZUMA.CustomerService.Infrastructure.Persistence;
+namespace ZUMA.CustomerService.Infrastructure.Persistence.Configurations;
 
 public class RegistrationEntityConfiguration : IEntityTypeConfiguration<RegistrationEntity>
 {
