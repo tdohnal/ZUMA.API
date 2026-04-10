@@ -15,7 +15,7 @@ services:
     restart: always
     environment:
       - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASS} # Tady musí být celý název PASSWORD
+      - POSTGRES_PASSWORD=${DB_PASS}
       - POSTGRES_DB=${DB_NAME}
     ports:
       - "5432:5432"
@@ -29,7 +29,7 @@ services:
     restart: always
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBIT_USER}
-      - RABBITMQ_DEFAULT_PASS=${RABBIT_PASS} # Tady stačí PASS, Rabbit to zná
+      - RABBITMQ_DEFAULT_PASS=${RABBIT_PASS}
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -48,7 +48,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=${APP_ENV}
       - ConnectionStrings__DbConnection=Host=zuma-db;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASS}
       - RabbitMQ__Username=${RABBIT_USER}
-      - RabbitMQ__Password=${RABBIT_PASS} # .NET pravděpodobně chce "Password"
+      - RabbitMQ__Password=${RABBIT_PASS}
       - Jwt__Key=${JWT_KEY}
       - Jwt__Issuer=${JWT_ISSUER}
       - Jwt__Audience=${JWT_AUDIENCE}
@@ -78,8 +78,6 @@ services:
     restart: always
     environment:
       - RABBITMQ_HOST=zuma-rabbitmq
-      - RabbitMQ__Username=${RABBIT_USER}
-      - RabbitMQ__Password=${RABBIT_PASS}
       - ASPNETCORE_ENVIRONMENT=${APP_ENV}
       - ConnectionStrings__DbConnection=Host=zuma-db;Port=5432;Database=zuma-customer;Username=${DB_USER};Password=${DB_PASS}
       - Jwt__Key=${JWT_KEY}
@@ -95,7 +93,7 @@ services:
     restart: always
     environment:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
-      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASS} # pgAdmin chce taky PASSWORD
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASS}
     ports:
       - "5050:80"
     depends_on:
