@@ -2,22 +2,27 @@ name: Production Deploy
 
 on:
   push:
-    branches: [ "main", "master" ] # Spustí se při pushi do main nebo master
+    branches: [ "main", "master" ]
 
 jobs:
   build-and-push:
-    # TADY BYLA CHYBA - musí tu být ubuntu-latest, ne self-hosted
     runs-on: ubuntu-latest
+    # TADY ŘÍKÁME GITHUBu, ŽE MÁ POUŽÍT TVOJE PROSTŘEDÍ ZUMA
+    environment: ZUMA
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@@v4
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
+          # Tady použijeme tvůj vygenerovaný token ze screenshotu
           username: ${{ github.actor }}
-          password: ${{ secrets.NUGET_GITHUB_TOKEN }}
+          password: ${{ secrets.GHCR_TOKEN }}
 
       - name: Build and push API
         uses: docker/build-push-action@v5
@@ -35,6 +40,8 @@ jobs:
           context: .
           file: ZUMA.CommunicationService/Dockerfile
           push: true
+          build-args: |
+            GH_TOKEN=${{ secrets.NUGET_GITHUB_TOKEN }}
           tags: ghcr.io/${{ github.repository_owner }}/communication-service:latest
 
       - name: Build and push Customer Service
@@ -43,11 +50,14 @@ jobs:
           context: .
           file: ZUMA.CustomerService/Dockerfile
           push: true
+          build-args: |
+            GH_TOKEN=${{ secrets.NUGET_GITHUB_TOKEN }}
           tags: ghcr.io/${{ github.repository_owner }}/customer-service:latest
 
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
+    environment: ZUMA
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -70,7 +80,7 @@ jobs:
           script: |
             cd ~/zuma
             
-            # Vytvoření .env souboru z tvých Secrets
+            # Vytvoření .env souboru z tvých Environment Secrets
             echo "DB_USER=${{ secrets.DB_USER }}" > .env
             echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
             echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
@@ -80,14 +90,12 @@ jobs:
             echo "PGADMIN_PASSWORD=${{ secrets.PGADMIN_PASSWORD }}" >> .env
             echo "APP_ENV=Production" >> .env
             
-            # Oprava názvu repozitáře na malá písmena pro Docker
             REPO_LOWER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
             echo "GITHUB_REPO_LOWER=$REPO_LOWER" >> .env
 
-            # Přihlášení k registru na tvém Contabu
-            echo "${{ secrets.NUGET_GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            # Přihlášení k registru na serveru
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             
-            # Spuštění sítě a kontejnerů
             docker network create proxy-nw || true
             docker compose pull
             docker compose up -d
