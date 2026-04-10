@@ -16,6 +16,18 @@ services:
       - "1025:1025" # SMTP port
     restart: always
 
+  seq:
+    image: datalust/seq:latest
+    container_name: zuma-seq
+    ports:
+      - "8090:80"   
+      - "5341:5341"  
+    environment:
+      - ACCEPT_EULA=Y
+    restart: unless-stopped
+    volumes:
+      - seq_data:/data
+
   zuma-db:
     image: postgres:latest
     container_name: zuma-db
@@ -58,6 +70,7 @@ services:
     ports:
       - "8080:8080"
     environment:
+      - SERILOG__SEQ__URL=http://seq:5341
       - ASPNETCORE_ENVIRONMENT=${APP_ENV}
       - ASPNETCORE_HTTP_PORTS=8080 
       - ConnectionStrings__DbConnection=Host=zuma-db;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASS}
@@ -77,6 +90,7 @@ services:
       - rabbitmq
     restart: always
     environment:
+      - SERILOG__SEQ__URL=http://seq:5341
       - RABBITMQ__HOST=${RABBIT_HOST}
       - RABBITMQ__USERNAME=${RABBIT_USER}
       - RABBITMQ__PASSWORD=${RABBIT_PASS}
@@ -99,6 +113,7 @@ services:
       - rabbitmq
     restart: always
     environment:
+      - SERILOG__SEQ__URL=http://seq:5341
       - RABBITMQ__HOST=${RABBIT_HOST}
       - RABBITMQ__USERNAME=${RABBIT_USER}
       - RABBITMQ__PASSWORD=${RABBIT_PASS}

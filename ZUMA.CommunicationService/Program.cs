@@ -1,10 +1,22 @@
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using ZUMA.CommunicationService;
 using ZUMA.CommunicationService.Application.Consumers;
 using ZUMA.CommunicationService.Infrastructure.Configuration;
 
 var builder = Host.CreateApplicationBuilder(args);
+
+#region Serilog
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .Enrich.FromLogContext()
+    .Enrich.WithProperty("Application", "ZUMA.CommunicationService")
+    .WriteTo.Seq(builder.Configuration["Serilog:WriteTo:0:Args:serverUrl"] ?? throw new Exception("key [Serilog:WriteTo:0:Args:serverUrl] IS NOT CONFIGURED!"))
+    .CreateLogger();
+
+#endregion
 
 builder.Services.AddInfrastructure(builder.Configuration);
 

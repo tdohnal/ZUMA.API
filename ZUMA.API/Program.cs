@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using ZUMA.API.Configuration;
@@ -14,6 +15,17 @@ using ZUMA.SharedKernel.Configuration;
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 var builder = WebApplication.CreateBuilder(args);
+
+#region Serilog
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.Seq(builder.Configuration["Serilog:WriteTo:0:Args:serverUrl"] ?? throw new Exception("key [Serilog:WriteTo:0:Args:serverUrl] IS NOT CONFIGURED!"))
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+
+#endregion
 
 #region Services Configuration
 
