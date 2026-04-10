@@ -1,4 +1,4 @@
-name: Production Deploy
+name: Sandbox Deploy
 
 on:
   push:
@@ -82,6 +82,7 @@ jobs:
             echo "DB_USER=${{ secrets.DB_USER }}" > .env
             echo "DB_PASS=${{ secrets.DB_PASS }}" >> .env
             echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+            echo "RABBIT_HOST=${{ secrets.RABBIT_HOST }}" >> .env
             echo "RABBIT_USER=${{ secrets.RABBIT_USER }}" >> .env
             echo "RABBIT_PASS=${{ secrets.RABBIT_PASS }}" >> .env
             echo "PGADMIN_EMAIL=${{ secrets.PGADMIN_EMAIL }}" >> .env
@@ -89,6 +90,12 @@ jobs:
             echo "JWT_KEY=${{ secrets.JWT_KEY }}" >> .env
             echo "JWT_ISSUER=${{ secrets.JWT_ISSUER }}" >> .env
             echo "JWT_AUDIENCE=${{ secrets.JWT_AUDIENCE }}"  >> .env
+            echo "SMTP_HOST=${{ secrets.SMTP_HOST }}"  >> .env
+            echo "SMTP_PORT=${{ secrets.SMTP_PORT }}"  >> .env
+            echo "SMTP_USERNAME=${{ secrets.SMTP_USERNAME }}"  >> .env
+            echo "SMTP_PASS=${{ secrets.SMTP_PASS }}"  >> .env
+            echo "SMTP_SENDER=${{ secrets.SMTP_SENDER }}"  >> .env
+            echo "SMTP_SENDER_NAME=${{ secrets.SMTP_SENDER_NAME }}"  >> .env
             echo "APP_ENV=Sandbox" >> .env
             
             REPO_LOWER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
