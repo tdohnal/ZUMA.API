@@ -44,8 +44,11 @@ services:
       - zuma-db
       - rabbitmq
     restart: always
+    ports:
+      - "8080:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=${APP_ENV}
+      - ASPNETCORE_HTTP_PORTS=8080 
       - ConnectionStrings__DbConnection=Host=zuma-db;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASS}
       - RABBITMQ__HOST=zuma-rabbitmq
       - RABBITMQ__USERNAME=${RABBIT_USER}
