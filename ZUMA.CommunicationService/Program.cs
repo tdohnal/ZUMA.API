@@ -16,6 +16,8 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Seq(builder.Configuration["SERILOG:SEQ:URL"] ?? throw new Exception("key [Serilog:WriteTo:0:Args:serverUrl] IS NOT CONFIGURED!"))
     .CreateLogger();
 
+builder.Services.AddSerilog();
+
 #endregion
 
 builder.Services.AddInfrastructure(builder.Configuration);
