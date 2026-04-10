@@ -96,6 +96,7 @@ jobs:
             echo "SMTP_PASS=${{ secrets.SMTP_PASS }}"  >> .env
             echo "SMTP_SENDER=${{ secrets.SMTP_SENDER }}"  >> .env
             echo "SMTP_SENDER_NAME=${{ secrets.SMTP_SENDER_NAME }}"  >> .env
+            echo "SEQ_PASS=${{ secrets.SEQ_PASS }}"  >> .env
             echo "APP_ENV=Sandbox" >> .env
             
             REPO_LOWER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
