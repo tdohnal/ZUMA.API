@@ -22,6 +22,11 @@ public class SmtpEmailClient(IOptions<SmtpOptions> options) : IEmailClient
         var bodyBuilder = new BodyBuilder { HtmlBody = message.Body };
         email.Body = bodyBuilder.ToMessageBody();
 
+        email.Headers.Add("Priority", "Urgent");
+        email.Headers.Add("Importance", "high");
+
+        email.Headers.Add("X-Entity-Ref-ID", Guid.NewGuid().ToString());
+
         using var client = new SmtpClient();
         try
         {
