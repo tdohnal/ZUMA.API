@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -107,9 +105,9 @@ internal class UserService : ServiceBase<UserEntity>, IUserService
                  {
                      UserId = user.PublicId,
                      Email = user.Email,
-                     Subject = "Zuma - Authorization code",
-                     FullName = user.FullName,
                      Code = code,
+                     Subject = $"Váš ověřovací kód ZUMA [{code}]",
+                     FullName = user.FullName,
                      EmailTemplateType = EmailTemplateType.Authorization,
                  }, cancellationToken);
         }
