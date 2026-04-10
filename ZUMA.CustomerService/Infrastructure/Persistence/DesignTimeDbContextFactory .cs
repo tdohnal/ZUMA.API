@@ -1,6 +1,4 @@
-﻿using ZUMA.Communication.Infrastructure.Persistence;
-
-namespace ZUMA.CustomerService.Infrastructure.Persistence;
+﻿namespace ZUMA.CustomerService.Infrastructure.Persistence;
 
 public class CustomerDbContextFactory : BaseDesignTimeDbContextFactory<CustomerDbContext>
 {

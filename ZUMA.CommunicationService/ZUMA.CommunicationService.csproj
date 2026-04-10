@@ -6,9 +6,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>dotnet-ZUMA.CommunicationService-bfe02083-e058-46c8-9401-bc7ba5284df7</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+	<WarningsAsErrors>$(WarningsAsErrors);ZUMA002</WarningsAsErrors>
   </PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="MailKit" Version="4.15.1" />
 		<PackageReference Include="MassTransit" Version="8.2.5" />
 		<PackageReference Include="MassTransit.RabbitMQ" Version="8.2.5" />
 		<PackageReference Include="MassTransit.Quartz" Version="8.2.5" />
@@ -17,8 +21,13 @@
 		  <PrivateAssets>all</PrivateAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.3" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="10.0.5" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
 		<PackageReference Include="MimeKit" Version="4.15.1" />
-		<PackageReference Include="ZUMA.SharedKernel" Version="2026.4.7.7" />
+		<PackageReference Include="ZUMA.ArchitectureAnalyzer" Version="2026.4.9.19">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="ZUMA.SharedKernel" Version="2026.4.9.19" />
 	</ItemGroup>
 </Project>

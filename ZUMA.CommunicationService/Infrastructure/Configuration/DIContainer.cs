@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using ZUMA.CommunicationService.Application.Configuration;
 using ZUMA.CommunicationService.Domain.Interfaces;
 using ZUMA.CommunicationService.Infrastructure.Repositories;
+using ZUMA.Infrastructure.ExternalServices;
 
 namespace ZUMA.CommunicationService.Infrastructure.Configuration;
 
@@ -22,10 +21,12 @@ public static class DIContainer
 
         #endregion
 
+        services.Configure<MailjetOptions>(configuration.GetSection("Mailjet"));
+
         #region Email 
 
         services.AddScoped<IEmailRepository, EmailRepository>();
-
+        services.AddHttpClient<IEmailClient, MailjetSmtpClient>();
         #endregion
     }
 }

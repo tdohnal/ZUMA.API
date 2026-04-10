@@ -30,6 +30,7 @@
 	  <PackageReference Include="MassTransit.RabbitMQ" Version="8.2.5" />
 	  <PackageReference Include="MassTransit.Quartz" Version="8.2.5" />
 	  <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.17.0" />
-	  <PackageReference Include="ZUMA.SharedKernel" Version="2026.4.7.7" />
+	  <PackageReference Include="ZUMA.ArchitectureAnalyzer" Version="2026.4.9.19" />
+	  <PackageReference Include="ZUMA.SharedKernel" Version="2026.4.9.19" />
   </ItemGroup>
 </Project>

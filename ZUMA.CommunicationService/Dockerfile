@@ -19,9 +19,6 @@ WORKDIR /src
 # Kopírujeme nuget.config a všechny projekty pro restore
 COPY ["nuget.config", "."]
 COPY ["ZUMA.CommunicationService/ZUMA.CommunicationService.csproj", "ZUMA.CommunicationService/"]
-COPY ["ZUMA.Communication.Infrastructure/ZUMA.Communication.Infrastructure.csproj", "ZUMA.Communication.Infrastructure/"]
-COPY ["ZUMA.Communication.Application/ZUMA.Communication.Application.csproj", "ZUMA.Communication.Application/"]
-COPY ["ZUMA.Communication.Domain/ZUMA.Communication.Domain.csproj", "ZUMA.Communication.Domain/"]
 
 # Restore s použitím tvého tokenu z ENV
 RUN dotnet restore "./ZUMA.CommunicationService/ZUMA.CommunicationService.csproj" --configfile nuget.config
