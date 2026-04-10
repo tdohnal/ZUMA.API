@@ -17,8 +17,8 @@ WORKDIR /src
 RUN dotnet nuget add source "https://nuget.pkg.github.com/tdohnal/index.json" \
     --name "github_final" \
     --username "tdohnal" \
-    --PASS "${GH_TOKEN}" \
-    --store-PASS-in-clear-text
+    --password "${GH_TOKEN}" \
+    --store-password-in-clear-text
 
 COPY ["ZUMA.CommunicationService/ZUMA.CommunicationService.csproj", "ZUMA.CommunicationService/"]
 
