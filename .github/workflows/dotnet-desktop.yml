@@ -7,20 +7,18 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    # TADY ŘÍKÁME GITHUBu, ŽE MÁ POUŽÍT TVOJE PROSTŘEDÍ ZUMA
     environment: ZUMA
     permissions:
       contents: read
       packages: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@@v4
+        uses: actions/checkout@v4
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          # Tady použijeme tvůj vygenerovaný token ze screenshotu
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN }}
 
