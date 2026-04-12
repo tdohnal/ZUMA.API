@@ -12,12 +12,15 @@ public class ControlElementConfiguration : IEntityTypeConfiguration<ControlEleme
 
         builder.HasMany(x => x.Items)
                .WithOne()
-               .HasForeignKey("ControlElementId")
+               .HasForeignKey(x => x.ControlElementId)
                .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasMany(x => x.SharedWith)
-               .WithOne()
-               .HasForeignKey(x => x.UserControlElementId)
-               .OnDelete(DeleteBehavior.Cascade);
+        builder.OwnsOne(u => u.ElementsPermission, elementPermissionBuilder =>
+        {
+            elementPermissionBuilder.ToJson();
+            elementPermissionBuilder.OwnsMany(p => p.UserPermissions);
+        });
+
+        builder.ToTable("ControlElements");
     }
 }

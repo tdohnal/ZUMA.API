@@ -1,3 +1,4 @@
+using DotNetEnv;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -6,6 +7,9 @@ using ZUMA.CommunicationService.Application.Consumers;
 using ZUMA.CommunicationService.Infrastructure.Configuration;
 
 var builder = Host.CreateApplicationBuilder(args);
+
+Env.TraversePath().Load();
+builder.Configuration.AddEnvironmentVariables();
 
 #region Serilog
 

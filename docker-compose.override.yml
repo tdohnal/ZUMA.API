@@ -1,6 +1,29 @@
 services:
-  zuma.api:
+  zuma-api:
+    build:
+      context: .
+      dockerfile: ZUMA.API/Dockerfile
+      args:
+        - GH_TOKEN=${GH_TOKEN}
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     ports:
-      - "8080:8080"
+      - "8070:8080"
+
+  customer-service:
+    build:
+      context: .
+      dockerfile: ZUMA.CustomerService/Dockerfile
+      args:
+        - GH_TOKEN=${GH_TOKEN}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  communication-service:
+    build:
+      context: .
+      dockerfile: ZUMA.CommunicationService/Dockerfile
+      args:
+        - GH_TOKEN=${GH_TOKEN}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development

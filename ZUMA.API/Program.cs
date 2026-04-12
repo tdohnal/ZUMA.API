@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using DotNetEnv;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -15,6 +16,9 @@ using ZUMA.SharedKernel.Configuration;
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 var builder = WebApplication.CreateBuilder(args);
+
+Env.TraversePath().Load();
+builder.Configuration.AddEnvironmentVariables();
 
 #region Serilog
 

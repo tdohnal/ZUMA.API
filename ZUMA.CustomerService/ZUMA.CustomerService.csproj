@@ -23,6 +23,7 @@
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.Network" Version="9.0.0" />
     <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
+    <PackageReference Include="DotNetEnv" Version="3.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -35,7 +36,7 @@
 	  <PackageReference Include="Serilog.Extensions.Hosting" Version="10.0.0" />
 	  <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
 	  <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.17.0" />
-	  <PackageReference Include="ZUMA.ArchitectureAnalyzer" Version="2026.4.10.20" />
-	  <PackageReference Include="ZUMA.SharedKernel" Version="2026.4.10.20" />
+	  <PackageReference Include="ZUMA.ArchitectureAnalyzer" Version="2026.4.12.21" />
+	  <PackageReference Include="ZUMA.SharedKernel" Version="2026.4.12.21" />
   </ItemGroup>
 </Project>

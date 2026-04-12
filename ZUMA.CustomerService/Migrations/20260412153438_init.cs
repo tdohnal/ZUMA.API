@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace ZUMA.Customer.Infrastructure.Migrations
+namespace ZUMA.CustomerService.Migrations
 {
     /// <inheritdoc />
     public partial class init : Migration
@@ -14,6 +14,26 @@ namespace ZUMA.Customer.Infrastructure.Migrations
         {
             migrationBuilder.EnsureSchema(
                 name: "public");
+
+            migrationBuilder.CreateTable(
+                name: "UserControlElements",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PublicId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Updated = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Deleted = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Title = table.Column<string>(type: "text", nullable: false),
+                    OwnerUserId = table.Column<long>(type: "bigint", nullable: false),
+                    ListType = table.Column<int>(type: "integer", nullable: false),
+                    ElementsPermission = table.Column<string>(type: "jsonb", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserControlElements", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "Users",
@@ -36,6 +56,31 @@ namespace ZUMA.Customer.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ControlElementsItems",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    PublicId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Updated = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Deleted = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Content = table.Column<string>(type: "text", nullable: false),
+                    Metadata = table.Column<string>(type: "text", nullable: true),
+                    ControlElementId = table.Column<long>(type: "bigint", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ControlElementsItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ControlElementsItems_UserControlElements_ControlElementId",
+                        column: x => x.ControlElementId,
+                        principalTable: "UserControlElements",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -66,6 +111,11 @@ namespace ZUMA.Customer.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_ControlElementsItems_ControlElementId",
+                table: "ControlElementsItems",
+                column: "ControlElementId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Registrations_Deleted",
                 schema: "public",
                 table: "Registrations",
@@ -76,6 +126,12 @@ namespace ZUMA.Customer.Infrastructure.Migrations
                 schema: "public",
                 table: "Registrations",
                 column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserControlElements_PublicId",
+                table: "UserControlElements",
+                column: "PublicId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -96,8 +152,14 @@ namespace ZUMA.Customer.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "ControlElementsItems");
+
+            migrationBuilder.DropTable(
                 name: "Registrations",
                 schema: "public");
+
+            migrationBuilder.DropTable(
+                name: "UserControlElements");
 
             migrationBuilder.DropTable(
                 name: "Users",

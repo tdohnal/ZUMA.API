@@ -1,0 +1,14 @@
+services:
+  zuma-api:
+    image: ghcr.io/${GITHUB_REPO_LOWER}/zuma-api:latest
+    restart: always
+    ports:
+      - "8080:8080"
+
+  customer-service:
+    image: ghcr.io/${GITHUB_REPO_LOWER}/customer-service:latest
+    restart: always
+
+  communication-service:
+    image: ghcr.io/${GITHUB_REPO_LOWER}/communication-service:latest
+    restart: always

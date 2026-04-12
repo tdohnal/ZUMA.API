@@ -10,6 +10,10 @@ public class RegistrationEntityConfiguration : IEntityTypeConfiguration<Registra
     {
         builder.HasKey(u => u.Id);
 
+        builder.HasOne(x => x.User)
+                  .WithOne()
+                  .HasForeignKey<RegistrationEntity>(x => x.UserId);
+
         builder.Property(u => u.PublicId)
             .IsRequired()
             .HasColumnType("uuid");
