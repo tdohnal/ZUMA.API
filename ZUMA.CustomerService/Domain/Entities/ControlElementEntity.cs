@@ -21,6 +21,7 @@ public class ControlsElementEntity : IAuditableEntities
     public required string Title { get; set; }
 
     public required long OwnerUserId { get; set; }
+    public UserEntity? OwnerUser { get; set; }
 
     public required ListType ListType { get; set; }
 

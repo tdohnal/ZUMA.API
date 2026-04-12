@@ -38,14 +38,22 @@ public class UpdateControlsElementConsumer : IConsumer<SendUpdateControlsElement
                 return;
             }
 
-            // Update fields
-            existingControlsElement.ControlsElementName = msg.ControlsElementname;
-            existingControlsElement.FullName = msg.FullName;
-            existingControlsElement.Email = msg.Email;
 
-            var ControlsElement = await _controlsElementService.UpdateAsync(existingControlsElement);
+            existingControlsElement.Title = msg.Title;
+            existingControlsElement.Items = msg.Items.Select(x => new Domain.Entities.ControlsElementsItemEntity
+            {
+                Content = x.Content,
+                ControlElementId = existingControlsElement.Id,
+                Metadata = x.Metadata,
+                PublicId = x.PublicId,
+                Created = DateTime.UtcNow,
 
-            if (ControlsElement == null)
+            }).ToList();
+            existingControlsElement.ElementsPermission = msg.ElementsPermission;
+
+            var controlsElement = await _controlsElementService.UpdateAsync(existingControlsElement);
+
+            if (controlsElement == null)
             {
                 await context.RespondAsync<SendControlsElementFailed>(new
                 {
@@ -59,13 +67,24 @@ public class UpdateControlsElementConsumer : IConsumer<SendUpdateControlsElement
             {
                 ControlsElement = new ControlsElementMessageModel
                 {
-                    PublicId = ControlsElement.PublicId,
-                    ControlsElementName = ControlsElement.ControlsElementName,
-                    Name = ControlsElement.FullName,
-                    Email = ControlsElement.Email,
-                    Created = ControlsElement.Created,
-                    Updated = ControlsElement.Updated,
-                    Deleted = ControlsElement.Deleted
+                    Title = controlsElement.Title,
+                    Created = controlsElement.Created,
+                    Updated = controlsElement.Updated,
+                    Deleted = controlsElement.Deleted,
+                    ListType = controlsElement.ListType,
+                    Items = controlsElement.Items.Select(x => new ControlsElementsItemModel
+                    {
+                        Content = x.Content,
+                        ControlElementPublicId = controlsElement.PublicId,
+                        Created = x.Created,
+                        Updated = controlsElement.Updated,
+                        PublicId = controlsElement.PublicId,
+                        Metadata = x.Metadata,
+                        Deleted = x.Deleted
+                    }).ToList(),
+                    OwnerUserPublicId = controlsElement.OwnerUser.PublicId,
+                    PublicId = controlsElement.PublicId,
+                    ElementsPermission = controlsElement.ElementsPermission
                 }
             });
         }

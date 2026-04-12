@@ -1,7 +1,7 @@
 ﻿using MassTransit;
 using ZUMA.CustomerService.Domain.Entities;
 using ZUMA.CustomerService.Domain.Interfaces;
-using ZUMA.SharedKernel.Messagges.Contracts.Authorization;
+using ZUMA.SharedKernel.MessagingContracts.Contracts.Authorization;
 
 namespace ZUMA.CustomerService.Application.Consumers;
 

@@ -10,7 +10,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using ZUMA.API.Configuration;
 using ZUMA.API.Middleware;
-using ZUMA.SharedKernel.Configuration;
+using ZUMA.SharedKernel.Configurration;
 
 // Vyčištění claim mapování hned na začátku
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();

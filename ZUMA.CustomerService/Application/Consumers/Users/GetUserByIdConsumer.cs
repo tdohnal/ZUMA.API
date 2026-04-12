@@ -1,7 +1,6 @@
 ﻿using MassTransit;
-using Microsoft.Extensions.Logging;
 using ZUMA.CustomerService.Domain.Interfaces;
-using ZUMA.SharedKernel.Messagges.Contracts.Users;
+using ZUMA.SharedKernel.MessagingContracts.Contracts.Users;
 
 namespace ZUMA.CustomerService.Application.Consumers.Users;
 

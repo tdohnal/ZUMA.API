@@ -1,8 +1,6 @@
 ﻿using MassTransit;
-using Microsoft.Extensions.Logging;
 using ZUMA.CustomerService.Domain.Interfaces;
-using ZUMA.SharedKernel.Messagges.Contracts.Authorization;
-using ZUMA.SharedKernel.Messagges.Contracts.Users;
+using ZUMA.SharedKernel.MessagingContracts.Contracts.Users;
 
 namespace ZUMA.CustomerService.Application.Consumers.Users;
 
@@ -58,7 +56,7 @@ public class GetUsersConsumer : IConsumer<SendGetUsersRequest>
         {
             _logger.LogError(ex, "Error occurred while fetching users");
 
-            await context.RespondAsync<AuthorizeUserFailed>(new
+            await context.RespondAsync<SendUserFailed>(new
             {
                 ErrorMessage = "An internal error occurred while retrieving user data.",
                 ErrorCode = "INTERNAL_ERROR"

@@ -1,4 +1,5 @@
-﻿using ZUMA.CustomerService.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using ZUMA.CustomerService.Domain.Entities;
 using ZUMA.CustomerService.Domain.Interfaces;
 using ZUMA.CustomerService.Infrastructure.Persistence;
 using ZUMA.SharedKernel.Repositories;
@@ -19,5 +20,9 @@ internal class ControlsElementRepository : RepositoryBase<ControlsElementEntity>
         _logger = logger;
     }
 
-
+    protected override IQueryable<ControlsElementEntity> ApplyIncludes(IQueryable<ControlsElementEntity> query)
+    {
+        return query.Include(x => x.OwnerUserId)
+                    .Include(x => x.Items);
+    }
 }

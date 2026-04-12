@@ -24,9 +24,9 @@ public class GetControlsElementByIdConsumer : IConsumer<SendGetControlsElementBy
 
         try
         {
-            var ControlsElement = await _controlsElementService.GetByPublicIdAsync(msg.PublicId);
+            var controlsElement = await _controlsElementService.GetByPublicIdAsync(msg.PublicId);
 
-            if (ControlsElement == null)
+            if (controlsElement == null)
             {
                 _logger.LogWarning("ControlsElement with PublicId: {PublicId} not found.", msg.PublicId);
 
@@ -42,13 +42,24 @@ public class GetControlsElementByIdConsumer : IConsumer<SendGetControlsElementBy
             {
                 ControlsElement = new ControlsElementMessageModel
                 {
-                    PublicId = ControlsElement.PublicId,
-                    ControlsElementName = ControlsElement.ControlsElementName,
-                    Name = ControlsElement.FullName,
-                    Email = ControlsElement.Email,
-                    Created = ControlsElement.Created,
-                    Updated = ControlsElement.Updated,
-                    Deleted = ControlsElement.Deleted
+                    Title = controlsElement.Title,
+                    Created = controlsElement.Created,
+                    Updated = controlsElement.Updated,
+                    Deleted = controlsElement.Deleted,
+                    ListType = controlsElement.ListType,
+                    Items = controlsElement.Items.Select(x => new ControlsElementsItemModel
+                    {
+                        Content = x.Content,
+                        ControlElementPublicId = controlsElement.PublicId,
+                        Created = x.Created,
+                        Updated = controlsElement.Updated,
+                        PublicId = controlsElement.PublicId,
+                        Metadata = x.Metadata,
+                        Deleted = x.Deleted
+                    }).ToList(),
+                    OwnerUserPublicId = controlsElement.OwnerUser.PublicId,
+                    PublicId = controlsElement.PublicId,
+                    ElementsPermission = controlsElement.ElementsPermission
                 }
             });
         }

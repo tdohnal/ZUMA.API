@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using ZUMA.CustomerService.Domain.Entities;
 using ZUMA.CustomerService.Domain.Interfaces;
+using ZUMA.SharedKernel.MessagingContracts.Events;
 using ZUMA.SharedKernel.Services;
 using ZUMA.SharedKernel.Utils;
 
@@ -101,8 +102,9 @@ internal class UserService : ServiceBase<UserEntity>, IUserService
             await _userRepository.UpdateAsync(user, cancellationToken);
 
             await _eventPublisherService.PublishCreateEmailEventAsync(
-                 new SharedKernel.Messagges.Events.CreateEmailEvent
+                 new CreateEmailEvent
                  {
+                     Body = "",
                      UserId = user.PublicId,
                      Email = user.Email,
                      Code = code,

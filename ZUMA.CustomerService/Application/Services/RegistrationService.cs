@@ -1,5 +1,6 @@
 ﻿using ZUMA.CustomerService.Domain.Entities;
 using ZUMA.CustomerService.Domain.Interfaces;
+using ZUMA.SharedKernel.MessagingContracts.Events;
 using ZUMA.SharedKernel.Services;
 using ZUMA.SharedKernel.Utils;
 
@@ -51,7 +52,7 @@ internal class RegistrationService : ServiceBase<RegistrationEntity>, IRegistrat
     {
         _logger.LogInformation("Registration created with Id:{id} for user with email: {email}", entity.Id, entity.User.Email);
         await _eventPublisherService.PublishCreateEmailEventAsync(
-                new SharedKernel.Messagges.Events.CreateEmailEvent
+                new CreateEmailEvent
                 {
                     UserId = entity.User.PublicId,
                     Subject = "Welcome in Zuma",

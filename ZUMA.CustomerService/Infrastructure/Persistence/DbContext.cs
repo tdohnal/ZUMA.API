@@ -13,8 +13,8 @@ public class CustomerDbContext : DbContext
     public DbSet<UserEntity> Users { get; set; } = null!;
     public DbSet<RegistrationEntity> Registrations { get; set; } = null!;
 
-    public DbSet<ControlElementEntity> ControlElements { get; set; } = null!;
-    public DbSet<ControlElementsItemEntity> ControlElementsItems { get; set; } = null!;
+    public DbSet<ControlsElementEntity> ControlElements { get; set; } = null!;
+    public DbSet<ControlsElementsItemEntity> ControlElementsItems { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

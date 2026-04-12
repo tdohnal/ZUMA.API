@@ -1,10 +1,12 @@
 ﻿using Riok.Mapperly.Abstractions;
 using ZUMA.API.REST.DTOs.Authorization.Requests;
 using ZUMA.API.REST.DTOs.Authorization.Responses;
+using ZUMA.API.REST.DTOs.ControlsElement;
 using ZUMA.API.REST.DTOs.Registration.Requests;
 using ZUMA.API.REST.DTOs.User;
-using ZUMA.SharedKernel.Messagges.Contracts.Authorization;
-using ZUMA.SharedKernel.Messagges.Contracts.Users;
+using ZUMA.SharedKernel.MessagingContracts.Contracts.Authorization;
+using ZUMA.SharedKernel.MessagingContracts.Contracts.ControlsElement;
+using ZUMA.SharedKernel.MessagingContracts.Contracts.Users;
 
 namespace ZUMA.API.REST.Mappers;
 
@@ -47,6 +49,31 @@ public partial class MessageMapper
 
     #region Registration (Responses)
 
+
+    #endregion
+
+    #region ControlsElement
+
+    public partial SendCreateControlsElementRequest MapCreateRequestToSendRequest(ControlsElementCreateRequest dto, Guid ownerUserPublicId);
+    public partial SendUpdateControlsElementRequest MapUpdateRequestToSendRequest(ControlsElementDto dto);
+
+    // Mapování odpovědí (Responses)
+    public partial ControlsElementDto MapControlsElementMessageModelToDto(ControlsElementMessageModel model);
+    private partial List<ControlsElementDto> MapControlsElementList(List<ControlsElementMessageModel> items);
+
+    public List<ControlsElementDto> MapSendGetControlsElementsSuccessToDtoList(SendGetControlsElementsSuccess success)
+    {
+        return success?.ControlsElement == null ? new List<ControlsElementDto>() : MapControlsElementList(success.ControlsElement);
+    }
+
+    public ControlsElementDto MapSendGetControlsElementByIdSuccessToDto(SendGetControlsElementByIdSuccess success) =>
+        MapControlsElementMessageModelToDto(success.ControlsElement);
+
+    public ControlsElementDto MapSendCreateControlsElementSuccessToDto(SendCreateControlsElementSuccess success) =>
+        MapControlsElementMessageModelToDto(success.ControlsElement);
+
+    public ControlsElementDto MapSendUpdateControlsElementSuccessToDto(SendUpdateControlsElementSuccess success) =>
+        MapControlsElementMessageModelToDto(success.ControlsElement);
 
     #endregion
 }

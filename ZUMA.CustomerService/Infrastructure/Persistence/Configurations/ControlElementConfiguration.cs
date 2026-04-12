@@ -4,9 +4,9 @@ using ZUMA.CustomerService.Domain.Entities;
 
 namespace ZUMA.CustomerService.Infrastructure.Persistence.Configurations;
 
-public class ControlElementConfiguration : IEntityTypeConfiguration<ControlElementEntity>
+public class ControlElementConfiguration : IEntityTypeConfiguration<ControlsElementEntity>
 {
-    public void Configure(EntityTypeBuilder<ControlElementEntity> builder)
+    public void Configure(EntityTypeBuilder<ControlsElementEntity> builder)
     {
         builder.HasIndex(x => x.PublicId).IsUnique();
 

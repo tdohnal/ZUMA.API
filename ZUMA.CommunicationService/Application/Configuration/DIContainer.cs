@@ -1,6 +1,6 @@
 ﻿using ZUMA.CommunicationService.Application.Services;
 using ZUMA.CommunicationService.Domain.Interfaces;
-using ZUMA.SharedKernel.Configuration;
+using ZUMA.SharedKernel.Configurration;
 
 namespace ZUMA.CommunicationService.Application.Configuration;
 

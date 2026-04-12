@@ -10,5 +10,17 @@ namespace ZUMA.API.REST.Controllers.Base;
 [Route("api/v1/[controller]")]
 public class AuthorizedBaseController : ControllerBase
 {
+    protected Guid AuthorizedUserId => GetUserIdOrThrow();
 
+    private Guid GetUserIdOrThrow()
+    {
+        var claimValue = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(claimValue) || !Guid.TryParse(claimValue, out var userGuid))
+        {
+            throw new UnauthorizedAccessException("User ID is missing or invalid in the JWT token.");
+        }
+
+        return userGuid;
+    }
 }

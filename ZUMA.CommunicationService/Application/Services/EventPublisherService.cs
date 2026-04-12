@@ -1,6 +1,6 @@
 ﻿using MassTransit;
 using ZUMA.CommunicationService.Domain.Interfaces;
-using ZUMA.SharedKernel.Messagges.Events;
+using ZUMA.SharedKernel.MessagingContracts.Events;
 
 namespace ZUMA.CommunicationService.Application.Services
 {

@@ -36,15 +36,26 @@ public class GetControlsElementConsumer : IConsumer<SendGetControlsElementsReque
                 return;
             }
 
-            var data = ControlsElements.Select(ControlsElement => new ControlsElementMessageModel
+            var data = ControlsElements.Select(controlsElement => new ControlsElementMessageModel
             {
-                PublicId = ControlsElement.PublicId,
-                ControlsElementName = ControlsElement.ControlsElementName,
-                Name = ControlsElement.FullName,
-                Email = ControlsElement.Email,
-                Created = ControlsElement.Created,
-                Updated = ControlsElement.Updated,
-                Deleted = ControlsElement.Deleted
+                Title = controlsElement.Title,
+                Created = controlsElement.Created,
+                Updated = controlsElement.Updated,
+                Deleted = controlsElement.Deleted,
+                ListType = controlsElement.ListType,
+                Items = controlsElement.Items.Select(x => new ControlsElementsItemModel
+                {
+                    Content = x.Content,
+                    ControlElementPublicId = controlsElement.PublicId,
+                    Created = x.Created,
+                    Updated = controlsElement.Updated,
+                    PublicId = controlsElement.PublicId,
+                    Metadata = x.Metadata,
+                    Deleted = x.Deleted
+                }).ToList(),
+                OwnerUserPublicId = controlsElement.OwnerUser.PublicId,
+                PublicId = controlsElement.PublicId,
+                ElementsPermission = controlsElement.ElementsPermission
             }).ToList();
 
             await context.RespondAsync<SendGetControlsElementsSuccess>(new SendGetControlsElementsSuccess
@@ -56,7 +67,7 @@ public class GetControlsElementConsumer : IConsumer<SendGetControlsElementsReque
         {
             _logger.LogError(ex, "Error occurred while fetching ControlsElements");
 
-            await context.RespondAsync<AuthorizeControlsElementFailed>(new
+            await context.RespondAsync<SendControlsElementFailed>(new
             {
                 ErrorMessage = "An internal error occurred while retrieving ControlsElement data.",
                 ErrorCode = "INTERNAL_ERROR"

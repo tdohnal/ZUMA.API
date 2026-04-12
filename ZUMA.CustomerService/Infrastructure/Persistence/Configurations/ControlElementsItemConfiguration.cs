@@ -4,9 +4,9 @@ using ZUMA.CustomerService.Domain.Entities;
 
 namespace ZUMA.CustomerService.Infrastructure.Persistence.Configurations;
 
-public class ControlElementsItemConfiguration : IEntityTypeConfiguration<ControlElementsItemEntity>
+public class ControlElementsItemConfiguration : IEntityTypeConfiguration<ControlsElementsItemEntity>
 {
-    public void Configure(EntityTypeBuilder<ControlElementsItemEntity> builder)
+    public void Configure(EntityTypeBuilder<ControlsElementsItemEntity> builder)
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Content).IsRequired();

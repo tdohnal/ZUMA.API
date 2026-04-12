@@ -8,33 +8,50 @@ namespace ZUMA.CustomerService.Application.Consumers.ControlsElement;
 public class CreateControlsElementConsumer : IConsumer<SendCreateControlsElementRequest>
 {
     private readonly IControlsElementService _controlsElementService;
+    private readonly IUserService _userService;
     private readonly ILogger<CreateControlsElementConsumer> _logger;
 
     public CreateControlsElementConsumer(
         IControlsElementService controlsElementService,
+        IUserService userService,
         ILogger<CreateControlsElementConsumer> logger)
     {
         _controlsElementService = controlsElementService;
+        _userService = userService;
         _logger = logger;
     }
 
     public async Task Consume(ConsumeContext<SendCreateControlsElementRequest> context)
     {
         var msg = context.Message;
-        _logger.LogInformation("Creating ControlsElement: {ControlsElementname}", msg.ControlsElementname);
+        _logger.LogInformation("Creating ControlsElement: {Title}", msg.Title);
 
         try
         {
-            var ControlsElementEntity = new ControlsElementEntity
+            var user = await _userService.GetByPublicIdAsync(msg.OwnerUserPublicId);
+
+            if (user == null)
+                throw new NullReferenceException(nameof(user));
+
+            var controlsElementEntity = new ControlsElementEntity
             {
-                ControlsElementName = msg.ControlsElementname,
-                FullName = msg.FullName,
-                Email = msg.Email
+                OwnerUserId = user.Id,
+                ListType = msg.ListType,
+                Title = msg.Title,
+                ElementsPermission = msg.ElementsPermission,
+                Items = msg.Items.Select(x => new ControlsElementsItemEntity
+                {
+                    Content = x.Content,
+                    Created = x.Created,
+                    Deleted = x.Deleted,
+                    Metadata = x.Metadata,
+                    Updated = x.Updated,
+                }).ToList()
             };
 
-            var ControlsElement = await _controlsElementService.CreateAsync(ControlsElementEntity);
+            var controlsElement = await _controlsElementService.CreateAsync(controlsElementEntity);
 
-            if (ControlsElement == null)
+            if (controlsElement == null)
             {
                 await context.RespondAsync<SendControlsElementFailed>(new
                 {
@@ -48,19 +65,19 @@ public class CreateControlsElementConsumer : IConsumer<SendCreateControlsElement
             {
                 ControlsElement = new ControlsElementMessageModel
                 {
-                    PublicId = ControlsElement.PublicId,
-                    ControlsElementName = ControlsElement.ControlsElementName,
-                    Name = ControlsElement.FullName,
-                    Email = ControlsElement.Email,
-                    Created = ControlsElement.Created,
-                    Updated = ControlsElement.Updated,
-                    Deleted = ControlsElement.Deleted
+                    OwnerUserPublicId = msg.OwnerUserPublicId,
+                    ListType = controlsElement.ListType,
+                    PublicId = controlsElement.PublicId,
+                    Title = controlsElement.Title,
+                    Created = controlsElement.Created,
+                    Updated = controlsElement.Updated,
+                    Deleted = controlsElement.Deleted
                 }
             });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error occurred while creating ControlsElement: {ControlsElementname}", msg.ControlsElementname);
+            _logger.LogError(ex, "Error occurred while creating ControlsElement: {Title}", msg.Title);
 
             await context.RespondAsync<SendControlsElementFailed>(new
             {

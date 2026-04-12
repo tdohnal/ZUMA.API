@@ -12,6 +12,7 @@ public class ControlsElementsItemEntity : IAuditableEntities
     public DateTime? Updated { get; set; }
     public DateTime? Deleted { get; set; }
     public long ControlElementId { get; set; }
+    public ControlsElementEntity? ControlElement { get; set; }
     public required string Content { get; set; }
     public string? Metadata { get; set; }
 }
