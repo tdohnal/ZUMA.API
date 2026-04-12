@@ -3,7 +3,7 @@ using ZUMA.SharedKernel.Entities;
 
 namespace ZUMA.CustomerService.Domain.Entities;
 
-public class ControlElementsItemEntity : IAuditableEntities
+public class ControlsElementsItemEntity : IAuditableEntities
 {
     [Key]
     public long Id { get; set; }

@@ -1,6 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using ZUMA.CustomerService.Application.Configuration;
 using ZUMA.CustomerService.Domain.Interfaces;
 using ZUMA.CustomerService.Infrastructure.Persistence;
@@ -26,6 +24,13 @@ public static class DIContainer
         #region Registration 
 
         services.AddScoped<IRegistrationRepository, RegistrationRepository>();
+
+        #endregion
+
+        #region ControlElements 
+
+        services.AddScoped<IControlsElementRepository, ControlsElementRepository>();
+        services.AddScoped<IControlsElementsItemRepository, ControlsElementsItemRepository>();
 
         #endregion
 

@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using ZUMA.CustomerService.Domain.ValueObjects;
+using ZUMA.SharedKernel.Domain.ValueObjects.Customer.ControlsElement;
 using ZUMA.SharedKernel.Entities;
+using ZUMA.SharedKernel.Enums;
 
 namespace ZUMA.CustomerService.Domain.Entities;
 
-public class ControlElementEntity : IAuditableEntities
+public class ControlsElementEntity : IAuditableEntities
 {
     #region Base
 
@@ -23,14 +24,6 @@ public class ControlElementEntity : IAuditableEntities
 
     public required ListType ListType { get; set; }
 
-    public List<ControlElementsItemEntity> Items { get; set; } = new();
+    public List<ControlsElementsItemEntity> Items { get; set; } = new();
     public ElementsPermission ElementsPermission { get; set; } = new();
-}
-public enum ListType
-{
-    ShoppingList = 1,
-    Calendar = 2,
-    GiftList = 3,
-    VoteList = 4,
-    CustomList = 5
 }

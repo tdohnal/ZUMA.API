@@ -12,13 +12,22 @@ public static class DIContainer
 
         #region Registration 
 
-        services.AddScoped<IRegistrationService, RegistrationService>();
+        services.AddSingleton<IRegistrationService, RegistrationService>();
 
         #endregion
 
         #region User 
 
-        services.AddScoped<IUserService, UserService>();
+        services.AddSingleton<IUserService, UserService>();
+
+        #endregion
+
+        #region ControlsElement
+
+
+        services.AddSingleton<IControlsElementService, ControlsElementService>();
+
+        services.AddSingleton<IControlsElementsItemService, ControlsElementsItemService>();
 
         #endregion
 

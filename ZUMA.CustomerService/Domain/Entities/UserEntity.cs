@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using ZUMA.CustomerService.Domain.ValueObjects;
+using ZUMA.SharedKernel.Domain.ValueObjects.Customer.User;
 using ZUMA.SharedKernel.Entities;
 
 namespace ZUMA.CustomerService.Domain.Entities;
