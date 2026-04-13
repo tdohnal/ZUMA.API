@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using ZUMA.CustomerService.Domain.Entities;
 using ZUMA.CustomerService.Domain.Interfaces;
 using ZUMA.CustomerService.Infrastructure.Persistence;
@@ -21,5 +20,5 @@ internal class UserRepository : RepositoryBase<UserEntity>, IUserRepository
         _logger = logger;
     }
 
-    public async Task<UserEntity?> GetByEmailAsync(string email, CancellationToken cancellationToken = default) => await _dbSet.SingleOrDefaultAsync(x => x.Email == email, cancellationToken);
+    public async Task<UserEntity?> GetByEmailAsync(string email, CancellationToken cancellationToken = default) => await _dbSet.SingleOrDefaultAsync(x => x.Email == email && !x.Deleted.HasValue, cancellationToken);
 }
