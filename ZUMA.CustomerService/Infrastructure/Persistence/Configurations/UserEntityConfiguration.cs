@@ -53,6 +53,7 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<UserEntity>
 
         builder.HasIndex(u => u.Email)
             .IsUnique()
+            .HasFilter("\"Deleted\" IS NULL")
             .HasDatabaseName("IX_Users_Email_Unique");
 
         builder.OwnsOne(u => u.Address, addressBuilder =>
