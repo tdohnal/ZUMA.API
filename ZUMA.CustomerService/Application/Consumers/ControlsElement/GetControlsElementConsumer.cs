@@ -24,9 +24,9 @@ public class GetControlsElementConsumer : IConsumer<SendGetControlsElementsReque
 
         try
         {
-            var ControlsElements = await _controlsElementService.GetAllAsync();
+            var controlsElements = await _controlsElementService.GetAllAsync();
 
-            if (ControlsElements == null)
+            if (controlsElements == null)
             {
                 await context.RespondAsync<SendControlsElementFailed>(new
                 {
@@ -36,7 +36,7 @@ public class GetControlsElementConsumer : IConsumer<SendGetControlsElementsReque
                 return;
             }
 
-            var data = ControlsElements.Select(controlsElement => new ControlsElementMessageModel
+            var data = controlsElements.Select(controlsElement => new ControlsElementMessageModel
             {
                 Title = controlsElement.Title,
                 Created = controlsElement.Created,
@@ -49,7 +49,7 @@ public class GetControlsElementConsumer : IConsumer<SendGetControlsElementsReque
                     ControlElementPublicId = controlsElement.PublicId,
                     Created = x.Created,
                     Updated = controlsElement.Updated,
-                    PublicId = controlsElement.PublicId,
+                    PublicId = x.PublicId,
                     Metadata = x.Metadata,
                     Deleted = x.Deleted
                 }).ToList(),

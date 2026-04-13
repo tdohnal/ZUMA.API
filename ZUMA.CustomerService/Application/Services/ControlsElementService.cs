@@ -23,5 +23,4 @@ internal class ControlsElementService : ServiceBase<ControlsElementEntity>, ICon
         _logger = logger;
         _config = config;
     }
-
 }

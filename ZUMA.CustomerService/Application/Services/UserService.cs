@@ -127,7 +127,7 @@ internal class UserService : ServiceBase<UserEntity>, IUserService
     {
         var claims = new List<Claim>
     {
-        new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
+        new Claim(ClaimTypes.NameIdentifier, user.PublicId.ToString()),
         new Claim(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)

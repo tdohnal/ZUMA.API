@@ -22,7 +22,7 @@ internal class ControlsElementRepository : RepositoryBase<ControlsElementEntity>
 
     protected override IQueryable<ControlsElementEntity> ApplyIncludes(IQueryable<ControlsElementEntity> query)
     {
-        return query.Include(x => x.OwnerUserId)
+        return query.Include(x => x.OwnerUser)
                     .Include(x => x.Items);
     }
 }

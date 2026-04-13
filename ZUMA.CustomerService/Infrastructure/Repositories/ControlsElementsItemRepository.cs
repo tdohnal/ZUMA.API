@@ -22,6 +22,6 @@ internal class ControlsElementsItemRepository : RepositoryBase<ControlsElementsI
 
     protected override IQueryable<ControlsElementsItemEntity> ApplyIncludes(IQueryable<ControlsElementsItemEntity> query)
     {
-        return query.Include(x => x.ControlElementId);
+        return query.Include(x => x.ControlElement);
     }
 }
