@@ -36,7 +36,7 @@
 	  <PackageReference Include="Serilog.Extensions.Hosting" Version="10.0.0" />
 	  <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
 	  <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.17.0" />
-	  <PackageReference Include="ZUMA.ArchitectureAnalyzer" Version="2026.4.13.31" />
-	  <PackageReference Include="ZUMA.SharedKernel" Version="2026.4.13.31" />
+	  <PackageReference Include="ZUMA.ArchitectureAnalyzer" Version="2026.4.13.32" />
+	  <PackageReference Include="ZUMA.SharedKernel" Version="2026.4.13.32" />
   </ItemGroup>
 </Project>
