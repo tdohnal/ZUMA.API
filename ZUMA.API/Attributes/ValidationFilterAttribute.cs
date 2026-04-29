@@ -13,7 +13,7 @@ public class ValidationFilterAttribute : ActionFilterAttribute
     {
         if (!context.ModelState.IsValid)
         {
-            var errors = context.ModelState
+            Dictionary<string, string[]> errors = context.ModelState
                 .Where(ms => ms.Value?.Errors.Count > 0)
                 .ToDictionary(
                     ms => ms.Key,

@@ -1,6 +1,6 @@
 using Microsoft.IO;
 using System.Text;
-using ZUMA.SharedKernel.Utils;
+using ZUMA.SharedKernel.Application.Utils;
 
 namespace ZUMA.API.Middleware;
 
@@ -25,8 +25,8 @@ public class RequestResponseLoggingMiddleware
     {
         await LogRequestAsync(context);
 
-        var originalBodyStream = context.Response.Body;
-        using var responseBody = _recyclableMemoryStreamManager.GetStream();
+        Stream originalBodyStream = context.Response.Body;
+        using RecyclableMemoryStream responseBody = _recyclableMemoryStreamManager.GetStream();
         context.Response.Body = responseBody;
 
         try
@@ -48,11 +48,11 @@ public class RequestResponseLoggingMiddleware
         // Povolí opětovné čtení request body
         context.Request.EnableBuffering();
 
-        var request = context.Request;
-        var body = await ReadStreamAsync(request.Body);
+        HttpRequest request = context.Request;
+        string body = await ReadStreamAsync(request.Body);
         request.Body.Position = 0;
 
-        var fullUrl = GetFullUrl(context);
+        string fullUrl = GetFullUrl(context);
 
         var logData = new
         {
@@ -69,19 +69,19 @@ public class RequestResponseLoggingMiddleware
             Host = request.Host.Host
         };
 
-        using var scope = _logger.BeginMessageScope(context.TraceIdentifier, identificationData: logData);
+        using IDisposable? scope = _logger.BeginMessageScope(context.TraceIdentifier, identificationData: logData);
         _logger.LogInformation($"{logData.Method} HTTP Request - {logData.Path}");
     }
 
     private async Task LogResponseAsync(HttpContext context)
     {
-        var response = context.Response;
+        HttpResponse response = context.Response;
         response.Body.Seek(0, SeekOrigin.Begin);
 
-        var body = await ReadStreamAsync(response.Body);
+        string body = await ReadStreamAsync(response.Body);
         response.Body.Seek(0, SeekOrigin.Begin);
 
-        var fullUrl = GetFullUrl(context);
+        string fullUrl = GetFullUrl(context);
 
         var logData = new
         {
@@ -95,7 +95,7 @@ public class RequestResponseLoggingMiddleware
             Body = TrySafelyParseJson(body),
         };
 
-        var logLevel = response.StatusCode switch
+        LogLevel logLevel = response.StatusCode switch
         {
             >= 200 and < 300 => LogLevel.Information,
             >= 300 and < 400 => LogLevel.Information,
@@ -103,7 +103,7 @@ public class RequestResponseLoggingMiddleware
             _ => LogLevel.Error
         };
 
-        using var scope = _logger.BeginMessageScope(context.TraceIdentifier, identificationData: logData);
+        using IDisposable? scope = _logger.BeginMessageScope(context.TraceIdentifier, identificationData: logData);
 
         _logger.LogInformation($"{logData.Method} HTTP Response ({response.StatusCode}) - {logData.Path}");
     }
@@ -113,12 +113,12 @@ public class RequestResponseLoggingMiddleware
     /// </summary>
     private static string GetFullUrl(HttpContext context)
     {
-        var request = context.Request;
-        var scheme = request.Scheme; // http nebo https
-        var host = request.Host.ToString(); // localhost:5044
-        var pathBase = request.PathBase.Value; // prázdné nebo /api
-        var path = request.Path.Value; // /user/1
-        var queryString = request.QueryString.Value; // ?page=1
+        HttpRequest request = context.Request;
+        string scheme = request.Scheme; // http nebo https
+        string host = request.Host.ToString(); // localhost:5044
+        string? pathBase = request.PathBase.Value; // prázdné nebo /api
+        string? path = request.Path.Value; // /user/1
+        string? queryString = request.QueryString.Value; // ?page=1
 
         return $"{scheme}://{host}{pathBase}{path}{queryString}";
     }
@@ -126,7 +126,7 @@ public class RequestResponseLoggingMiddleware
     private static async Task<string> ReadStreamAsync(Stream stream)
     {
         stream.Seek(0, SeekOrigin.Begin);
-        using var reader = new StreamReader(stream, Encoding.UTF8, leaveOpen: true);
+        using StreamReader reader = new(stream, Encoding.UTF8, leaveOpen: true);
         return await reader.ReadToEndAsync();
     }
 

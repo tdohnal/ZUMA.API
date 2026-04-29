@@ -15,10 +15,7 @@
 		<PackageReference Include="AspNetCore.HealthChecks.Network" Version="9.0.0" />
 		<PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
 		<PackageReference Include="DotNetEnv" Version="3.1.1" />
-		<PackageReference Include="MailKit" Version="4.15.1" />
-		<PackageReference Include="MassTransit" Version="8.2.5" />
-		<PackageReference Include="MassTransit.RabbitMQ" Version="8.2.5" />
-		<PackageReference Include="MassTransit.Quartz" Version="8.2.5" />
+		<PackageReference Include="MailKit" Version="4.16.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5">
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		  <PrivateAssets>all</PrivateAssets>
@@ -26,15 +23,12 @@
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.3" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="10.0.5" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
-		<PackageReference Include="MimeKit" Version="4.15.1" />
-		<PackageReference Include="Serilog" Version="4.3.1" />
+		<PackageReference Include="MimeKit" Version="4.16.0" />
 		<PackageReference Include="Serilog.Extensions.Hosting" Version="10.0.0" />
-		<PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
-		<PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
-		<PackageReference Include="ZUMA.ArchitectureAnalyzer" Version="2026.4.29.36">
+		<PackageReference Include="ZUMA.ArchitectureAnalyzer" Version="2026.4.29.38">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
-		<PackageReference Include="ZUMA.SharedKernel" Version="2026.4.29.36" />
+		<PackageReference Include="ZUMA.SharedKernel" Version="2026.4.29.38" />
 	</ItemGroup>
 </Project>

@@ -1,6 +1,6 @@
 ﻿using ZUMA.CommunicationService.Application.Services;
 using ZUMA.CommunicationService.Domain.Interfaces;
-using ZUMA.SharedKernel.Configurration;
+using ZUMA.SharedKernel.Application.Configuration;
 
 namespace ZUMA.CommunicationService.Application.Configuration;
 
@@ -8,7 +8,7 @@ public static class DIContainer
 {
     public static void AddApplication(this IServiceCollection services, IConfiguration configuration)
     {
-        services.ConfigureBaseServices(configuration);
+        services.ConfigureApplicationBaseServices(configuration);
 
         #region Email 
 

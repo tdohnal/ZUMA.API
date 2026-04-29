@@ -6,7 +6,7 @@ public class AuthorizeCheckOperationFilter : IOperationFilter
 {
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
-        var hasAuthorize = context.MethodInfo.DeclaringType.GetCustomAttributes(true).OfType<AuthorizeAttribute>().Any() ||
+        bool hasAuthorize = context.MethodInfo.DeclaringType.GetCustomAttributes(true).OfType<AuthorizeAttribute>().Any() ||
                            context.MethodInfo.GetCustomAttributes(true).OfType<AuthorizeAttribute>().Any();
 
         if (hasAuthorize)
@@ -14,8 +14,8 @@ public class AuthorizeCheckOperationFilter : IOperationFilter
             operation.Responses.TryAdd("401", new OpenApiResponse { Description = "Unauthorized" });
             operation.Responses.TryAdd("403", new OpenApiResponse { Description = "Forbidden" });
 
-            operation.Security = new List<OpenApiSecurityRequirement>
-            {
+            operation.Security =
+            [
                 new OpenApiSecurityRequirement
                 {
                     [
@@ -27,7 +27,7 @@ public class AuthorizeCheckOperationFilter : IOperationFilter
                         }
                     ] = new string[] { }
                 }
-            };
+            ];
         }
     }
 }

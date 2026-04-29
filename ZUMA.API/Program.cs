@@ -3,24 +3,26 @@ using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using ZUMA.API.Configuration;
 using ZUMA.API.Extensions;
 using ZUMA.API.Middleware;
-using ZUMA.SharedKernel.Configurration;
+using ZUMA.SharedKernel.Application.Configuration;
+using ZUMA.SharedKernel.Infrastructure.Extensions;
 
-// Vyčištění claim mapování hned na začátku
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 Env.TraversePath().Load();
 builder.Configuration.AddEnvironmentVariables();
 
 #region Serilog
 
-builder.AddZumaSerilog();
+builder.SetZumaLoggerConfigurationSerilog();
+builder.Services.AddSerilog();
 
 #endregion
 
@@ -63,14 +65,14 @@ builder.Services.AddApiVersioning(options =>
 
 #region Infrastructure
 
-builder.Services.AddZumaMassTransit(builder.Configuration);
+builder.Services.AddZumaMassTransitGateway(builder.Configuration);
 
 // Externí DI kontejnery
-DIContainer.ConfigureBaseServices(builder.Services, builder.Configuration);
+DIContainer.ConfigureApplicationBaseServices(builder.Services, builder.Configuration);
 ApiDiContainer.ConfigureServices(builder.Services);
 
 // Health Checks
-var connectionString = builder.Configuration.GetConnectionString("DbConnection");
+string? connectionString = builder.Configuration.GetConnectionString("DbConnection");
 builder.Services.AddHealthChecks()
     .AddNpgSql(connectionString!, name: "PostgreSQL Database")
     .AddTcpHealthCheck(opt => opt.AddHost("communication-service", 8081), name: "Communication Service")
@@ -110,7 +112,7 @@ builder.Services.AddZumaPolly();
 
 #endregion
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 #region Middleware Pipeline
 

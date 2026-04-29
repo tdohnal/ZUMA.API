@@ -1,6 +1,7 @@
 ﻿using MassTransit;
+using ZUMA.CustomerService.Domain.Entities;
 using ZUMA.CustomerService.Domain.Interfaces;
-using ZUMA.SharedKernel.MessagingContracts.Contracts.ControlsElement;
+using ZUMA.SharedKernel.Domain.MessagingContracts.Contracts.ControlsElement;
 
 namespace ZUMA.CustomerService.Application.Consumers.ControlsElement;
 
@@ -24,7 +25,7 @@ public class GetControlsElementConsumer : IConsumer<SendGetControlsElementsReque
 
         try
         {
-            var controlsElements = await _controlsElementService.GetAllAsync();
+            IList<ControlsElementEntity> controlsElements = await _controlsElementService.GetAllAsync();
 
             if (controlsElements == null)
             {

@@ -1,6 +1,7 @@
 using MassTransit;
+using ZUMA.CustomerService.Domain.Entities;
 using ZUMA.CustomerService.Domain.Interfaces;
-using ZUMA.SharedKernel.MessagingContracts.Contracts.Users;
+using ZUMA.SharedKernel.Domain.MessagingContracts.Contracts.Users;
 
 namespace ZUMA.CustomerService.Application.Consumers.Users;
 
@@ -19,12 +20,12 @@ public class UpdateUserConsumer : IConsumer<SendUpdateUserRequest>
 
     public async Task Consume(ConsumeContext<SendUpdateUserRequest> context)
     {
-        var msg = context.Message;
+        SendUpdateUserRequest msg = context.Message;
         _logger.LogInformation("Updating user: {PublicId}", msg.PublicId);
 
         try
         {
-            var existingUser = await _userService.GetByPublicIdAsync(msg.PublicId);
+            UserEntity? existingUser = await _userService.GetByPublicIdAsync(msg.PublicId);
 
             if (existingUser == null)
             {
@@ -43,7 +44,7 @@ public class UpdateUserConsumer : IConsumer<SendUpdateUserRequest>
             existingUser.FullName = msg.FullName;
             existingUser.Email = msg.Email;
 
-            var user = await _userService.UpdateAsync(existingUser);
+            UserEntity? user = await _userService.UpdateAsync(existingUser);
 
             if (user == null)
             {

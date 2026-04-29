@@ -4,9 +4,9 @@ using System.Security.Claims;
 using System.Text;
 using ZUMA.CustomerService.Domain.Entities;
 using ZUMA.CustomerService.Domain.Interfaces;
-using ZUMA.SharedKernel.MessagingContracts.Events;
-using ZUMA.SharedKernel.Services;
-using ZUMA.SharedKernel.Utils;
+using ZUMA.SharedKernel.Application.Services;
+using ZUMA.SharedKernel.Application.Utils;
+using ZUMA.SharedKernel.Domain.MessagingContracts.Events;
 
 namespace ZUMA.CustomerService.Application.Services;
 
@@ -45,7 +45,7 @@ internal class UserService : ServiceBase<UserEntity>, IUserService
 
         try
         {
-            var ret = await _userRepository.GetByEmailAsync(email, cancellationToken);
+            UserEntity? ret = await _userRepository.GetByEmailAsync(email, cancellationToken);
             return ret?.Id;
         }
         catch (Exception ex)
@@ -62,7 +62,7 @@ internal class UserService : ServiceBase<UserEntity>, IUserService
 
         try
         {
-            var user = await _userRepository.GetByEmailAsync(email, cancellationToken);
+            UserEntity? user = await _userRepository.GetByEmailAsync(email, cancellationToken);
 
             if (user == null) return new VerificationResult("User not found");
 
@@ -70,7 +70,7 @@ internal class UserService : ServiceBase<UserEntity>, IUserService
 
             if (user.AuthCodeExpiration < DateTime.UtcNow) return new VerificationResult("Authorization code expired");
 
-            var token = CreateJwtToken(user);
+            string token = CreateJwtToken(user);
 
             user.AuthCode = null;
             user.AuthCodeExpiration = null;
@@ -125,18 +125,18 @@ internal class UserService : ServiceBase<UserEntity>, IUserService
     /// </summary>
     private string CreateJwtToken(UserEntity user)
     {
-        var claims = new List<Claim>
-    {
-        new Claim(ClaimTypes.NameIdentifier, user.PublicId.ToString()),
-        new Claim(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
-        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-        new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
-    };
+        List<Claim> claims =
+        [
+        new(ClaimTypes.NameIdentifier, user.PublicId.ToString()),
+        new(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty),
+        new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+        new(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
+    ];
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        SymmetricSecurityKey key = new(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
+        SigningCredentials creds = new(key, SecurityAlgorithms.HmacSha256);
 
-        var token = new JwtSecurityToken(
+        JwtSecurityToken token = new(
             issuer: _config["Jwt:Issuer"],
             audience: _config["Jwt:Audience"],
             claims: claims,

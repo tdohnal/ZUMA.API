@@ -1,6 +1,6 @@
 ﻿using ZUMA.API.REST.DTOs.ControlElementsItem;
+using ZUMA.SharedKernel.Domain.Enums;
 using ZUMA.SharedKernel.Domain.ValueObjects.Customer.ControlsElement;
-using ZUMA.SharedKernel.Enums;
 
 namespace ZUMA.API.REST.DTOs.ControlsElement
 {
@@ -21,7 +21,7 @@ namespace ZUMA.API.REST.DTOs.ControlsElement
 
         public required ListType ListType { get; set; }
 
-        public List<ControlsElementsItemDto> Items { get; set; } = new();
+        public List<ControlsElementsItemDto> Items { get; set; } = [];
         public ElementsPermission ElementsPermission { get; set; } = new();
     }
 }

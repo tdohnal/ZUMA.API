@@ -1,5 +1,5 @@
 ﻿using ZUMA.CustomerService.Domain.Entities;
-using ZUMA.SharedKernel.Repositories;
+using ZUMA.SharedKernel.Domain.Interfaces;
 
 namespace ZUMA.CustomerService.Domain.Interfaces;
 

@@ -1,6 +1,7 @@
 ﻿using MassTransit;
+using ZUMA.CustomerService.Domain.Entities;
 using ZUMA.CustomerService.Domain.Interfaces;
-using ZUMA.SharedKernel.MessagingContracts.Contracts.Users;
+using ZUMA.SharedKernel.Domain.MessagingContracts.Contracts.Users;
 
 namespace ZUMA.CustomerService.Application.Consumers.Users;
 
@@ -24,7 +25,7 @@ public class GetUsersConsumer : IConsumer<SendGetUsersRequest>
 
         try
         {
-            var users = await _userService.GetAllAsync();
+            IList<UserEntity> users = await _userService.GetAllAsync();
 
             if (users == null)
             {

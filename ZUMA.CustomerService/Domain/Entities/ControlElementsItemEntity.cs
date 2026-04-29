@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using ZUMA.SharedKernel.Entities;
+using ZUMA.SharedKernel.Domain.Interfaces;
 
 namespace ZUMA.CustomerService.Domain.Entities;
 

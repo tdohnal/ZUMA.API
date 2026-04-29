@@ -1,5 +1,5 @@
 ﻿using ZUMA.CommunicationService.Domain.Entities;
-using ZUMA.SharedKernel.Repositories;
+using ZUMA.SharedKernel.Domain.Interfaces;
 
 namespace ZUMA.CommunicationService.Domain.Interfaces;
 

@@ -18,12 +18,12 @@ public static class EmailTemplateHelper
 
         if (!File.Exists(fullPath))
         {
-            return placeholders.TryGetValue("Body", out var b) ? b : "Empty Content";
+            return placeholders.TryGetValue("Body", out string? b) ? b : "Empty Content";
         }
 
         string content = await File.ReadAllTextAsync(fullPath);
 
-        foreach (var item in placeholders)
+        foreach (KeyValuePair<string, string> item in placeholders)
         {
             content = content.Replace($"{{{{{item.Key}}}}}", item.Value);
         }

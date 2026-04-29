@@ -1,7 +1,7 @@
 ﻿using MassTransit;
 using ZUMA.CustomerService.Domain.Entities;
 using ZUMA.CustomerService.Domain.Interfaces;
-using ZUMA.SharedKernel.MessagingContracts.Contracts.Authorization;
+using ZUMA.SharedKernel.Domain.MessagingContracts.Contracts.Authorization;
 
 namespace ZUMA.CustomerService.Application.Consumers;
 
@@ -25,7 +25,7 @@ public class RegistrationCreateConsumer : IConsumer<SendRegistrationCreateReques
 
         try
         {
-            var newReg = new RegistrationEntity
+            RegistrationEntity newReg = new()
             {
                 Created = DateTime.UtcNow,
                 User = new UserEntity

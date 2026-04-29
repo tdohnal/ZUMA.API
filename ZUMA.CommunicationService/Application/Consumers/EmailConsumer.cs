@@ -1,8 +1,8 @@
 ﻿using MassTransit;
 using ZUMA.CommunicationService.Domain.Entities;
 using ZUMA.CommunicationService.Domain.Interfaces;
-using ZUMA.SharedKernel.MessagingContracts.Events;
-using ZUMA.SharedKernel.Utils;
+using ZUMA.SharedKernel.Application.Utils;
+using ZUMA.SharedKernel.Domain.MessagingContracts.Events;
 
 namespace ZUMA.CommunicationService.Application.Consumers;
 
@@ -38,5 +38,6 @@ public class EmailConsumer : IConsumer<CreateEmailEvent>
             Subject = msg.Subject,
             Recipient = msg.Email
         });
+
     }
 }

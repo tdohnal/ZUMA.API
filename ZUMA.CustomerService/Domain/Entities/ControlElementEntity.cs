@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using ZUMA.SharedKernel.Domain.Enums;
+using ZUMA.SharedKernel.Domain.Interfaces;
 using ZUMA.SharedKernel.Domain.ValueObjects.Customer.ControlsElement;
-using ZUMA.SharedKernel.Entities;
-using ZUMA.SharedKernel.Enums;
 
 namespace ZUMA.CustomerService.Domain.Entities;
 
@@ -25,6 +25,6 @@ public class ControlsElementEntity : IAuditableEntities
 
     public required ListType ListType { get; set; }
 
-    public List<ControlsElementsItemEntity> Items { get; set; } = new();
+    public List<ControlsElementsItemEntity> Items { get; set; } = [];
     public ElementsPermission ElementsPermission { get; set; } = new();
 }

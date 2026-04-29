@@ -1,7 +1,7 @@
 ﻿using MassTransit;
 using ZUMA.CustomerService.Application.Utils;
 using ZUMA.CustomerService.Domain.Interfaces;
-using ZUMA.SharedKernel.MessagingContracts.Events;
+using ZUMA.SharedKernel.Domain.MessagingContracts.Events;
 
 namespace ZUMA.CustomerService.Application.Services;
 
@@ -20,8 +20,8 @@ internal class EventPublisherService : IEventPublisherService
     {
         _logger.LogInformation("Publishing UserRegistered event for email: {Email}", createEmailEvent.Email);
 
-        var placeholders = new Dictionary<string, string>
-    {
+        Dictionary<string, string> placeholders = new()
+        {
         { "Name", createEmailEvent.FullName },
         { "Subject", createEmailEvent.Subject },
         { "Body", createEmailEvent.Body ?? "" },

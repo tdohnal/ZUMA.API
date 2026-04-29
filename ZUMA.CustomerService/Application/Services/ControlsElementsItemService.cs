@@ -1,6 +1,6 @@
 ﻿using ZUMA.CustomerService.Domain.Entities;
 using ZUMA.CustomerService.Domain.Interfaces;
-using ZUMA.SharedKernel.Services;
+using ZUMA.SharedKernel.Application.Services;
 
 namespace ZUMA.CustomerService.Application.Services;
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MassTransit;
+using Microsoft.EntityFrameworkCore;
 using ZUMA.CommunicationService.Domain.Entities;
 
 public class CommunicationDbContext : Microsoft.EntityFrameworkCore.DbContext
@@ -21,5 +22,9 @@ public class CommunicationDbContext : Microsoft.EntityFrameworkCore.DbContext
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(DbContext).Assembly);
 
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.AddInboxStateEntity();
+        modelBuilder.AddOutboxMessageEntity();
+        modelBuilder.AddOutboxStateEntity();
     }
 }

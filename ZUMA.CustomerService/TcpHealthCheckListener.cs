@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
+using System.Net.Sockets;
 
 namespace ZUMA.CustomerService;
 
@@ -14,13 +15,13 @@ public class TcpHealthCheckListener : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var listener = new System.Net.Sockets.TcpListener(System.Net.IPAddress.Any, _port);
+        TcpListener listener = new(System.Net.IPAddress.Any, _port);
         listener.Start();
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            using var client = await listener.AcceptTcpClientAsync(stoppingToken);
-            var report = await _healthCheckService.CheckHealthAsync(stoppingToken);
+            using TcpClient client = await listener.AcceptTcpClientAsync(stoppingToken);
+            HealthReport report = await _healthCheckService.CheckHealthAsync(stoppingToken);
 
             if (report.Status == HealthStatus.Healthy)
             {

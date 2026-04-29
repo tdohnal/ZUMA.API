@@ -7,11 +7,11 @@ public static class SwaggerExtensions
 {
     public static IServiceCollection AddZumaSwagger(this IServiceCollection services)
     {
-        var deploymentVersion = Assembly.GetEntryAssembly()?.GetName().Version?.ToString() ?? "unknown";
+        string deploymentVersion = Assembly.GetEntryAssembly()?.GetName().Version?.ToString() ?? "unknown";
 
         return services.AddSwaggerGen(options =>
         {
-            var apiInfo = new OpenApiInfo
+            OpenApiInfo apiInfo = new()
             {
                 Title = "ZUMA API",
                 Version = "v1",
@@ -34,7 +34,7 @@ public static class SwaggerExtensions
 
             options.OperationFilter<AuthorizeCheckOperationFilter>();
 
-            var xmlFile = Path.Combine(AppContext.BaseDirectory, "ZUMA.API.xml");
+            string xmlFile = Path.Combine(AppContext.BaseDirectory, "ZUMA.API.xml");
             if (File.Exists(xmlFile)) options.IncludeXmlComments(xmlFile);
         });
     }

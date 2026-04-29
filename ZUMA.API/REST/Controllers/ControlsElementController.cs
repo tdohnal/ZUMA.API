@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ZUMA.API.REST.Controllers.Base;
 using ZUMA.API.REST.DTOs.ControlsElement;
 using ZUMA.API.REST.Mappers;
-using ZUMA.SharedKernel.MessagingContracts.Contracts.ControlsElement;
+using ZUMA.SharedKernel.Domain.MessagingContracts.Contracts.ControlsElement;
 
 namespace ZUMA.API.REST.Controllers;
 
@@ -29,7 +29,7 @@ public class ControlsElementController : AuthorizedBaseController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetControlsElementByIdAsync(Guid publicId, CancellationToken cancellationToken = default)
     {
-        var result = await _messageService.SendAsync<SendGetControlsElementByIdRequest, SendGetControlsElementByIdSuccess, SendControlsElementFailed>(
+        BusinessResult<SendGetControlsElementByIdSuccess, SendControlsElementFailed> result = await _messageService.SendAsync<SendGetControlsElementByIdRequest, SendGetControlsElementByIdSuccess, SendControlsElementFailed>(
             new SendGetControlsElementByIdRequest { PublicId = publicId },
             cancellationToken);
 
@@ -44,7 +44,7 @@ public class ControlsElementController : AuthorizedBaseController
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ControlsElementDto>))]
     public async Task<IActionResult> GetControlsElementsAsync(CancellationToken cancellationToken = default)
     {
-        var result = await _messageService.SendAsync<SendGetControlsElementsRequest, SendGetControlsElementsSuccess, SendControlsElementFailed>(
+        BusinessResult<SendGetControlsElementsSuccess, SendControlsElementFailed> result = await _messageService.SendAsync<SendGetControlsElementsRequest, SendGetControlsElementsSuccess, SendControlsElementFailed>(
             new SendGetControlsElementsRequest(),
             cancellationToken);
 
@@ -61,10 +61,10 @@ public class ControlsElementController : AuthorizedBaseController
     public async Task<IActionResult> AddControlsElementAsync([FromBody] ControlsElementCreateRequest request, CancellationToken cancellationToken = default)
     {
         // Namapujeme DTO na Message a ručně dohodíme OwnerId z tokenu
-        var sendRequest = _mapper.MapCreateRequestToSendRequest(request, AuthorizedUserId);
+        SendCreateControlsElementRequest sendRequest = _mapper.MapCreateRequestToSendRequest(request, AuthorizedUserId);
         sendRequest.OwnerUserPublicId = AuthorizedUserId;
 
-        var result = await _messageService.SendAsync<SendCreateControlsElementRequest, SendCreateControlsElementSuccess, SendControlsElementFailed>(
+        BusinessResult<SendCreateControlsElementSuccess, SendControlsElementFailed> result = await _messageService.SendAsync<SendCreateControlsElementRequest, SendCreateControlsElementSuccess, SendControlsElementFailed>(
             sendRequest,
             cancellationToken);
 
@@ -81,10 +81,10 @@ public class ControlsElementController : AuthorizedBaseController
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public async Task<IActionResult> UpdateControlsElementAsync(Guid publicId, [FromBody] ControlsElementDto request, CancellationToken cancellationToken = default)
     {
-        var sendRequest = _mapper.MapUpdateRequestToSendRequest(request);
+        SendUpdateControlsElementRequest sendRequest = _mapper.MapUpdateRequestToSendRequest(request);
         sendRequest.PublicId = publicId;
 
-        var result = await _messageService.SendAsync<SendUpdateControlsElementRequest, SendUpdateControlsElementSuccess, SendControlsElementFailed>(
+        BusinessResult<SendUpdateControlsElementSuccess, SendControlsElementFailed> result = await _messageService.SendAsync<SendUpdateControlsElementRequest, SendUpdateControlsElementSuccess, SendControlsElementFailed>(
             sendRequest,
             cancellationToken);
 
@@ -100,7 +100,7 @@ public class ControlsElementController : AuthorizedBaseController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteControlsElementAsync(Guid publicId, CancellationToken cancellationToken = default)
     {
-        var result = await _messageService.SendAsync<SendDeleteControlsElementRequest, SendDeleteControlsElementSuccess, SendControlsElementFailed>(
+        BusinessResult<SendDeleteControlsElementSuccess, SendControlsElementFailed> result = await _messageService.SendAsync<SendDeleteControlsElementRequest, SendDeleteControlsElementSuccess, SendControlsElementFailed>(
             new SendDeleteControlsElementRequest { PublicId = publicId },
             cancellationToken);
 

@@ -1,7 +1,7 @@
 using MassTransit;
 using ZUMA.CustomerService.Domain.Entities;
 using ZUMA.CustomerService.Domain.Interfaces;
-using ZUMA.SharedKernel.MessagingContracts.Contracts.ControlsElement;
+using ZUMA.SharedKernel.Domain.MessagingContracts.Contracts.ControlsElement;
 
 namespace ZUMA.CustomerService.Application.Consumers.ControlsElement;
 
@@ -23,17 +23,17 @@ public class CreateControlsElementConsumer : IConsumer<SendCreateControlsElement
 
     public async Task Consume(ConsumeContext<SendCreateControlsElementRequest> context)
     {
-        var msg = context.Message;
+        SendCreateControlsElementRequest msg = context.Message;
         _logger.LogInformation("Creating ControlsElement: {Title}", msg.Title);
 
         try
         {
-            var user = await _userService.GetByPublicIdAsync(msg.OwnerUserPublicId);
+            UserEntity? user = await _userService.GetByPublicIdAsync(msg.OwnerUserPublicId);
 
             if (user == null)
                 throw new NullReferenceException(nameof(user));
 
-            var controlsElementEntity = new ControlsElementEntity
+            ControlsElementEntity controlsElementEntity = new()
             {
                 OwnerUserId = user.Id,
                 ListType = msg.ListType,
@@ -49,7 +49,7 @@ public class CreateControlsElementConsumer : IConsumer<SendCreateControlsElement
                 }).ToList()
             };
 
-            var controlsElement = await _controlsElementService.CreateAsync(controlsElementEntity);
+            ControlsElementEntity? controlsElement = await _controlsElementService.CreateAsync(controlsElementEntity);
 
             if (controlsElement == null)
             {

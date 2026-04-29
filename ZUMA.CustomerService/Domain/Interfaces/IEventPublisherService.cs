@@ -1,4 +1,4 @@
-﻿using ZUMA.SharedKernel.MessagingContracts.Events;
+﻿using ZUMA.SharedKernel.Domain.MessagingContracts.Events;
 
 namespace ZUMA.CustomerService.Domain.Interfaces;
 

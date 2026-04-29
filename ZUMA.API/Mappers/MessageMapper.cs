@@ -4,9 +4,9 @@ using ZUMA.API.REST.DTOs.Authorization.Responses;
 using ZUMA.API.REST.DTOs.ControlsElement;
 using ZUMA.API.REST.DTOs.Registration.Requests;
 using ZUMA.API.REST.DTOs.User;
-using ZUMA.SharedKernel.MessagingContracts.Contracts.Authorization;
-using ZUMA.SharedKernel.MessagingContracts.Contracts.ControlsElement;
-using ZUMA.SharedKernel.MessagingContracts.Contracts.Users;
+using ZUMA.SharedKernel.Domain.MessagingContracts.Contracts.Authorization;
+using ZUMA.SharedKernel.Domain.MessagingContracts.Contracts.ControlsElement;
+using ZUMA.SharedKernel.Domain.MessagingContracts.Contracts.Users;
 
 namespace ZUMA.API.REST.Mappers;
 
@@ -20,7 +20,7 @@ public partial class MessageMapper
     private partial List<UserDto> MapUserList(List<UserMessageModel> users);
     public List<UserDto> MapSendGetUsersSuccessToUserDto(SendGetUsersSuccess success)
     {
-        if (success?.User == null) return new List<UserDto>();
+        if (success?.User == null) return [];
 
         return MapUserList(success.User);
     }
@@ -63,7 +63,7 @@ public partial class MessageMapper
 
     public List<ControlsElementDto> MapSendGetControlsElementsSuccessToDtoList(SendGetControlsElementsSuccess success)
     {
-        return success?.ControlsElement == null ? new List<ControlsElementDto>() : MapControlsElementList(success.ControlsElement);
+        return success?.ControlsElement == null ? [] : MapControlsElementList(success.ControlsElement);
     }
 
     public ControlsElementDto MapSendGetControlsElementByIdSuccessToDto(SendGetControlsElementByIdSuccess success) =>

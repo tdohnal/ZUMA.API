@@ -1,6 +1,6 @@
 ﻿using MassTransit;
 using ZUMA.CustomerService.Domain.Interfaces;
-using ZUMA.SharedKernel.MessagingContracts.Contracts.Authorization;
+using ZUMA.SharedKernel.Domain.MessagingContracts.Contracts.Authorization;
 
 namespace ZUMA.CustomerService.Application.Consumers;
 
@@ -19,12 +19,12 @@ public class AuthorizeUserConsumer : IConsumer<SendAuthorizeUserRequest>
 
     public async Task Consume(ConsumeContext<SendAuthorizeUserRequest> context)
     {
-        var msg = context.Message;
+        SendAuthorizeUserRequest msg = context.Message;
         _logger.LogInformation("Processing registration request for email: {Email}", msg.Email);
 
         try
         {
-            var id = await _userService.GetIdByEmailAsync(msg.Email);
+            long? id = await _userService.GetIdByEmailAsync(msg.Email);
 
             if (id == null)
             {

@@ -8,9 +8,9 @@ public static class SerilogExtensions
 {
     public static void AddZumaSerilog(this IHostApplicationBuilder builder)
     {
-        var assemblyName = Assembly.GetEntryAssembly()?.GetName();
-        var serviceName = assemblyName?.Name;
-        var version = assemblyName?.Version?.ToString();
+        AssemblyName? assemblyName = Assembly.GetEntryAssembly()?.GetName();
+        string? serviceName = assemblyName?.Name;
+        string? version = assemblyName?.Version?.ToString();
 
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()

@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using ZUMA.CommunicationService.Domain.Entities;
 using ZUMA.CommunicationService.Domain.Interfaces;
-using ZUMA.SharedKernel.Repositories;
+using ZUMA.SharedKernel.Infrastructure.Repositories;
 
 namespace ZUMA.CommunicationService.Infrastructure.Repositories;
 

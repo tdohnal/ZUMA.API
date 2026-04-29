@@ -14,14 +14,14 @@ public class SmtpEmailClient(IOptions<SmtpOptions> options) : IEmailClient
 
     public async Task<bool> SendAsync(EmailEntity message, CancellationToken ct)
     {
-        var email = new MimeMessage();
+        MimeMessage email = new();
         email.From.Add(new MailboxAddress(_options.SenderName, _options.SenderEmail));
         email.To.Add(new MailboxAddress(message.Recipient, message.Recipient));
 
         // Globální doporučení: Nepoužívej v předmětu hranaté závorky []
         email.Subject = message.Subject;
 
-        var bodyBuilder = new BodyBuilder
+        BodyBuilder bodyBuilder = new()
         {
             HtmlBody = message.Body,
             // KLÍČOVÉ PRO DORUČITELNOST: Přidání čistě textové verze
@@ -43,7 +43,7 @@ public class SmtpEmailClient(IOptions<SmtpOptions> options) : IEmailClient
         // !!! TUTO ŘÁDKU SMAŽ - 'bulk' tě posílá do Hromadných !!!
         // email.Headers.Add("Precedence", "bulk"); 
 
-        using var client = new SmtpClient();
+        using SmtpClient client = new();
         try
         {
             await client.ConnectAsync(_options.Host, _options.Port, SecureSocketOptions.StartTls, ct);

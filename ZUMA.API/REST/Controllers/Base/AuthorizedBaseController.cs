@@ -14,9 +14,9 @@ public class AuthorizedBaseController : ControllerBase
 
     private Guid GetUserIdOrThrow()
     {
-        var claimValue = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        string? claimValue = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
-        if (string.IsNullOrEmpty(claimValue) || !Guid.TryParse(claimValue, out var userGuid))
+        if (string.IsNullOrEmpty(claimValue) || !Guid.TryParse(claimValue, out Guid userGuid))
         {
             throw new UnauthorizedAccessException("User ID is missing or invalid in the JWT token.");
         }

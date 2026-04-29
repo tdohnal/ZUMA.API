@@ -1,8 +1,8 @@
 ﻿using MassTransit;
 using ZUMA.CommunicationService.Domain.Entities;
 using ZUMA.CommunicationService.Domain.Interfaces;
-using ZUMA.SharedKernel.MessagingContracts.Events;
-using ZUMA.SharedKernel.Services;
+using ZUMA.SharedKernel.Application.Services;
+using ZUMA.SharedKernel.Domain.MessagingContracts.Events;
 
 namespace ZUMA.CommunicationService.Application.Services;
 
@@ -42,9 +42,9 @@ internal class EmailService : ServiceBase<EmailEntity>, IEmailService
 
     public async Task ProcessQueueAsync(CancellationToken cancellationToken = default)
     {
-        var emailsToSend = await _emailRepository.GetPendingEmailsAsync(cancellationToken);
+        IList<EmailEntity> emailsToSend = await _emailRepository.GetPendingEmailsAsync(cancellationToken);
 
-        foreach (var email in emailsToSend)
+        foreach (EmailEntity email in emailsToSend)
         {
             try
             {

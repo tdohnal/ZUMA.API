@@ -2,7 +2,7 @@
 using ZUMA.CustomerService.Domain.Entities;
 using ZUMA.CustomerService.Domain.Interfaces;
 using ZUMA.CustomerService.Infrastructure.Persistence;
-using ZUMA.SharedKernel.Repositories;
+using ZUMA.SharedKernel.Infrastructure.Repositories;
 
 namespace ZUMA.CustomerService.Infrastructure.Repositories;
 

@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ZUMA.CustomerService.Application.Configuration;
+using ZUMA.CustomerService.Application.Consumers;
 using ZUMA.CustomerService.Domain.Interfaces;
 using ZUMA.CustomerService.Infrastructure.Persistence;
 using ZUMA.CustomerService.Infrastructure.Repositories;
+using ZUMA.SharedKernel.Infrastructure.Extensions;
 
 namespace ZUMA.CustomerService.Infrastructure.Configuration;
 
@@ -37,6 +39,12 @@ public static class DIContainer
         #region User 
 
         services.AddScoped<IUserRepository, UserRepository>();
+
+        #endregion
+
+        #region MassTransit
+
+        services.AddZumaMassTransitWorker<CustomerDbContext>(configuration, typeof(AuthorizeUserConsumer).Assembly);
 
         #endregion
     }

@@ -1,6 +1,7 @@
 using MassTransit;
+using ZUMA.CustomerService.Domain.Entities;
 using ZUMA.CustomerService.Domain.Interfaces;
-using ZUMA.SharedKernel.MessagingContracts.Contracts.ControlsElement;
+using ZUMA.SharedKernel.Domain.MessagingContracts.Contracts.ControlsElement;
 
 namespace ZUMA.CustomerService.Application.Consumers.ControlsElement;
 
@@ -19,12 +20,12 @@ public class DeleteControlsElementConsumer : IConsumer<SendDeleteControlsElement
 
     public async Task Consume(ConsumeContext<SendDeleteControlsElementRequest> context)
     {
-        var msg = context.Message;
+        SendDeleteControlsElementRequest msg = context.Message;
         _logger.LogInformation("Deleting ControlsElement: {PublicId}", msg.PublicId);
 
         try
         {
-            var existingControlsElement = await _controlsElementService.GetByPublicIdAsync(msg.PublicId);
+            ControlsElementEntity? existingControlsElement = await _controlsElementService.GetByPublicIdAsync(msg.PublicId);
 
             if (existingControlsElement == null)
             {
@@ -38,7 +39,7 @@ public class DeleteControlsElementConsumer : IConsumer<SendDeleteControlsElement
                 return;
             }
 
-            var success = await _controlsElementService.DeleteAsync(existingControlsElement.Id);
+            bool success = await _controlsElementService.DeleteAsync(existingControlsElement.Id);
 
             if (!success)
             {

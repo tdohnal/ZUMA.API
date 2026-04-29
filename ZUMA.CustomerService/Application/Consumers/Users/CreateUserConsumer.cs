@@ -1,7 +1,7 @@
 using MassTransit;
 using ZUMA.CustomerService.Domain.Entities;
 using ZUMA.CustomerService.Domain.Interfaces;
-using ZUMA.SharedKernel.MessagingContracts.Contracts.Users;
+using ZUMA.SharedKernel.Domain.MessagingContracts.Contracts.Users;
 
 namespace ZUMA.CustomerService.Application.Consumers.Users;
 
@@ -25,14 +25,14 @@ public class CreateUserConsumer : IConsumer<SendCreateUserRequest>
 
         try
         {
-            var userEntity = new UserEntity
+            UserEntity userEntity = new()
             {
                 UserName = msg.Username,
                 FullName = msg.FullName,
                 Email = msg.Email
             };
 
-            var user = await _userService.CreateAsync(userEntity);
+            UserEntity? user = await _userService.CreateAsync(userEntity);
 
             if (user == null)
             {

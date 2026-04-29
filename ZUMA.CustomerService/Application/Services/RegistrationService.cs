@@ -1,8 +1,7 @@
 ﻿using ZUMA.CustomerService.Domain.Entities;
 using ZUMA.CustomerService.Domain.Interfaces;
-using ZUMA.SharedKernel.MessagingContracts.Events;
-using ZUMA.SharedKernel.Services;
-using ZUMA.SharedKernel.Utils;
+using ZUMA.SharedKernel.Application.Services;
+using ZUMA.SharedKernel.Application.Utils;
 
 namespace ZUMA.CustomerService.Application.Services;
 
@@ -32,7 +31,7 @@ internal class RegistrationService : ServiceBase<RegistrationEntity>, IRegistrat
         entity.ActivationCode = PasswordGenerator.Generate(10);
         entity.ExpirationCodeDate = DateTime.UtcNow.AddHours(24);
 
-        var user = new UserEntity
+        UserEntity user = new()
         {
             Email = entity.User.Email,
             FullName = entity.User.FullName,
@@ -52,7 +51,7 @@ internal class RegistrationService : ServiceBase<RegistrationEntity>, IRegistrat
     {
         _logger.LogInformation("Registration created with Id:{id} for user with email: {email}", entity.Id, entity.User.Email);
         await _eventPublisherService.PublishCreateEmailEventAsync(
-                new CreateEmailEvent
+                new SharedKernel.Domain.MessagingContracts.Events.CreateEmailEvent
                 {
                     UserId = entity.User.PublicId,
                     Subject = "Welcome in Zuma",
