@@ -17,7 +17,7 @@ public static class SerilogExtensions
             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
             .Enrich.FromLogContext()
             .Enrich.WithProperty("ServiceSource", serviceName)
-            .Enrich.WithProperty("Version", version)
+            .Enrich.WithProperty("BuildVersion", version)
             .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] ({ServiceSource}) {Message:lj}{NewLine}{Exception}")
             .WriteTo.Seq(host.Configuration["SERILOG:SEQ:URL"]
                 ?? throw new Exception("Key SERILOG:SEQ:URL not found in configuration!"))

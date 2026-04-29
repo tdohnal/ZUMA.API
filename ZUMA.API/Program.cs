@@ -126,6 +126,7 @@ app.UseSwaggerUI(options =>
 app.UseHttpsRedirection();
 app.UseCors();
 
+app.UseRouting();
 app.UseRateLimiter();
 
 // Auth musí být PŘED Controllers, ale PO Cors

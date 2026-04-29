@@ -7,16 +7,17 @@ public static class SwaggerExtensions
 {
     public static IServiceCollection AddZumaSwagger(this IServiceCollection services)
     {
-        var assemblyVersion = Assembly.GetEntryAssembly()?.GetName().Version?.ToString();
+        var deploymentVersion = Assembly.GetEntryAssembly()?.GetName().Version?.ToString() ?? "unknown";
 
         return services.AddSwaggerGen(options =>
         {
             var apiInfo = new OpenApiInfo
             {
                 Title = "ZUMA API",
-                Version = assemblyVersion,
+                Version = "v1",
                 Contact = new OpenApiContact { Name = "ZUMA Team", Email = "tomas.dohnal46@seznam.cz" },
-                License = new OpenApiLicense { Name = "MIT" }
+                License = new OpenApiLicense { Name = "MIT" },
+                Description = $"Build version `{deploymentVersion}`"
             };
 
             options.SwaggerDoc("v1", new OpenApiInfo { Version = "v1.0" });

@@ -1,5 +1,6 @@
 using Microsoft.IO;
 using System.Text;
+using ZUMA.SharedKernel.Utils;
 
 namespace ZUMA.API.Middleware;
 
@@ -68,23 +69,8 @@ public class RequestResponseLoggingMiddleware
             Host = request.Host.Host
         };
 
-        _logger.LogInformation(
-            "_________________________________________________________________ HTTP REQUEST _________________________________________________________________\n" +
-            "{Method} {FullUrl}\n" +
-            "Path: {Path} | Query: {QueryString}\n" +
-            "Host: {Host} | IP: {RemoteIpAddress}\n" +
-            "Content-Type: {ContentType} | Content-Length: {ContentLength}\n" +
-            "Body: {Body}\n" +
-            "_________________________________________________________________________________________________________________________________________________________",
-            logData.Method,
-            logData.FullUrl,
-            logData.Path,
-            logData.QueryString,
-            logData.Host,
-            logData.RemoteIpAddress,
-            logData.ContentType,
-            logData.ContentLength,
-            logData.Body);
+        using var scope = _logger.BeginMessageScope(context.Session.Id, identificationData: logData);
+        _logger.LogInformation($"HTTP Request - {logData.Method}");
     }
 
     private async Task LogResponseAsync(HttpContext context)
@@ -118,18 +104,9 @@ public class RequestResponseLoggingMiddleware
             _ => LogLevel.Error
         };
 
-        _logger.Log(
-            logLevel,
-            "_________________________________________________________________ HTTP RESPONSE _________________________________________________________________\n" +
-            "{Method} {FullUrl}\n" +
-            "Status: {StatusCode} | Content-Type: {ContentType}\n" +
-            "Body: {Body}\n" +
-            "_________________________________________________________________________________________________________________________________________________________",
-            logData.Method,
-            logData.FullUrl,
-            logData.StatusCode,
-            logData.ContentType,
-            logData.Body);
+        using var scope = _logger.BeginMessageScope(context.Session.Id, identificationData: logData);
+
+        _logger.LogInformation($"HTTP Response - {logData.Method}");
     }
 
     /// <summary>
