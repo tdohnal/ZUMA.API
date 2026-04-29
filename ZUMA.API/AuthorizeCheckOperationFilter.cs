@@ -1,33 +1,41 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.SwaggerGen;
+using Microsoft.AspNetCore.OpenApi;
+using Microsoft.OpenApi;
 
-public class AuthorizeCheckOperationFilter : IOperationFilter
+public class SecurityRequirementsTransformer : IOpenApiOperationTransformer
 {
-    public void Apply(OpenApiOperation operation, OperationFilterContext context)
+    public Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
     {
-        bool hasAuthorize = context.MethodInfo.DeclaringType.GetCustomAttributes(true).OfType<AuthorizeAttribute>().Any() ||
-                           context.MethodInfo.GetCustomAttributes(true).OfType<AuthorizeAttribute>().Any();
+        // Kontrola, zda endpoint vyžaduje autorizaci
+        var hasAuthorize = context.Description.ActionDescriptor.EndpointMetadata
+            .Any(m => m is IAuthorizeData);
 
-        if (hasAuthorize)
+        // Kontrola, zda není povolen anonymní přístup (přebíjí Authorize)
+        var allowAnonymous = context.Description.ActionDescriptor.EndpointMetadata
+            .Any(m => m is IAllowAnonymous);
+
+        if (hasAuthorize && !allowAnonymous)
         {
+            // Přidání chybových kódů
             operation.Responses.TryAdd("401", new OpenApiResponse { Description = "Unauthorized" });
             operation.Responses.TryAdd("403", new OpenApiResponse { Description = "Forbidden" });
 
-            operation.Security =
-            [
-                new OpenApiSecurityRequirement
-                {
-                    [
-                        new OpenApiSecurityScheme {
-                            Reference = new OpenApiReference {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            }
-                        }
-                    ] = new string[] { }
-                }
-            ];
+            //// Definice bezpečnostního schématu
+            //var scheme = new OpenApiSecurityScheme
+            //{
+            //    Reference = new OpenApiReference
+            //    {
+            //        Type = ReferenceType.SecurityScheme,
+            //        Id = JwtBearerDefaults.AuthenticationScheme // Obvykle "Bearer"
+            //    }
+            //};
+
+            //operation.Security =
+            //[
+            //    new() { [scheme] = Array.Empty<string>() }
+            //];
         }
+
+        return Task.CompletedTask;
     }
 }

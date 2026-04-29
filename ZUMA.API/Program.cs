@@ -3,6 +3,7 @@ using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
+using Scalar.AspNetCore;
 using Serilog;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
@@ -80,9 +81,9 @@ builder.Services.AddHealthChecks()
 
 #endregion
 
-#region Swagger
+#region OpenApi
 
-builder.Services.AddZumaSwagger();
+builder.Services.AddZumaOpenApi();
 
 #endregion
 
@@ -116,26 +117,23 @@ WebApplication app = builder.Build();
 
 #region Middleware Pipeline
 
-app.UseSwagger();
-app.UseSwaggerUI(options =>
+app.MapOpenApi(); // Zpřístupní JSON specifikaci na /openapi/v1.json
+app.MapScalarApiReference("docs", options =>
 {
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "ZUMA API v1.0");
-    options.SwaggerEndpoint("/swagger/v2/swagger.json", "ZUMA API v2.0");
-    options.RoutePrefix = string.Empty;
+    options.WithTitle("ZUMA API Documentation")
+           .WithTheme(ScalarTheme.Moon)
+           .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
 });
 
-// Pořadí je důležité!
 app.UseHttpsRedirection();
 app.UseCors();
 
 app.UseRouting();
 app.UseRateLimiter();
 
-// Auth musí být PŘED Controllers, ale PO Cors
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Pokud chceš logovat i auth/unauth přístupy, dej to pod Authentication
 app.UseRequestResponseLogging();
 
 app.MapControllers();
@@ -155,5 +153,7 @@ app.MapHealthChecks("/api/system-status", new HealthCheckOptions
 });
 
 #endregion
+
+app.MapGet("/", () => Results.Redirect("/docs/v1"));
 
 app.Run();
