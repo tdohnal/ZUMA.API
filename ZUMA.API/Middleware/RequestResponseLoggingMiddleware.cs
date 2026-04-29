@@ -69,8 +69,8 @@ public class RequestResponseLoggingMiddleware
             Host = request.Host.Host
         };
 
-        using var scope = _logger.BeginMessageScope(context.Session.Id, identificationData: logData);
-        _logger.LogInformation($"HTTP Request - {logData.Method}");
+        using var scope = _logger.BeginMessageScope(context.TraceIdentifier, identificationData: logData);
+        _logger.LogInformation($"{logData.Method} HTTP Request - {logData.Path}");
     }
 
     private async Task LogResponseAsync(HttpContext context)
@@ -104,9 +104,9 @@ public class RequestResponseLoggingMiddleware
             _ => LogLevel.Error
         };
 
-        using var scope = _logger.BeginMessageScope(context.Session.Id, identificationData: logData);
+        using var scope = _logger.BeginMessageScope(context.TraceIdentifier, identificationData: logData);
 
-        _logger.LogInformation($"HTTP Response - {logData.Method}");
+        _logger.LogInformation($"{logData.Method} HTTP Response ({response.StatusCode}) - {logData.Path}");
     }
 
     /// <summary>
