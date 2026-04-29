@@ -20,7 +20,7 @@ builder.Configuration.AddEnvironmentVariables();
 
 #region Serilog
 
-builder.Host.AddZumaSerilog(builder.Configuration);
+builder.AddZumaSerilog();
 
 #endregion
 

@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using ZUMA.API.REST.Controllers.Base;
 using ZUMA.API.REST.DTOs.Authorization.Requests;
 using ZUMA.API.REST.DTOs.Authorization.Responses;
@@ -57,6 +58,7 @@ namespace ZUMA.API.REST.Controllers
         /// authorization email is sent successfully; returns Status404NotFound if the email address is not associated
         /// with any user.</returns>
         [HttpPost("authorizeByEmail")]
+        [EnableRateLimiting("auth-limit")]
         [ApiVersion("1.0")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
