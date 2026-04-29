@@ -14,7 +14,6 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 ARG GH_TOKEN
-ARG APP_VERSION=1.0.0
 
 WORKDIR /src
 
@@ -34,6 +33,7 @@ RUN dotnet build "./ZUMA.CustomerService.csproj" -c $BUILD_CONFIGURATION -o /app
 
 # --- Publish Stage ---
 FROM build AS publish
+ARG APP_VERSION=1.0.0
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./ZUMA.CustomerService.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false /p:Version=$APP_VERSION
 
