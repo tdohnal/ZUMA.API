@@ -152,8 +152,9 @@ app.MapHealthChecks("/api/system-status", new HealthCheckOptions
     }
 });
 
-#endregion
-
 app.MapGet("/", () => Results.Redirect("/docs/v1"));
+app.MapGet("/index.html", () => Results.Redirect("/docs/v1"));
+
+#endregion
 
 app.Run();

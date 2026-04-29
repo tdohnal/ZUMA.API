@@ -83,6 +83,8 @@ services:
       - Jwt__Key=${JWT_KEY}
       - Jwt__Issuer=${JWT_ISSUER}
       - Jwt__Audience=${JWT_AUDIENCE}
+    labels:
+      - "dev.scalar.path=/docs/v1"
 
   communication-service:
     container_name: communication-service
