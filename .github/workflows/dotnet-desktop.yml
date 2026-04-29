@@ -30,6 +30,7 @@ jobs:
           push: true
           build-args: |
             GH_TOKEN=${{ secrets.NUGET_GITHUB_TOKEN }}
+            APP_VERSION=1.0.${{ github.run_number }}
           tags: ghcr.io/${{ github.repository_owner }}/zuma-api:latest
 
       - name: Build and push Communication Service
@@ -78,7 +79,6 @@ jobs:
           script: |
             cd ~/zuma
             
-            # Vytvoření .env souboru z tvých Environment Secrets
             echo "DB_USER=${{ secrets.DB_USER }}" > .env
             echo "DB_PASS=${{ secrets.DB_PASS }}" >> .env
             echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
