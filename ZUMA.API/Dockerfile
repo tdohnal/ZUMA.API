@@ -5,8 +5,10 @@ EXPOSE 8080
 
 # Tato fáze staví aplikaci
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+
 ARG BUILD_CONFIGURATION=Release
 ARG GH_TOKEN
+ARG APP_VERSION=1.0.0
 
 WORKDIR /src
 
@@ -30,7 +32,7 @@ WORKDIR "/src/ZUMA.API"
 RUN dotnet build "ZUMA.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "ZUMA.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "ZUMA.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false /p:Version=$APP_VERSION
 
 FROM base AS final
 WORKDIR /app

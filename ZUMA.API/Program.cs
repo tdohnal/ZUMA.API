@@ -10,6 +10,7 @@ using Polly.Extensions.Http;
 using Serilog;
 using Serilog.Events;
 using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 using System.Text;
 using ZUMA.API.Configuration;
 using ZUMA.API.Middleware;
@@ -116,27 +117,28 @@ builder.Services.AddHealthChecks()
 
 #region Swagger
 
+var assemblyVersion = Assembly.GetEntryAssembly()?.GetName().Version?.ToString();
+
 builder.Services.AddSwaggerGen(options =>
 {
     var apiInfo = new OpenApiInfo
     {
         Title = "ZUMA API",
-        Description = "REST API pro správu uživatelů",
+        Version = assemblyVersion,
         Contact = new OpenApiContact { Name = "ZUMA Team", Email = "tomas.dohnal46@seznam.cz" },
         License = new OpenApiLicense { Name = "MIT" }
     };
 
     options.SwaggerDoc("v1", new OpenApiInfo { Version = "v1.0" });
-    options.SwaggerDoc("v2", new OpenApiInfo { Version = "v2.0", Description = apiInfo.Description + " (v2 - s stránkováním)" });
 
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
-        Type = SecuritySchemeType.Http, // Vráceno na Http pro pohodlí ve Swaggeru
+        Type = SecuritySchemeType.Http,
         Scheme = "Bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Vložte pouze JWT token."
+        Description = "Paste only JWT token."
     });
 
     options.OperationFilter<AuthorizeCheckOperationFilter>();
