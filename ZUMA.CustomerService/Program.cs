@@ -1,11 +1,10 @@
 using DotNetEnv;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
-using Serilog.Events;
 using ZUMA.CustomerService;
 using ZUMA.CustomerService.Application.Consumers;
 using ZUMA.CustomerService.Infrastructure.Configuration;
+using ZUMA.CustomerService.Infrastructure.Extensions;
 using ZUMA.CustomerService.Infrastructure.Persistence;
 
 var builder = Host.CreateApplicationBuilder(args);
@@ -14,16 +13,9 @@ Env.TraversePath().Load();
 builder.Configuration.AddEnvironmentVariables();
 
 #region Serilog
-Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Information()
-    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-    .Enrich.FromLogContext()
-    .Enrich.WithProperty("ServiceSource", "ZUMA.CustomerService")
-    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] ({ServiceSource}) {Message:lj}{NewLine}{Exception}")
-    .WriteTo.Seq(builder.Configuration["SERILOG:SEQ:URL"] ?? throw new Exception("key [Serilog:WriteTo:0:Args:serverUrl] IS NOT CONFIGURED!"))
-    .CreateLogger();
 
-builder.Services.AddSerilog();
+builder.AddZumaSerilog();
+
 #endregion
 
 // 1. Infrastruktura

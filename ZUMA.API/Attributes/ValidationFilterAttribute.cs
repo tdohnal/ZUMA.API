@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace ZUMA.API.REST.Filters;
+namespace ZUMA.API.Attributes;
 
 /// <summary>
 /// Action Filter pro validaci ModelState.

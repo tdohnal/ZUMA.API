@@ -1,4 +1,4 @@
-﻿using ZUMA.API.REST.Filters;
+﻿using ZUMA.API.Attributes;
 using ZUMA.API.REST.Mappers;
 
 namespace ZUMA.API.Configuration;

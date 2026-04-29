@@ -1,18 +1,12 @@
 using Asp.Versioning;
 using DotNetEnv;
-using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using Polly;
-using Polly.Extensions.Http;
-using Serilog;
-using Serilog.Events;
 using System.IdentityModel.Tokens.Jwt;
-using System.Reflection;
 using System.Text;
 using ZUMA.API.Configuration;
+using ZUMA.API.Extensions;
 using ZUMA.API.Middleware;
 using ZUMA.SharedKernel.Configurration;
 
@@ -26,16 +20,7 @@ builder.Configuration.AddEnvironmentVariables();
 
 #region Serilog
 
-Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Information()
-    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-    .Enrich.FromLogContext()
-    .Enrich.WithProperty("ServiceSource", "ZUMA.API")
-    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] ({ServiceSource}) {Message:lj}{NewLine}{Exception}")
-    .WriteTo.Seq(builder.Configuration["SERILOG:SEQ:URL"] ?? throw new Exception("key [Serilog:WriteTo:0:Args:serverUrl] IS NOT CONFIGURED!"))
-    .CreateLogger();
-
-builder.Services.AddSerilog();
+builder.Host.AddZumaSerilog(builder.Configuration);
 
 #endregion
 
@@ -76,31 +61,9 @@ builder.Services.AddApiVersioning(options =>
 
 #endregion
 
-#region Infrastructure (RabbitMQ, DB, DI)
+#region Infrastructure
 
-// MassTransit & RabbitMQ
-builder.Services.AddMassTransit(x =>
-{
-    x.UsingRabbitMq((context, cfg) =>
-    {
-        var rabbitHost = builder.Configuration["RABBITMQ:HOST"];
-        var username = builder.Configuration["RABBITMQ:USERNAME"];
-        var password = builder.Configuration["RABBITMQ:PASSWORD"];
-
-        Console.WriteLine($"DEBUG: Připojuji se k Rabbitu: {rabbitHost} jako {username}");
-
-        if (string.IsNullOrWhiteSpace(rabbitHost))
-            throw new Exception("CHYBA: RABBITMQ__HOST nebyl nalezen v konfiguraci!");
-
-        cfg.Host(rabbitHost, "/", h =>
-        {
-            h.Username(username ?? "guest");
-            h.Password(password ?? "guest");
-        });
-
-        cfg.ConfigureEndpoints(context);
-    });
-});
+builder.Services.AddZumaMassTransit(builder.Configuration);
 
 // Externí DI kontejnery
 DIContainer.ConfigureBaseServices(builder.Services, builder.Configuration);
@@ -117,35 +80,7 @@ builder.Services.AddHealthChecks()
 
 #region Swagger
 
-var assemblyVersion = Assembly.GetEntryAssembly()?.GetName().Version?.ToString();
-
-builder.Services.AddSwaggerGen(options =>
-{
-    var apiInfo = new OpenApiInfo
-    {
-        Title = "ZUMA API",
-        Version = assemblyVersion,
-        Contact = new OpenApiContact { Name = "ZUMA Team", Email = "tomas.dohnal46@seznam.cz" },
-        License = new OpenApiLicense { Name = "MIT" }
-    };
-
-    options.SwaggerDoc("v1", new OpenApiInfo { Version = "v1.0" });
-
-    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "Paste only JWT token."
-    });
-
-    options.OperationFilter<AuthorizeCheckOperationFilter>();
-
-    var xmlFile = Path.Combine(AppContext.BaseDirectory, "ZUMA.API.xml");
-    if (File.Exists(xmlFile)) options.IncludeXmlComments(xmlFile);
-});
+builder.Services.AddZumaSwagger();
 
 #endregion
 
@@ -163,24 +98,15 @@ builder.Services.AddCors(options =>
 
 #endregion
 
+#region RateLimiter
+
+builder.Services.AddZumaRateLimiter();
+
+#endregion
+
 #region Polly
 
-// 1. Definujeme politiku pro Circuit Breaker (pokud se to 5x po sobě nepovede, na 30s stopneme provoz)
-var circuitBreakerPolicy = HttpPolicyExtensions
-    .HandleTransientHttpError()
-    .CircuitBreakerAsync(5, TimeSpan.FromSeconds(30));
-
-// 2. Definujeme Retry s exponenciálním zpětným rázem a Jitterem
-var retryPolicy = HttpPolicyExtensions
-    .HandleTransientHttpError()
-    .WaitAndRetryAsync(3, retryAttempt =>
-        TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)) // 2, 4, 8 sekund
-        + TimeSpan.FromMilliseconds(new Random().Next(0, 100))); // Jitter
-
-// 3. Registrace pojmenovaného klienta s "Policy Wrap"
-builder.Services.AddHttpClient("ZumaExternalClient")
-    .AddPolicyHandler(retryPolicy)
-    .AddPolicyHandler(circuitBreakerPolicy);
+builder.Services.AddZumaPolly();
 
 #endregion
 
