@@ -34,9 +34,10 @@
 	  <PackageReference Include="MassTransit.Quartz" Version="8.2.5" />
 	  <PackageReference Include="Serilog" Version="4.3.1" />
 	  <PackageReference Include="Serilog.Extensions.Hosting" Version="10.0.0" />
+	  <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
 	  <PackageReference Include="Serilog.Sinks.Seq" Version="9.0.0" />
 	  <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.17.0" />
-	  <PackageReference Include="ZUMA.ArchitectureAnalyzer" Version="2026.4.13.34" />
-	  <PackageReference Include="ZUMA.SharedKernel" Version="2026.4.13.34" />
+	  <PackageReference Include="ZUMA.ArchitectureAnalyzer" Version="2026.4.28.35" />
+	  <PackageReference Include="ZUMA.SharedKernel" Version="2026.4.28.35" />
   </ItemGroup>
 </Project>

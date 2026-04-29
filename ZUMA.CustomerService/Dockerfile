@@ -1,20 +1,23 @@
-# 1. Změna na aspnet image (nutné pro API)
+# --- Base Runtime Stage ---
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
-# Dočasně přepneme na root, abychom mohli instalovat knihovny
+# Nutné pro instalaci systémových balíčků
 USER root
-RUN apt-get update && apt-get install -y libgssapi-krb5-2 && rm -rf /var/lib/apt/lists/*
-# Vrátíme zpět uživatele pro bezpečnost
+RUN apt-get update && apt-get install -y \
+    libgssapi-krb5-2 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Bezpečnostní standard: Běžíme pod neprivilegovaným uživatelem
 USER $APP_UID
 WORKDIR /app
 
-# Build stage
+# --- Build Stage ---
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 ARG GH_TOKEN
 
 WORKDIR /src
 
-# NuGet konfigurace
+# V build stage nepotřebujeme libgssapi-krb5-2, stačí nám SDK pro restore/build
 RUN dotnet nuget add source "https://nuget.pkg.github.com/tdohnal/index.json" \
     --name "github_final" \
     --username "tdohnal" \
@@ -28,11 +31,12 @@ COPY . .
 WORKDIR "/src/ZUMA.CustomerService"
 RUN dotnet build "./ZUMA.CustomerService.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
+# --- Publish Stage ---
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./ZUMA.CustomerService.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-# Final stage
+# --- Final Stage ---
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .

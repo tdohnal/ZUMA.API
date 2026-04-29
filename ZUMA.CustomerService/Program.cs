@@ -2,6 +2,7 @@ using DotNetEnv;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Serilog.Events;
 using ZUMA.CustomerService;
 using ZUMA.CustomerService.Application.Consumers;
 using ZUMA.CustomerService.Infrastructure.Configuration;
@@ -13,16 +14,16 @@ Env.TraversePath().Load();
 builder.Configuration.AddEnvironmentVariables();
 
 #region Serilog
-
 Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Information() // Pro vývoj v Workeru doporučuji Debug
+    .MinimumLevel.Information()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
     .Enrich.FromLogContext()
-    .Enrich.WithProperty("Application", "ZUMA.CustomerService") // Aby ses v Seque vyznal
+    .Enrich.WithProperty("ServiceSource", "ZUMA.CustomerService")
+    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] ({ServiceSource}) {Message:lj}{NewLine}{Exception}")
     .WriteTo.Seq(builder.Configuration["SERILOG:SEQ:URL"] ?? throw new Exception("key [Serilog:WriteTo:0:Args:serverUrl] IS NOT CONFIGURED!"))
     .CreateLogger();
 
 builder.Services.AddSerilog();
-
 #endregion
 
 // 1. Infrastruktura
@@ -44,15 +45,31 @@ builder.Services.AddMassTransit(x =>
         var username = builder.Configuration["RABBITMQ:USERNAME"];
         var password = builder.Configuration["RABBITMQ:PASSWORD"];
 
-        Console.WriteLine($"DEBUG: Připojuji se k Rabbitu: {rabbitHost} jako {username}");
-
         if (string.IsNullOrWhiteSpace(rabbitHost))
-            throw new Exception("CHYBA: RABBITMQ__HOST nebyl nalezen v konfiguraci!");
+            throw new NullReferenceException($"{nameof(rabbitHost)} IS NULL");
+
+        if (string.IsNullOrWhiteSpace(username))
+            throw new NullReferenceException($"{nameof(username)} IS NULL");
+
+        if (string.IsNullOrWhiteSpace(password))
+            throw new NullReferenceException($"{nameof(password)} IS NULL");
 
         cfg.Host(rabbitHost, "/", h =>
         {
-            h.Username(username ?? "guest");
-            h.Password(password ?? "guest");
+            h.Username(username);
+            h.Password(password);
+        });
+
+        cfg.UseMessageRetry(r => r.Exponential(3,
+     TimeSpan.FromSeconds(2),
+     TimeSpan.FromSeconds(30),
+     TimeSpan.FromSeconds(5)));
+
+        cfg.UseCircuitBreaker(cb =>
+        {
+            cb.TripThreshold = 15;
+            cb.ActiveThreshold = 10;
+            cb.ResetInterval = TimeSpan.FromMinutes(5);
         });
 
         cfg.ConfigureEndpoints(context);

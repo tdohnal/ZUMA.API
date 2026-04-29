@@ -88,6 +88,7 @@ services:
     container_name: communication-service
     networks:
       - zuma-network
+      - proxy-nw
     depends_on:
       - rabbitmq
     restart: always
@@ -111,6 +112,7 @@ services:
     container_name: customer-service
     networks:
       - zuma-network
+      - proxy-nw
     depends_on:
       - rabbitmq
     restart: always

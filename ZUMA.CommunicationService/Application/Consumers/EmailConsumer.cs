@@ -2,6 +2,7 @@
 using ZUMA.CommunicationService.Domain.Entities;
 using ZUMA.CommunicationService.Domain.Interfaces;
 using ZUMA.SharedKernel.MessagingContracts.Events;
+using ZUMA.SharedKernel.Utils;
 
 namespace ZUMA.CommunicationService.Application.Consumers;
 
@@ -20,26 +21,22 @@ public class EmailConsumer : IConsumer<CreateEmailEvent>
 
     public async Task Consume(ConsumeContext<CreateEmailEvent> context)
     {
+        ArgumentNullException.ThrowIfNull(context);
+
+        if (context.MessageId is null) throw new NullReferenceException(nameof(context.MessageId));
+
+        using var scope = _logger.BeginMessageScope(messageId: context.MessageId.ToString()!,
+                                                    identificationData: context.Message.Email);
+
         _logger.LogInformation("Email processing triggered by event. Starting bulk send process...");
 
         var msg = context.Message;
-
-        try
+        var sentCount = await _emailService.CreateAsync(new EmailEntity
         {
-            var sentCount = await _emailService.CreateAsync(new EmailEntity
-            {
-                EmailTemplateType = msg.EmailTemplateType,
-                Body = msg.Body,
-                Subject = msg.Subject,
-                Recipient = msg.Email
-            });
-
-            _logger.LogInformation("Bulk email processing completed. Successfully sent {Count} emails.", sentCount);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred during bulk email processing. Some emails might not have been sent.");
-            throw;
-        }
+            EmailTemplateType = msg.EmailTemplateType,
+            Body = msg.Body,
+            Subject = msg.Subject,
+            Recipient = msg.Email
+        });
     }
 }

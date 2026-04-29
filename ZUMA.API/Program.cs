@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using Polly;
 using Polly.Extensions.Http;
 using Serilog;
+using Serilog.Events;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using ZUMA.API.Configuration;
@@ -25,11 +26,15 @@ builder.Configuration.AddEnvironmentVariables();
 #region Serilog
 
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
-    .WriteTo.Seq(builder.Configuration["SERILOG:SEQ:URL"] ?? throw new Exception("key [SERILOG:SEQ:URL] IS NOT CONFIGURED!"))
+    .MinimumLevel.Information()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+    .Enrich.FromLogContext()
+    .Enrich.WithProperty("ServiceSource", "ZUMA.API")
+    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] ({ServiceSource}) {Message:lj}{NewLine}{Exception}")
+    .WriteTo.Seq(builder.Configuration["SERILOG:SEQ:URL"] ?? throw new Exception("key [Serilog:WriteTo:0:Args:serverUrl] IS NOT CONFIGURED!"))
     .CreateLogger();
 
-builder.Host.UseSerilog();
+builder.Services.AddSerilog();
 
 #endregion
 

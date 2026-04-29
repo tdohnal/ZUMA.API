@@ -40,9 +40,9 @@ public class AuthorizeUserConsumer : IConsumer<SendAuthorizeUserRequest>
                 await _userService.GetAuthorizationCodeAsync(id.Value);
             }
 
-            await context.RespondAsync<AuthorizeUserSuccess>(new
+            await context.RespondAsync(new AuthorizeUserSuccess
             {
-                Message = "Authorization record created successfully."
+                SentAt = DateTime.UtcNow
             });
         }
         catch (Exception ex)

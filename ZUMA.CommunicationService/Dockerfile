@@ -1,19 +1,20 @@
-# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-# Runtime stage
+# --- Runtime stage (Tady to musí být!) ---
 FROM mcr.microsoft.com/dotnet/runtime:10.0 AS base
+# Přepneme na roota, abychom mohli instalovat
+USER root 
+RUN apt-get update && apt-get install -y libgssapi-krb5-2 && rm -rf /var/lib/apt/lists/*
+# Přepneme zpět na bezpečný UID aplikace
 USER $APP_UID
 WORKDIR /app
 
 # --- Build stage ---
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
-
-# DŮLEŽITÉ: Definice argumentu uvnitř buildu
 ARG GH_TOKEN
 
 WORKDIR /src
 
+# Tady v buildu to teoreticky nepotřebuješ, pokud tam nespouštíš testy proti DB
 RUN dotnet nuget add source "https://nuget.pkg.github.com/tdohnal/index.json" \
     --name "github_final" \
     --username "tdohnal" \
@@ -21,8 +22,6 @@ RUN dotnet nuget add source "https://nuget.pkg.github.com/tdohnal/index.json" \
     --store-password-in-clear-text
 
 COPY ["ZUMA.CommunicationService/ZUMA.CommunicationService.csproj", "ZUMA.CommunicationService/"]
-
-# Restore s použitím tvého tokenu z ENV
 RUN dotnet restore "./ZUMA.CommunicationService/ZUMA.CommunicationService.csproj"
 
 COPY . .
