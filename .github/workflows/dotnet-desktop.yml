@@ -22,6 +22,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN }}
 
+      - name: Set Build Timestamp
+        id: timestamp
+        run: echo "BUILD_VER=$(date +'%Y.%m%d.%H%M')" >> $GITHUB_OUTPUT
+      
       - name: Build and push API
         uses: docker/build-push-action@v5
         with:
@@ -30,7 +34,7 @@ jobs:
           push: true
           build-args: |
             GH_TOKEN=${{ secrets.NUGET_GITHUB_TOKEN }}
-            APP_VERSION=1.0.${{ github.run_number }}
+            APP_VERSION=${{ steps.timestamp.outputs.BUILD_VER }}
           tags: ghcr.io/${{ github.repository_owner }}/zuma-api:latest
 
       - name: Build and push Communication Service
@@ -41,6 +45,7 @@ jobs:
           push: true
           build-args: |
             GH_TOKEN=${{ secrets.NUGET_GITHUB_TOKEN }}
+            APP_VERSION=${{ steps.timestamp.outputs.BUILD_VER }}
           tags: ghcr.io/${{ github.repository_owner }}/communication-service:latest
 
       - name: Build and push Customer Service
@@ -51,6 +56,7 @@ jobs:
           push: true
           build-args: |
             GH_TOKEN=${{ secrets.NUGET_GITHUB_TOKEN }}
+            APP_VERSION=${{ steps.timestamp.outputs.BUILD_VER }}
           tags: ghcr.io/${{ github.repository_owner }}/customer-service:latest
 
   deploy:
