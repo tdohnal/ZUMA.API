@@ -20,7 +20,7 @@ public static class SwaggerExtensions
                 Description = $"Build version `{deploymentVersion}`"
             };
 
-            options.SwaggerDoc("v1", new OpenApiInfo { Version = "v1.0" });
+            options.SwaggerDoc("v1", apiInfo);
 
             options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {

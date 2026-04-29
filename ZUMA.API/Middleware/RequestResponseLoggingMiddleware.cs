@@ -81,7 +81,6 @@ public class RequestResponseLoggingMiddleware
         var body = await ReadStreamAsync(response.Body);
         response.Body.Seek(0, SeekOrigin.Begin);
 
-        // ✅ Vytvoř úplnou URL
         var fullUrl = GetFullUrl(context);
 
         var logData = new
