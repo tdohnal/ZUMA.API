@@ -121,7 +121,7 @@ app.MapOpenApi(); // Zpřístupní JSON specifikaci na /openapi/v1.json
 app.MapScalarApiReference("docs", options =>
 {
     options.WithTitle("ZUMA API Documentation")
-           .WithTheme(ScalarTheme.Moon)
+           .WithTheme(ScalarTheme.DeepSpace)
            .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
 });
 
@@ -152,9 +152,11 @@ app.MapHealthChecks("/api/system-status", new HealthCheckOptions
     }
 });
 
-app.MapGet("/", () => Results.Redirect("/docs/v1"));
-app.MapGet("/index.html", () => Results.Redirect("/docs/v1"));
+app.MapGet("/", () => Results.Redirect("/docs/v1"))
+                             .ExcludeFromDescription();
 
+app.MapGet("/index.html", () => Results.Redirect("/docs/v1"))
+                                       .ExcludeFromDescription();
 #endregion
 
 app.Run();
