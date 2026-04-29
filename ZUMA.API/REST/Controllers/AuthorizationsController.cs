@@ -60,7 +60,7 @@ namespace ZUMA.API.REST.Controllers
         [HttpPost("authorizeByEmail")]
         [EnableRateLimiting("auth-limit")]
         [ApiVersion("1.0")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(DateTime), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Authorize(AuthorizationRequest request, CancellationToken cancellationToken = default)
         {
