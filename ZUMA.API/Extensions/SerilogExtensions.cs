@@ -20,7 +20,7 @@ public static class SerilogExtensions
             .Enrich.WithProperty("BuildVersion", version)
             .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] ({ServiceSource}) {Message:lj}{NewLine}{Exception}")
             .WriteTo.Seq(builder.Configuration["SERILOG:SEQ:URL"]
-                ?? throw new Exception("Klíč SERILOG:SEQ:URL nebyl nalezen!"))
+                ?? throw new Exception("KEY SERILOG:SEQ:URL not found!"))
             .CreateLogger();
 
         builder.Services.AddSerilog();

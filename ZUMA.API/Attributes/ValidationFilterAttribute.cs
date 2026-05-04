@@ -3,10 +3,6 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace ZUMA.API.Attributes;
 
-/// <summary>
-/// Action Filter pro validaci ModelState.
-/// Automaticky vrátí 422 Unprocessable Entity pokud je model neplatný.
-/// </summary>
 public class ValidationFilterAttribute : ActionFilterAttribute
 {
     public override void OnActionExecuting(ActionExecutingContext context)

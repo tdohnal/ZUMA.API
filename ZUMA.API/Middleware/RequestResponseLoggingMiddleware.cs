@@ -108,17 +108,15 @@ public class RequestResponseLoggingMiddleware
         _logger.LogInformation($"{logData.Method} HTTP Response ({response.StatusCode}) - {logData.Path}");
     }
 
-    /// <summary>
-    /// Vytvoří úplnou URL adresu (scheme + host + path + query)
-    /// </summary>
+
     private static string GetFullUrl(HttpContext context)
     {
         HttpRequest request = context.Request;
-        string scheme = request.Scheme; // http nebo https
-        string host = request.Host.ToString(); // localhost:5044
-        string? pathBase = request.PathBase.Value; // prázdné nebo /api
-        string? path = request.Path.Value; // /user/1
-        string? queryString = request.QueryString.Value; // ?page=1
+        string scheme = request.Scheme;
+        string host = request.Host.ToString();
+        string? pathBase = request.PathBase.Value;
+        string? path = request.Path.Value;
+        string? queryString = request.QueryString.Value;
 
         return $"{scheme}://{host}{pathBase}{path}{queryString}";
     }
@@ -150,7 +148,6 @@ public class RequestResponseLoggingMiddleware
 
         try
         {
-            // Pokud je body příliš dlouhý, stav zkrácený
             if (body.Length > 1000)
                 return body.Substring(0, 1000) + "... [truncated]";
 

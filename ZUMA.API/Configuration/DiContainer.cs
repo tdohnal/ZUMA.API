@@ -1,14 +1,17 @@
 ﻿using ZUMA.API.Attributes;
-using ZUMA.API.REST.Mappers;
+using ZUMA.API.Mappers;
 
 namespace ZUMA.API.Configuration;
 
-public class ApiDiContainer
+public class DIContainer
 {
     public static void ConfigureServices(IServiceCollection services)
     {
         services.AddScoped<ValidationFilterAttribute>();
-        services.AddSingleton<MessageMapper>();
+
+        services.AddSingleton<UserMapper>();
+        services.AddSingleton<ControlsElementMapper>();
+        services.AddSingleton<AuthMapper>();
     }
 }
 

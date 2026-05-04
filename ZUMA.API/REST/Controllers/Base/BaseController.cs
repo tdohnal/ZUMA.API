@@ -8,6 +8,8 @@ namespace ZUMA.API.REST.Controllers.Base;
 [Route("api/v1/[controller]")]
 public class BaseController : ControllerBase
 {
+    protected HttpMethod CurrentHttpMethod => new(HttpContext.Request.Method);
+
     protected IActionResult ProcessResult<TS, TF>(
          BusinessResult<TS, TF> result,
          Func<TS, IActionResult>? onSuccess = null,

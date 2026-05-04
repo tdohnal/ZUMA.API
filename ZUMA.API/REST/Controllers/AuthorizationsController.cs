@@ -1,11 +1,11 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using ZUMA.API.Mappers;
 using ZUMA.API.REST.Controllers.Base;
 using ZUMA.API.REST.DTOs.Authorization.Requests;
 using ZUMA.API.REST.DTOs.Authorization.Responses;
 using ZUMA.API.REST.DTOs.Registration.Requests;
-using ZUMA.API.REST.Mappers;
 using ZUMA.SharedKernel.Domain.MessagingContracts.Contracts.Authorization;
 
 namespace ZUMA.API.REST.Controllers
@@ -13,9 +13,9 @@ namespace ZUMA.API.REST.Controllers
     public class AuthorizationController : BaseController
     {
         private readonly IMessageService _messageService;
-        private readonly MessageMapper _mapper;
+        private readonly AuthMapper _mapper;
 
-        public AuthorizationController(IMessageService messageService, MessageMapper mapper)
+        public AuthorizationController(IMessageService messageService, AuthMapper mapper)
         {
             _messageService = messageService;
             _mapper = mapper;
@@ -38,7 +38,7 @@ namespace ZUMA.API.REST.Controllers
         [ProducesResponseType(typeof(RegistrateFailed), StatusCodes.Status422UnprocessableEntity)]
         public async Task<IActionResult> NewRegistrationAsync([FromBody] CreateRegistrationRequestDto request)
         {
-            SendRegistrationCreateRequest message = _mapper.MapCreateRegistrationDtoToSendRequest(request);
+            SendRegistrationCreateRequest message = _mapper.MapCreateRegistrationDtoToSendRequest(request, CurrentHttpMethod);
             BusinessResult<RegistrateSuccess, RegistrateFailed> result = await _messageService.SendAsync<SendRegistrationCreateRequest, RegistrateSuccess, RegistrateFailed>(message);
 
             return result.ToCreated();
@@ -64,7 +64,7 @@ namespace ZUMA.API.REST.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Authorize(AuthorizationRequest request, CancellationToken cancellationToken = default)
         {
-            SendAuthorizeUserRequest message = _mapper.MapAuthorizationDtoToSendRequest(request);
+            SendAuthorizeUserRequest message = _mapper.MapAuthorizationDtoToSendRequest(request, CurrentHttpMethod);
             BusinessResult<AuthorizeUserSuccess, AuthorizeUserFailed> result = await _messageService.SendAsync<SendAuthorizeUserRequest, AuthorizeUserSuccess, AuthorizeUserFailed>(message);
 
             return result.ToOk();
@@ -76,7 +76,7 @@ namespace ZUMA.API.REST.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> VerificateAuthorizationCode(VerificationRequest request, CancellationToken cancellationToken = default)
         {
-            SendVerifyCodeRequest message = _mapper.MapVerificationDtoToSendRequest(request);
+            SendVerifyCodeRequest message = _mapper.MapVerificationDtoToSendRequest(request, CurrentHttpMethod);
             BusinessResult<VerificationSuccess, VerificationFailed> result = await _messageService.SendAsync<SendVerifyCodeRequest, VerificationSuccess, VerificationFailed>(message);
 
             return result.ToOk(_mapper.MapVerificationSuccessToResponse);

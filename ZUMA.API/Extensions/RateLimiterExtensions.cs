@@ -11,8 +11,6 @@ public static class RateLimiterExtensions
         {
             options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
-            // 2. GLOBÁLNÍ LIMITER - platí pro všechno
-            // Nastavíme ho třeba na 100 požadavků za minutu na jednu IP
             options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
                 RateLimitPartition.GetFixedWindowLimiter(
                     partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
@@ -26,7 +24,7 @@ public static class RateLimiterExtensions
             options.AddFixedWindowLimiter("auth-limit", opt =>
             {
                 opt.Window = TimeSpan.FromSeconds(30);
-                opt.PermitLimit = 1;                 // Jen 1 request každých 30s
+                opt.PermitLimit = 1;
                 opt.QueueLimit = 0;
             });
         });

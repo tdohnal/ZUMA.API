@@ -3,7 +3,6 @@ using System.Reflection;
 
 namespace ZUMA.API.Extensions;
 
-// Statická třída musí být top-level (ne vnořená), aby fungoval "this IServiceCollection"
 public static class OpenApiExtensions
 {
     public static IServiceCollection AddZumaOpenApi(this IServiceCollection services)
@@ -30,6 +29,12 @@ public static class OpenApiExtensions
                     In = ParameterLocation.Header,
                     Description = "Vložte pouze JWT token."
                 };
+
+                document.Components ??= new OpenApiComponents();
+
+                document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
+
+                document.Components.SecuritySchemes.Add("Bearer", securityScheme);
 
                 return Task.CompletedTask;
             });

@@ -10,8 +10,8 @@ using System.Text;
 using ZUMA.API.Configuration;
 using ZUMA.API.Extensions;
 using ZUMA.API.Middleware;
-using ZUMA.SharedKernel.Application.Configuration;
 using ZUMA.SharedKernel.Infrastructure.Extensions;
+using BaseDIContainer = ZUMA.SharedKernel.Application.Configuration.DIContainer;
 
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
@@ -31,7 +31,6 @@ builder.Services.AddSerilog();
 
 builder.Services.AddControllers();
 
-// JWT Autentizace - Produkční nastavení
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -48,7 +47,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
 
-            ClockSkew = TimeSpan.Zero // Přísná kontrola expirace bez 5min tolerance
+            ClockSkew = TimeSpan.Zero
         };
     });
 
@@ -68,9 +67,8 @@ builder.Services.AddApiVersioning(options =>
 
 builder.Services.AddZumaMassTransitGateway(builder.Configuration);
 
-// Externí DI kontejnery
-DIContainer.ConfigureApplicationBaseServices(builder.Services, builder.Configuration);
-ApiDiContainer.ConfigureServices(builder.Services);
+BaseDIContainer.ConfigureApplicationBaseServices(builder.Services, builder.Configuration);
+DIContainer.ConfigureServices(builder.Services);
 
 // Health Checks
 string? connectionString = builder.Configuration.GetConnectionString("DbConnection");

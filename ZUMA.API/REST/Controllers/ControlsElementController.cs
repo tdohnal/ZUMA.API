@@ -1,8 +1,8 @@
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
+using ZUMA.API.Mappers;
 using ZUMA.API.REST.Controllers.Base;
 using ZUMA.API.REST.DTOs.ControlsElement;
-using ZUMA.API.REST.Mappers;
 using ZUMA.SharedKernel.Domain.MessagingContracts.Contracts.ControlsElement;
 
 namespace ZUMA.API.REST.Controllers;
@@ -10,9 +10,9 @@ namespace ZUMA.API.REST.Controllers;
 public class ControlsElementController : AuthorizedBaseController
 {
     private readonly IMessageService _messageService;
-    private readonly MessageMapper _mapper;
+    private readonly ControlsElementMapper _mapper;
 
-    public ControlsElementController(IMessageService messageService, MessageMapper mapper)
+    public ControlsElementController(IMessageService messageService, ControlsElementMapper mapper)
     {
         _messageService = messageService;
         _mapper = mapper;
@@ -30,7 +30,7 @@ public class ControlsElementController : AuthorizedBaseController
     public async Task<IActionResult> GetControlsElementByIdAsync(Guid publicId, CancellationToken cancellationToken = default)
     {
         BusinessResult<SendGetControlsElementByIdSuccess, SendControlsElementFailed> result = await _messageService.SendAsync<SendGetControlsElementByIdRequest, SendGetControlsElementByIdSuccess, SendControlsElementFailed>(
-            new SendGetControlsElementByIdRequest { PublicId = publicId },
+            new SendGetControlsElementByIdRequest { Method = CurrentHttpMethod, PublicId = publicId },
             cancellationToken);
 
         return result.ToOk(_mapper.MapSendGetControlsElementByIdSuccessToDto);
@@ -45,7 +45,7 @@ public class ControlsElementController : AuthorizedBaseController
     public async Task<IActionResult> GetControlsElementsAsync(CancellationToken cancellationToken = default)
     {
         BusinessResult<SendGetControlsElementsSuccess, SendControlsElementFailed> result = await _messageService.SendAsync<SendGetControlsElementsRequest, SendGetControlsElementsSuccess, SendControlsElementFailed>(
-            new SendGetControlsElementsRequest(),
+            new SendGetControlsElementsRequest { Method = CurrentHttpMethod },
             cancellationToken);
 
         return result.ToOk(_mapper.MapSendGetControlsElementsSuccessToDtoList);
@@ -60,13 +60,14 @@ public class ControlsElementController : AuthorizedBaseController
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public async Task<IActionResult> AddControlsElementAsync([FromBody] ControlsElementCreateRequest request, CancellationToken cancellationToken = default)
     {
-        // Namapujeme DTO na Message a ručně dohodíme OwnerId z tokenu
-        SendCreateControlsElementRequest sendRequest = _mapper.MapCreateRequestToSendRequest(request, AuthorizedUserId);
+        // Metoda se namapuje přímo uvnitř mapperu díky parametru CurrentHttpMethod
+        var sendRequest = _mapper.MapCreateRequestToSendRequest(request, AuthorizedUserId, CurrentHttpMethod);
+
+        // OwnerId už tam máš z parametru mapperu, ale pokud ho chceš mít jistý:
         sendRequest.OwnerUserPublicId = AuthorizedUserId;
 
-        BusinessResult<SendCreateControlsElementSuccess, SendControlsElementFailed> result = await _messageService.SendAsync<SendCreateControlsElementRequest, SendCreateControlsElementSuccess, SendControlsElementFailed>(
-            sendRequest,
-            cancellationToken);
+        var result = await _messageService.SendAsync<SendCreateControlsElementRequest, SendCreateControlsElementSuccess, SendControlsElementFailed>(
+            sendRequest, cancellationToken);
 
         return result.ToCreated();
     }
@@ -81,12 +82,11 @@ public class ControlsElementController : AuthorizedBaseController
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public async Task<IActionResult> UpdateControlsElementAsync(Guid publicId, [FromBody] ControlsElementDto request, CancellationToken cancellationToken = default)
     {
-        SendUpdateControlsElementRequest sendRequest = _mapper.MapUpdateRequestToSendRequest(request);
+        var sendRequest = _mapper.MapUpdateRequestToSendRequest(request, CurrentHttpMethod);
         sendRequest.PublicId = publicId;
 
-        BusinessResult<SendUpdateControlsElementSuccess, SendControlsElementFailed> result = await _messageService.SendAsync<SendUpdateControlsElementRequest, SendUpdateControlsElementSuccess, SendControlsElementFailed>(
-            sendRequest,
-            cancellationToken);
+        var result = await _messageService.SendAsync<SendUpdateControlsElementRequest, SendUpdateControlsElementSuccess, SendControlsElementFailed>(
+            sendRequest, cancellationToken);
 
         return result.ToOk(_mapper.MapSendUpdateControlsElementSuccessToDto);
     }
@@ -101,7 +101,7 @@ public class ControlsElementController : AuthorizedBaseController
     public async Task<IActionResult> DeleteControlsElementAsync(Guid publicId, CancellationToken cancellationToken = default)
     {
         BusinessResult<SendDeleteControlsElementSuccess, SendControlsElementFailed> result = await _messageService.SendAsync<SendDeleteControlsElementRequest, SendDeleteControlsElementSuccess, SendControlsElementFailed>(
-            new SendDeleteControlsElementRequest { PublicId = publicId },
+            new SendDeleteControlsElementRequest { PublicId = publicId, Method = CurrentHttpMethod },
             cancellationToken);
 
         return result.ToNoContent();
