@@ -10,7 +10,7 @@ services:
     container_name: zuma-npm
     restart: always
     ports:
-      - '80:85'   # HTTP
+      - '85:85'   # HTTP
       - '86:86'   # Administrační rozhraní NPM
       - '443:443' # HTTPS
     volumes:
