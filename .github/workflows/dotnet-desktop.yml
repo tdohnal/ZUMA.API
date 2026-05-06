@@ -38,7 +38,7 @@ jobs:
           tags: ghcr.io/${{ github.repository_owner }}/zuma-api:latest
 
       - name: Build and push Communication Service
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: ZUMA.CommunicationService/Dockerfile
