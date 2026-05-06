@@ -10,170 +10,92 @@ services:
     container_name: zuma-npm
     restart: always
     ports:
-      - '85:85'   # HTTP
-      - '86:86'   # Administrační rozhraní NPM
-      - '443:443' # HTTPS
+      - '80:80'    # Standardní HTTP
+      - '81:81'    # Admin panel NPM (tohle si pamatuj!)
+      - '443:443'  # Standardní HTTPS
     volumes:
       - ./npm/data:/data
       - ./npm/letsencrypt:/etc/letsencrypt
     networks:
+      - zuma-network
       - proxy-nw
 
   portainer:
     image: portainer/portainer-ce:latest
     container_name: zuma-portainer
     restart: always
-    ports:
-      - "9443:9443" 
-      - "8000:8000" 
+    # Porty 9443 a 8000 už nepotřebuješ venku, NPM to vyřeší vnitřkem
+    expose:
+      - "9000"
+      - "9443"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
     networks:
-      - proxy-nw
+      - zuma-network
 
-  mailpit:
-    image: axllent/mailpit
-    container_name: zuma-mailpit
+  zuma-api:
+    image: ghcr.io/${GITHUB_REPO_LOWER}/zuma-api:latest
+    container_name: zuma-api
+    restart: always
+    environment:
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ConnectionStrings__DbConnection=Host=zuma-db;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASS}
+      - SERILOG__SEQ__URL=http://zuma-seq:5341
+      - RABBITMQ__HOST=zuma-rabbitmq
     networks:
       - zuma-network
-      - proxy-nw
-    ports:
-      - "8025:8025" 
-      - "1025:1025" 
-    restart: always
-
-  seq:
-    image: datalust/seq:latest
-    container_name: zuma-seq
-    ports:
-      - "8090:80"  
-      - "5341:5341"
-    environment:
-      - ACCEPT_EULA=Y
-      - SEQ_FIRSTRUN_ADMINPASSWORD=${SEQ_PASS}
-    restart: unless-stopped
-    networks:
-      - proxy-nw
-    volumes:
-      - seq_data:/data
 
   zuma-db:
     image: postgres:latest
     container_name: zuma-db
-    networks:
-      - zuma-network
-    volumes:
-      - postgres_data:/var/lib/postgresql
     restart: always
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASS}
       - POSTGRES_DB=${DB_NAME}
-    ports:
-      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - zuma-network
 
-  rabbitmq:
+  zuma-seq:
+    image: datalust/seq:latest
+    container_name: zuma-seq
+    restart: unless-stopped
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_ADMINPASSWORD=${SEQ_PASS}
+    volumes:
+      - seq_data:/data
+    networks:
+      - zuma-network
+
+  zuma-rabbitmq:
     image: rabbitmq:3-management
     container_name: zuma-rabbitmq
+    restart: always
     networks:
       - zuma-network
-      - proxy-nw
-    restart: always
-    environment:
-      - RABBITMQ_DEFAULT_USER=${RABBIT_USER}
-      - RABBITMQ_DEFAULT_PASS=${RABBIT_PASS}
-    ports:
-      - "5672:5672"
-      - "15672:15672"
 
-  zuma-api:
-    container_name: zuma-api
-    networks:
-      - zuma-network
-      - proxy-nw
-    depends_on:
-      - zuma-db
-      - rabbitmq
-    restart: always
-    ports:
-      - "8080:8080"
-    environment:
-      - GH_TOKEN=${GH_TOKEN}
-      - SERILOG__SEQ__URL=http://seq:5341
-      - ASPNETCORE_ENVIRONMENT=${APP_ENV}
-      - ASPNETCORE_HTTP_PORTS=8080 
-      - ConnectionStrings__DbConnection=Host=zuma-db;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASS}
-      - RABBITMQ__HOST=${RABBIT_HOST}
-      - RABBITMQ__USERNAME=${RABBIT_USER}
-      - RABBITMQ__PASSWORD=${RABBIT_PASS} 
-      - Jwt__Key=${JWT_KEY}
-      - Jwt__Issuer=${JWT_ISSUER}
-      - Jwt__Audience=${JWT_AUDIENCE}
-    labels:
-      - "dev.scalar.path=/docs/v1"
-
-  communication-service:
-    container_name: communication-service
-    networks:
-      - zuma-network
-      - proxy-nw
-    depends_on:
-      - rabbitmq
-    restart: always
-    environment:
-      - GH_TOKEN=${GH_TOKEN}
-      - SERILOG__SEQ__URL=http://seq:5341
-      - RABBITMQ__HOST=${RABBIT_HOST}
-      - RABBITMQ__USERNAME=${RABBIT_USER}
-      - RABBITMQ__PASSWORD=${RABBIT_PASS}
-      - ASPNETCORE_ENVIRONMENT=${APP_ENV}
-      - ConnectionStrings__DbConnection=Host=zuma-db;Port=5432;Database=zuma-communication;Username=${DB_USER};Password=${DB_PASS}
-    
-      - Smtp__Host=${SMTP_HOST}
-      - Smtp__Port=${SMTP_PORT}
-      - Smtp__Username=${SMTP_USERNAME}
-      - Smtp__Password=${SMTP_PASS}
-      - Smtp__SenderEmail=${SMTP_SENDER}
-      - Smtp__SenderName=${SMTP_SENDER_NAME}
-
-  customer-service:
-    container_name: customer-service
-    networks:
-      - zuma-network
-      - proxy-nw
-    depends_on:
-      - rabbitmq
-    restart: always
-    environment:
-
-      - SERILOG__SEQ__URL=http://seq:5341
-      - RABBITMQ__HOST=${RABBIT_HOST}
-      - RABBITMQ__USERNAME=${RABBIT_USER}
-      - RABBITMQ__PASSWORD=${RABBIT_PASS}
-      - ASPNETCORE_ENVIRONMENT=${APP_ENV}
-      - ConnectionStrings__DbConnection=Host=zuma-db;Port=5432;Database=zuma-customer;Username=${DB_USER};Password=${DB_PASS}
-      - Jwt__Key=${JWT_KEY}
-      - Jwt__Issuer=${JWT_ISSUER}
-      - Jwt__Audience=${JWT_AUDIENCE}
-
-  pgadmin:
+  zuma-pgadmin:
     image: dpage/pgadmin4
     container_name: zuma-pgadmin
-    networks:
-      - zuma-network
-      - proxy-nw
     restart: always
     environment:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASS}
-    ports:
-      - "5050:80"
-    depends_on:
-      - zuma-db
+    networks:
+      - zuma-network
+
+  zuma-mailpit:
+    image: axllent/mailpit
+    container_name: zuma-mailpit
+    restart: always
+    networks:
+      - zuma-network
 
 volumes:
   postgres_data:
   seq_data:
   portainer_data:
-  npm_data:
