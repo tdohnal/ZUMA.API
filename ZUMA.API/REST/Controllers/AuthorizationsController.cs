@@ -10,6 +10,7 @@ using ZUMA.SharedKernel.Domain.MessagingContracts.Contracts.Authorization;
 
 namespace ZUMA.API.REST.Controllers
 {
+
     public class AuthorizationController : BaseController
     {
         private readonly IMessageService _messageService;

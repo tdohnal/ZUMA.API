@@ -11,7 +11,7 @@ services:
     restart: always
     ports:
       - '80:80'
-      - '81:81'   # Administrace NPM
+      - '81:81'
       - '443:443'
     volumes:
       - ./npm/data:/data
@@ -39,7 +39,6 @@ services:
     networks:
       - zuma-network
       - proxy-nw
-    # Porty odebrány, půjdeš přes mail.zumalab.site
 
   seq:
     image: datalust/seq:latest
@@ -89,6 +88,8 @@ services:
       - zuma-network
       - proxy-nw
     environment:
+      - ASPNETCORE_FORWARDEDHEADERS_ENABLED=true
+      - ASPNETCORE_URLS=http://+:8080
       - GH_TOKEN=${GH_TOKEN}
       - SERILOG__SEQ__URL=http://zuma-seq:5341
       - ASPNETCORE_ENVIRONMENT=${APP_ENV}

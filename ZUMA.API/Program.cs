@@ -114,6 +114,7 @@ builder.Services.AddZumaPolly();
 WebApplication app = builder.Build();
 
 #region Middleware Pipeline
+app.UseForwardedHeaders();
 
 app.MapOpenApi(); // Zpřístupní JSON specifikaci na /openapi/v1.json
 app.MapScalarApiReference("docs", options =>
