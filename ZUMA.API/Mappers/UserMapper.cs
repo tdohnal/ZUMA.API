@@ -8,10 +8,9 @@ namespace ZUMA.API.Mappers;
 [Mapper]
 public partial class UserMapper
 {
-    [MapperIgnoreTarget(nameof(SendCreateUserRequest.PublicId))]
-    public partial SendCreateUserRequest MapCreateUserRequestToSendRequest(UserCreateRequest dto, HttpMethod method);
+    public partial SendCreateUserRequest MapCreateUserRequestToSendRequest(UserCreateRequest dto);
 
-    public partial SendUpdateUserRequest MapUpdateUserRequestToSendRequest(UserCreateRequest dto, HttpMethod method);
+    public partial SendUpdateUserRequest MapUpdateUserRequestToSendRequest(UserCreateRequest dto);
 
     public partial UserDto MapUserMessageModelToUserDto(UserMessageModel model);
 

@@ -33,7 +33,6 @@ public class UserController : AuthorizedBaseController
         var request = new SendGetUserByIdRequest
         {
             PublicId = publicId,
-            Method = CurrentHttpMethod
         };
 
         var result = await _messageService.SendAsync<SendGetUserByIdRequest, SendGetUserByIdSuccess, SendUserFailed>(request, cancellationToken);
@@ -51,7 +50,6 @@ public class UserController : AuthorizedBaseController
     {
         var request = new SendGetUsersRequest
         {
-            Method = CurrentHttpMethod
         };
 
         var result = await _messageService.SendAsync<SendGetUsersRequest, SendGetUsersSuccess, SendUserFailed>(request, cancellationToken);
@@ -69,9 +67,7 @@ public class UserController : AuthorizedBaseController
     public async Task<IActionResult> AddUserAsync([FromBody] UserCreateRequest request, CancellationToken cancellationToken = default)
     {
         // Využijeme mapper pro čistý převod DTO -> Message
-        var sendRequest = _mapper.MapCreateUserRequestToSendRequest(request, CurrentHttpMethod);
-
-        sendRequest.Method = CurrentHttpMethod; // Nastaví POST
+        var sendRequest = _mapper.MapCreateUserRequestToSendRequest(request);
 
         var result = await _messageService.SendAsync<SendCreateUserRequest, SendCreateUserSuccess, SendUserFailed>(sendRequest, cancellationToken);
 
@@ -88,10 +84,9 @@ public class UserController : AuthorizedBaseController
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public async Task<IActionResult> UpdateUserAsync(Guid publicId, [FromBody] UserCreateRequest request, CancellationToken cancellationToken = default)
     {
-        var sendRequest = _mapper.MapUpdateUserRequestToSendRequest(request, CurrentHttpMethod);
+        var sendRequest = _mapper.MapUpdateUserRequestToSendRequest(request);
 
         sendRequest.PublicId = publicId;
-        sendRequest.Method = CurrentHttpMethod; // Nastaví PUT
 
         var result = await _messageService.SendAsync<SendUpdateUserRequest, SendUpdateUserSuccess, SendUserFailed>(sendRequest, cancellationToken);
 
@@ -110,7 +105,6 @@ public class UserController : AuthorizedBaseController
         var sendRequest = new SendDeleteUserRequest
         {
             PublicId = publicId,
-            Method = CurrentHttpMethod
         };
 
         var result = await _messageService.SendAsync<SendDeleteUserRequest, SendDeleteUserSuccess, SendUserFailed>(sendRequest, cancellationToken);

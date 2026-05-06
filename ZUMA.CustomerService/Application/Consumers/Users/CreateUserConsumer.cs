@@ -5,68 +5,57 @@ using ZUMA.SharedKernel.Domain.MessagingContracts.Contracts.Users;
 
 namespace ZUMA.CustomerService.Application.Consumers.Users;
 
-public class CreateUserConsumer : IConsumer<SendCreateUserRequest>
+public class CreateUserConsumer : BaseConsumer<SendCreateUserRequest>
 {
     private readonly IUserService _userService;
     private readonly ILogger<CreateUserConsumer> _logger;
 
     public CreateUserConsumer(
         IUserService userService,
-        ILogger<CreateUserConsumer> logger)
+        ILogger<CreateUserConsumer> logger) : base(logger)
     {
         _userService = userService;
         _logger = logger;
     }
 
-    public async Task Consume(ConsumeContext<SendCreateUserRequest> context)
+    protected override async Task OnConsumeAsync(ConsumeContext<SendCreateUserRequest> context)
     {
         var msg = context.Message;
         _logger.LogInformation("Creating user: {Username}", msg.Username);
 
-        try
+        var userEntity = new UserEntity()
         {
-            UserEntity userEntity = new()
-            {
-                UserName = msg.Username,
-                FullName = msg.FullName,
-                Email = msg.Email
-            };
+            UserName = msg.Username,
+            FullName = msg.FullName,
+            Email = msg.Email
+        };
 
-            UserEntity? user = await _userService.CreateAsync(userEntity);
+        UserEntity? user = await _userService.CreateAsync(userEntity);
 
-            if (user == null)
+        if (user == null)
+        {
+            await OnFailedAsync<SendUserFailed>(context, new Exception($"{nameof(user)} IS NULL!"));
+            return;
+        }
+
+        await context.RespondAsync(new SendCreateUserSuccess
+        {
+            User = new UserMessageModel
             {
-                await context.RespondAsync<SendUserFailed>(new
-                {
-                    ErrorMessage = "Failed to create user.",
-                    ErrorCode = "CREATE_FAILED"
-                });
-                return;
+                PublicId = user.PublicId,
+                UserName = user.UserName,
+                Name = user.FullName,
+                Email = user.Email,
+                Created = user.Created,
+                Updated = user.Updated,
+                Deleted = user.Deleted
             }
+        });
 
-            await context.RespondAsync<SendCreateUserSuccess>(new SendCreateUserSuccess
-            {
-                User = new UserMessageModel
-                {
-                    PublicId = user.PublicId,
-                    UserName = user.UserName,
-                    Name = user.FullName,
-                    Email = user.Email,
-                    Created = user.Created,
-                    Updated = user.Updated,
-                    Deleted = user.Deleted
-                }
-            });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error occurred while creating user: {Username}", msg.Username);
+    }
 
-            await context.RespondAsync<SendUserFailed>(new
-            {
-                ErrorMessage = "An internal error occurred while creating the user.",
-                ErrorCode = "INTERNAL_ERROR"
-            });
-        }
+    protected override Task OnFailedAsync<TFailedResponse>(ConsumeContext<SendCreateUserRequest> context, Exception ex)
+    {
+        return base.OnFailedAsync<SendUserFailed>(context, ex);
     }
 }

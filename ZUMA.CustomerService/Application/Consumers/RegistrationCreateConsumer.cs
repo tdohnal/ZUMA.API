@@ -5,56 +5,49 @@ using ZUMA.SharedKernel.Domain.MessagingContracts.Contracts.Authorization;
 
 namespace ZUMA.CustomerService.Application.Consumers;
 
-public class RegistrationCreateConsumer : IConsumer<SendRegistrationCreateRequest>
+public class RegistrationCreateConsumer : BaseConsumer<SendRegistrationCreateRequest>
 {
     private readonly IRegistrationService _registrationService;
     private readonly ILogger<RegistrationCreateConsumer> _logger;
 
     public RegistrationCreateConsumer(
         IRegistrationService registrationService,
-        ILogger<RegistrationCreateConsumer> logger)
+        ILogger<RegistrationCreateConsumer> logger) : base(logger)
     {
         _registrationService = registrationService;
         _logger = logger;
     }
 
-    public async Task Consume(ConsumeContext<SendRegistrationCreateRequest> context)
+    protected override async Task OnConsumeAsync(ConsumeContext<SendRegistrationCreateRequest> context)
     {
         var msg = context.Message;
         _logger.LogInformation("Processing registration request for email: {Email}", msg.Email);
 
-        try
+        RegistrationEntity newReg = new()
         {
-            RegistrationEntity newReg = new()
+            Created = DateTime.UtcNow,
+            User = new UserEntity
             {
-                Created = DateTime.UtcNow,
-                User = new UserEntity
-                {
-                    FullName = $"{msg.FirstName} {msg.LastName}",
-                    Email = msg.Email,
-                    UserName = msg.Username
-                }
-            };
+                FullName = $"{msg.FirstName} {msg.LastName}",
+                Email = msg.Email,
+                UserName = msg.Username
+            }
+        };
 
-            await _registrationService.CreateAsync(newReg);
+        await _registrationService.CreateAsync(newReg);
 
-            _logger.LogInformation("Registration successfully created. PublicId: {PublicId}", newReg.PublicId);
+        _logger.LogInformation("Registration successfully created. PublicId: {PublicId}", newReg.PublicId);
 
-            await context.RespondAsync<RegistrateSuccess>(new
-            {
-                PublicId = newReg.PublicId,
-                Message = "Registration record created successfully."
-            });
-        }
-        catch (Exception ex)
+        await context.RespondAsync<RegistrateSuccess>(new
         {
-            _logger.LogError(ex, "Failed to create registration for email: {Email}", msg.Email);
-
-            await context.RespondAsync<RegistrateFailed>(new
-            {
-                ErrorMessage = "Internal database error during registration process.",
-                ErrorCode = "DB_SAVE_ERROR"
-            });
-        }
+            PublicId = newReg.PublicId,
+            Message = "Registration record created successfully."
+        });
     }
+
+    protected override Task OnFailedAsync<TFailedResponse>(ConsumeContext<SendRegistrationCreateRequest> context, Exception ex)
+    {
+        return base.OnFailedAsync<RegistrateFailed>(context, ex);
+    }
+
 }

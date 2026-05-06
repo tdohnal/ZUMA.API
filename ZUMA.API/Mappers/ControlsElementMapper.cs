@@ -10,16 +10,13 @@ public partial class ControlsElementMapper
     // --- REQUEST MAPPING ---
 
     [MapProperty(nameof(ownerUserPublicId), nameof(SendCreateControlsElementRequest.OwnerUserPublicId))]
-    [MapperIgnoreTarget(nameof(SendCreateControlsElementRequest.PublicId))]
     public partial SendCreateControlsElementRequest MapCreateRequestToSendRequest(
         ControlsElementCreateRequest dto,
-        Guid ownerUserPublicId,
-        HttpMethod method);
+        Guid ownerUserPublicId);
 
     [MapperIgnoreTarget(nameof(SendUpdateControlsElementRequest.PublicId))]
     public partial SendUpdateControlsElementRequest MapUpdateRequestToSendRequest(
-        ControlsElementDto dto,
-        HttpMethod method);
+        ControlsElementDto dto);
 
 
     // --- RESPONSE MAPPING ---

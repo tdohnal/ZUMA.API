@@ -4,56 +4,44 @@ using ZUMA.SharedKernel.Domain.MessagingContracts.Contracts.Authorization;
 
 namespace ZUMA.CustomerService.Application.Consumers;
 
-public class AuthorizeUserConsumer : IConsumer<SendAuthorizeUserRequest>
+public class AuthorizeUserConsumer : BaseConsumer<SendAuthorizeUserRequest>
 {
     private readonly IUserService _userService;
     private readonly ILogger<AuthorizeUserConsumer> _logger;
 
     public AuthorizeUserConsumer(
         IUserService userService,
-        ILogger<AuthorizeUserConsumer> logger)
+        ILogger<AuthorizeUserConsumer> logger) : base(logger)
     {
         _userService = userService;
         _logger = logger;
     }
 
-    public async Task Consume(ConsumeContext<SendAuthorizeUserRequest> context)
+    protected override async Task OnConsumeAsync(ConsumeContext<SendAuthorizeUserRequest> context)
     {
-        SendAuthorizeUserRequest msg = context.Message;
+        var msg = context.Message;
         _logger.LogInformation("Processing registration request for email: {Email}", msg.Email);
 
-        try
+        var id = await _userService.GetIdByEmailAsync(msg.Email);
+
+        if (id == null)
         {
-            long? id = await _userService.GetIdByEmailAsync(msg.Email);
-
-            if (id == null)
-            {
-                await context.RespondAsync<AuthorizeUserFailed>(new
-                {
-                    ErrorMessage = $"Not found by {msg.Email}"
-                });
-                return;
-            }
-
-            if (id.HasValue)
-            {
-                await _userService.GetAuthorizationCodeAsync(id.Value);
-            }
-
-            await context.RespondAsync(new AuthorizeUserSuccess
-            {
-                SentAt = DateTime.UtcNow
-            });
+            throw new Exception($"Not found by {msg.Email}");
         }
-        catch (Exception ex)
+
+        if (id.HasValue)
         {
-            _logger.LogError(ex, "Failed to create authorize for email: {Email}", msg.Email);
-
-            await context.RespondAsync<AuthorizeUserFailed>(new
-            {
-                ErrorMessage = "Internal database error during authorization user process.",
-                ErrorCode = "DB_SAVE_ERROR"
-            });
+            await _userService.GetAuthorizationCodeAsync(id.Value);
         }
+
+        await context.RespondAsync(new AuthorizeUserSuccess
+        {
+            SentAt = DateTime.UtcNow
+        });
+    }
+
+    protected override Task OnFailedAsync<TFailedResponse>(ConsumeContext<SendAuthorizeUserRequest> context, Exception ex)
+    {
+        return base.OnFailedAsync<AuthorizeUserFailed>(context, ex);
     }
 }

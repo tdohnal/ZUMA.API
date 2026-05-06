@@ -30,7 +30,7 @@ public class ControlsElementController : AuthorizedBaseController
     public async Task<IActionResult> GetControlsElementByIdAsync(Guid publicId, CancellationToken cancellationToken = default)
     {
         BusinessResult<SendGetControlsElementByIdSuccess, SendControlsElementFailed> result = await _messageService.SendAsync<SendGetControlsElementByIdRequest, SendGetControlsElementByIdSuccess, SendControlsElementFailed>(
-            new SendGetControlsElementByIdRequest { Method = CurrentHttpMethod, PublicId = publicId },
+            new SendGetControlsElementByIdRequest { PublicId = publicId },
             cancellationToken);
 
         return result.ToOk(_mapper.MapSendGetControlsElementByIdSuccessToDto);
@@ -45,7 +45,7 @@ public class ControlsElementController : AuthorizedBaseController
     public async Task<IActionResult> GetControlsElementsAsync(CancellationToken cancellationToken = default)
     {
         BusinessResult<SendGetControlsElementsSuccess, SendControlsElementFailed> result = await _messageService.SendAsync<SendGetControlsElementsRequest, SendGetControlsElementsSuccess, SendControlsElementFailed>(
-            new SendGetControlsElementsRequest { Method = CurrentHttpMethod },
+            new SendGetControlsElementsRequest { },
             cancellationToken);
 
         return result.ToOk(_mapper.MapSendGetControlsElementsSuccessToDtoList);
@@ -61,7 +61,7 @@ public class ControlsElementController : AuthorizedBaseController
     public async Task<IActionResult> AddControlsElementAsync([FromBody] ControlsElementCreateRequest request, CancellationToken cancellationToken = default)
     {
         // Metoda se namapuje přímo uvnitř mapperu díky parametru CurrentHttpMethod
-        var sendRequest = _mapper.MapCreateRequestToSendRequest(request, AuthorizedUserId, CurrentHttpMethod);
+        var sendRequest = _mapper.MapCreateRequestToSendRequest(request, AuthorizedUserId);
 
         // OwnerId už tam máš z parametru mapperu, ale pokud ho chceš mít jistý:
         sendRequest.OwnerUserPublicId = AuthorizedUserId;
@@ -82,7 +82,7 @@ public class ControlsElementController : AuthorizedBaseController
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     public async Task<IActionResult> UpdateControlsElementAsync(Guid publicId, [FromBody] ControlsElementDto request, CancellationToken cancellationToken = default)
     {
-        var sendRequest = _mapper.MapUpdateRequestToSendRequest(request, CurrentHttpMethod);
+        var sendRequest = _mapper.MapUpdateRequestToSendRequest(request);
         sendRequest.PublicId = publicId;
 
         var result = await _messageService.SendAsync<SendUpdateControlsElementRequest, SendUpdateControlsElementSuccess, SendControlsElementFailed>(
@@ -101,7 +101,7 @@ public class ControlsElementController : AuthorizedBaseController
     public async Task<IActionResult> DeleteControlsElementAsync(Guid publicId, CancellationToken cancellationToken = default)
     {
         BusinessResult<SendDeleteControlsElementSuccess, SendControlsElementFailed> result = await _messageService.SendAsync<SendDeleteControlsElementRequest, SendDeleteControlsElementSuccess, SendControlsElementFailed>(
-            new SendDeleteControlsElementRequest { PublicId = publicId, Method = CurrentHttpMethod },
+            new SendDeleteControlsElementRequest { PublicId = publicId },
             cancellationToken);
 
         return result.ToNoContent();

@@ -1,84 +1,64 @@
 using MassTransit;
-using ZUMA.CustomerService.Domain.Entities;
 using ZUMA.CustomerService.Domain.Interfaces;
 using ZUMA.SharedKernel.Domain.MessagingContracts.Contracts.Users;
 
 namespace ZUMA.CustomerService.Application.Consumers.Users;
 
-public class UpdateUserConsumer : IConsumer<SendUpdateUserRequest>
+public class UpdateUserConsumer : BaseConsumer<SendUpdateUserRequest>
 {
     private readonly IUserService _userService;
     private readonly ILogger<UpdateUserConsumer> _logger;
 
     public UpdateUserConsumer(
         IUserService userService,
-        ILogger<UpdateUserConsumer> logger)
+        ILogger<UpdateUserConsumer> logger) : base(logger)
     {
         _userService = userService;
         _logger = logger;
     }
 
-    public async Task Consume(ConsumeContext<SendUpdateUserRequest> context)
+    protected override async Task OnConsumeAsync(ConsumeContext<SendUpdateUserRequest> context)
     {
-        SendUpdateUserRequest msg = context.Message;
+        var msg = context.Message;
         _logger.LogInformation("Updating user: {PublicId}", msg.PublicId);
 
-        try
+        var existingUser = await _userService.GetByPublicIdAsync(msg.PublicId);
+
+        if (existingUser == null)
         {
-            UserEntity? existingUser = await _userService.GetByPublicIdAsync(msg.PublicId);
+            _logger.LogWarning("User with PublicId: {PublicId} not found.", msg.PublicId);
 
-            if (existingUser == null)
-            {
-                _logger.LogWarning("User with PublicId: {PublicId} not found.", msg.PublicId);
-
-                await context.RespondAsync<SendUserFailed>(new
-                {
-                    ErrorMessage = $"User with ID {msg.PublicId} was not found.",
-                    ErrorCode = "USER_NOT_FOUND"
-                });
-                return;
-            }
-
-            // Update fields
-            existingUser.UserName = msg.Username;
-            existingUser.FullName = msg.FullName;
-            existingUser.Email = msg.Email;
-
-            UserEntity? user = await _userService.UpdateAsync(existingUser);
-
-            if (user == null)
-            {
-                await context.RespondAsync<SendUserFailed>(new
-                {
-                    ErrorMessage = "Failed to update user.",
-                    ErrorCode = "UPDATE_FAILED"
-                });
-                return;
-            }
-
-            await context.RespondAsync<SendUpdateUserSuccess>(new SendUpdateUserSuccess
-            {
-                User = new UserMessageModel
-                {
-                    PublicId = user.PublicId,
-                    UserName = user.UserName,
-                    Name = user.FullName,
-                    Email = user.Email,
-                    Created = user.Created,
-                    Updated = user.Updated,
-                    Deleted = user.Deleted
-                }
-            });
+            throw new Exception($"User with ID {msg.PublicId} was not found.");
         }
-        catch (Exception ex)
+
+        existingUser.UserName = msg.Username;
+        existingUser.FullName = msg.FullName;
+        existingUser.Email = msg.Email;
+
+        var user = await _userService.UpdateAsync(existingUser);
+
+        if (user == null)
         {
-            _logger.LogError(ex, "Error occurred while updating user: {PublicId}", msg.PublicId);
-
-            await context.RespondAsync<SendUserFailed>(new
-            {
-                ErrorMessage = "An internal error occurred while updating the user.",
-                ErrorCode = "INTERNAL_ERROR"
-            });
+            throw new Exception("Failed to update user.");
         }
+
+        await context.RespondAsync(new SendUpdateUserSuccess
+        {
+            User = new UserMessageModel
+            {
+                PublicId = user.PublicId,
+                UserName = user.UserName,
+                Name = user.FullName,
+                Email = user.Email,
+                Created = user.Created,
+                Updated = user.Updated,
+                Deleted = user.Deleted
+            }
+        });
+    }
+
+    protected override Task OnFailedAsync<TFailedResponse>(ConsumeContext<SendUpdateUserRequest> context, Exception ex)
+    {
+        return base.OnFailedAsync<SendUserFailed>(context, ex);
     }
 }

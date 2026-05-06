@@ -51,7 +51,7 @@ public class DeleteControlsElementConsumer : IConsumer<SendDeleteControlsElement
                 return;
             }
 
-            await context.RespondAsync<SendDeleteControlsElementSuccess>(new SendDeleteControlsElementSuccess());
+            await context.RespondAsync(new SendDeleteControlsElementSuccess());
         }
         catch (Exception ex)
         {

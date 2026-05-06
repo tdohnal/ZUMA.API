@@ -10,8 +10,6 @@ namespace ZUMA.API.REST.Controllers.Base;
 [Route("api/v1/[controller]")]
 public class AuthorizedBaseController : ControllerBase
 {
-    protected HttpMethod CurrentHttpMethod => new(HttpContext.Request.Method);
-
     protected Guid AuthorizedUserId => GetUserIdOrThrow();
 
     private Guid GetUserIdOrThrow()

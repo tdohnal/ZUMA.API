@@ -42,9 +42,11 @@ internal class EmailService : ServiceBase<EmailEntity>, IEmailService
 
     public async Task ProcessQueueAsync(CancellationToken cancellationToken = default)
     {
-        IList<EmailEntity> emailsToSend = await _emailRepository.GetPendingEmailsAsync(cancellationToken);
+        _logger.LogInformation("Email processing triggered by event. Starting bulk send process...");
 
-        foreach (EmailEntity email in emailsToSend)
+        var emailsToSend = await _emailRepository.GetPendingEmailsAsync(cancellationToken);
+
+        foreach (var email in emailsToSend)
         {
             try
             {

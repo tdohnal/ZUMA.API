@@ -4,63 +4,52 @@ using ZUMA.SharedKernel.Domain.MessagingContracts.Contracts.Users;
 
 namespace ZUMA.CustomerService.Application.Consumers.Users;
 
-public class GetUserByIdConsumer : IConsumer<SendGetUserByIdRequest>
+public class GetUserByIdConsumer : BaseConsumer<SendGetUserByIdRequest>
 {
     private readonly IUserService _userService;
     private readonly ILogger<GetUserByIdConsumer> _logger;
 
     public GetUserByIdConsumer(
         IUserService userService,
-        ILogger<GetUserByIdConsumer> logger)
+        ILogger<GetUserByIdConsumer> logger) : base(logger)
     {
         _userService = userService;
         _logger = logger;
     }
 
-    public async Task Consume(ConsumeContext<SendGetUserByIdRequest> context)
+    protected override async Task OnConsumeAsync(ConsumeContext<SendGetUserByIdRequest> context)
     {
         var msg = context.Message;
+
         _logger.LogInformation("Fetching user data for PublicId: {PublicId}", msg.PublicId);
 
-        try
+
+        var user = await _userService.GetByPublicIdAsync(msg.PublicId);
+
+        if (user == null)
         {
-            var user = await _userService.GetByPublicIdAsync(msg.PublicId);
+            _logger.LogWarning("User with PublicId: {PublicId} not found.", msg.PublicId);
 
-            if (user == null)
+            throw new Exception($"User with ID {msg.PublicId} was not found.");
+        }
+
+        await context.RespondAsync(new SendGetUserByIdSuccess
+        {
+            User = new UserMessageModel
             {
-                _logger.LogWarning("User with PublicId: {PublicId} not found.", msg.PublicId);
-
-                await context.RespondAsync<SendUserFailed>(new
-                {
-                    ErrorMessage = $"User with ID {msg.PublicId} was not found.",
-                    ErrorCode = "USER_NOT_FOUND"
-                });
-                return;
+                PublicId = user.PublicId,
+                UserName = user.UserName,
+                Name = user.FullName,
+                Email = user.Email,
+                Created = user.Created,
+                Updated = user.Updated,
+                Deleted = user.Deleted
             }
+        });
+    }
 
-            await context.RespondAsync<SendGetUserByIdSuccess>(new SendGetUserByIdSuccess
-            {
-                User = new UserMessageModel
-                {
-                    PublicId = user.PublicId,
-                    UserName = user.UserName,
-                    Name = user.FullName,
-                    Email = user.Email,
-                    Created = user.Created,
-                    Updated = user.Updated,
-                    Deleted = user.Deleted
-                }
-            });
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error occurred while fetching user for PublicId: {PublicId}", msg.PublicId);
-
-            await context.RespondAsync<SendUserFailed>(new
-            {
-                ErrorMessage = "An internal error occurred while retrieving user data.",
-                ErrorCode = "INTERNAL_ERROR"
-            });
-        }
+    protected override Task OnFailedAsync<TFailedResponse>(ConsumeContext<SendGetUserByIdRequest> context, Exception ex)
+    {
+        return base.OnFailedAsync<SendUserFailed>(context, ex);
     }
 }

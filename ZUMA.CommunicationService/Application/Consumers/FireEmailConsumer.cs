@@ -4,32 +4,21 @@ using ZUMA.SharedKernel.Domain.MessagingContracts.Events;
 
 namespace ZUMA.CommunicationService.Application.Consumers;
 
-public class FireEmailConsumer : IConsumer<FireEmailEvent>
+public class FireEmailConsumer : BaseConsumer<FireEmailEvent>
 {
     private readonly IEmailService _emailService;
     private readonly ILogger<FireEmailConsumer> _logger;
 
     public FireEmailConsumer(
         IEmailService emailService,
-        ILogger<FireEmailConsumer> logger)
+        ILogger<FireEmailConsumer> logger) : base(logger)
     {
         _emailService = emailService;
         _logger = logger;
     }
 
-    public async Task Consume(ConsumeContext<FireEmailEvent> context)
+    protected override async Task OnConsumeAsync(ConsumeContext<FireEmailEvent> context)
     {
-        _logger.LogInformation("Email processing triggered by event. Starting bulk send process...");
-
-        try
-        {
-            await _emailService.ProcessQueueAsync();
-
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred during bulk email processing. Some emails might not have been sent.");
-            throw;
-        }
+        await _emailService.ProcessQueueAsync();
     }
 }
