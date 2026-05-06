@@ -5,6 +5,20 @@ networks:
     external: true
 
 services:
+  nginx-proxy-manager:
+    image: 'jc21/nginx-proxy-manager:latest'
+    container_name: zuma-npm
+    restart: always
+    ports:
+      - '80:80'   # HTTP
+      - '86:86'   # Administrační rozhraní NPM
+      - '443:443' # HTTPS
+    volumes:
+      - ./npm/data:/data
+      - ./npm/letsencrypt:/etc/letsencrypt
+    networks:
+      - proxy-nw
+
   portainer:
     image: portainer/portainer-ce:latest
     container_name: zuma-portainer
@@ -162,3 +176,4 @@ volumes:
   postgres_data:
   seq_data:
   portainer_data:
+  npm_data:
