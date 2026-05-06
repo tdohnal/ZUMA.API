@@ -19,6 +19,19 @@ services:
     networks:
       - proxy-nw
       - zuma-network
+  
+  aspire-dashboard:
+    image: mcr.microsoft.com/dotnet/aspire-dashboard:8.0
+    container_name: aspire-dashboard
+    environment:
+      - ASPIRE_ALLOW_UNSECURED_TRANSPORT=true
+      - DOTNET_DASHBOARD_UNSECURED_ALLOW_ANONYMOUS=true
+    ports:
+      - "18888:18888"
+      - "4318:4317"
+    networks:
+      - proxy-nw
+      - zuma-network
 
   portainer:
     image: portainer/portainer-ce:latest
@@ -47,6 +60,9 @@ services:
     environment:
       - ACCEPT_EULA=Y
       - SEQ_FIRSTRUN_ADMINPASSWORD=${SEQ_PASS}
+      - SEQ_API_INGESTION_PORT_OTLP=4317
+    ports:
+      - 4317:4317
     volumes:
       - seq_data:/data
     networks:
@@ -62,7 +78,7 @@ services:
       - POSTGRES_PASSWORD=${DB_PASS}
       - POSTGRES_DB=${DB_NAME}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
     networks:
       - zuma-network
 
@@ -88,6 +104,7 @@ services:
       - zuma-network
       - proxy-nw
     environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://aspire-dashboard:4317
       - ASPNETCORE_FORWARDEDHEADERS_ENABLED=true
       - ASPNETCORE_URLS=http://+:8080
       - GH_TOKEN=${GH_TOKEN}
@@ -113,6 +130,7 @@ services:
     networks:
       - zuma-network
     environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://aspire-dashboard:4317
       - GH_TOKEN=${GH_TOKEN}
       - SERILOG__SEQ__URL=http://zuma-seq:5341
       - RABBITMQ__HOST=zuma-rabbitmq
@@ -136,6 +154,7 @@ services:
     networks:
       - zuma-network
     environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://aspire-dashboard:4317
       - SERILOG__SEQ__URL=http://zuma-seq:5341
       - RABBITMQ__HOST=zuma-rabbitmq
       - RABBITMQ__USERNAME=${RABBIT_USER}

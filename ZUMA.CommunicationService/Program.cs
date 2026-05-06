@@ -17,6 +17,13 @@ builder.Services.AddSerilog();
 
 #endregion
 
+#region OpenTelemetry
+
+var otlpEndpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
+builder.Services.AddZumaTelemetry("ZUMA.API", otlpEndpoint);
+
+#endregion
+
 builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddHealthChecks()
