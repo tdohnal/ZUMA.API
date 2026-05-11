@@ -36,20 +36,28 @@ jobs:
 
     - name: Test with Coverage
       run: |
-        mkdir -p TestResults
-        # find najde všechny .csproj v podsložkách Tests
+        # Vyčištění a vytvoření složky
+        rm -rf "${{ github.workspace }}/TestResults"
+        mkdir -p "${{ github.workspace }}/TestResults"
+        
+        # Spuštění testů pro každý projekt
         find Tests -name "*.csproj" | while read project_file; do
-          echo "Processing project: $project_file"
-          # Spustíme testy a nasměrujeme cobertura report do centrální složky
+          echo "Testing project: $project_file"
+          
           dotnet test "$project_file" --no-build --verbosity normal \
             /p:CollectCoverage=true \
             /p:CoverletOutputFormat=cobertura \
-            /p:CoverletOutput="../../TestResults/$(basename ${project_file%.*}).cobertura.xml"
+            /p:CoverletOutput="${{ github.workspace }}/TestResults/"
+            # Coverlet v novějších verzích při cestě končící lomítkem 
+            # automaticky pojmenuje soubor jako coverage.cobertura.xml 
+            # nebo zachová název projektu.
         done
 
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        directory: ./TestResults/
+        # Použijeme hvězdičku pro nalezení všech xml reportů v rootu složky
+        files: ${{ github.workspace }}/TestResults/*.xml
         fail_ci_if_error: true
+        verbose: true
