@@ -1,0 +1,40 @@
+name: CI - Build, Test and Coverage
+
+on:
+  push:
+    branches: [ master, develop ]
+  pull_request:
+    branches: [ master, develop ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x' # nebo 9.0.x podle tvého projektu
+
+    - name: Restore
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --no-restore
+
+    - name: Test with Coverage
+      # Generujeme cobertura.xml pro Codecov
+      run: |
+        dotnet test --no-build --verbosity normal \
+        /p:CollectCoverage=true \
+        /p:CoverletOutputFormat=cobertura \
+        /p:CoverletOutput=./TestResults/ \
+        --p:Exclude="[ZUMA.*.Migrations]*;[ZUMA.*]*.Program;[ZUMA.*.DTOs]*"
+
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v5
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        fail_ci_if_error: true
