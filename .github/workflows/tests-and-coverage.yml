@@ -40,7 +40,7 @@ jobs:
         /p:CollectCoverage=true \
         /p:CoverletOutputFormat=cobertura \
         /p:CoverletOutput=./TestResults/ \
-        /p:Exclude="[ZUMA.*.Migrations]*;[ZUMA.*]*.Program;[ZUMA.*.DTOs]*"
+        "/p:Exclude=[ZUMA.*.Migrations]*;[ZUMA.*]*.Program;[ZUMA.*.DTOs]*"
 
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v5
