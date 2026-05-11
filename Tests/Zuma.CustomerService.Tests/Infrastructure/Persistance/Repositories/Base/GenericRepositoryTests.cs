@@ -20,10 +20,8 @@ public abstract class GenericRepositoryTests<TEntity, TRepository> : Persistence
         Repo = CreateRepository(LoggerMock.Object);
     }
 
-    // Vrací interface (např. IUserRepository), který je public
     protected abstract TRepository CreateRepository(ILogger<TRepository> logger);
 
-    // Specifické nastavení dat pro danou entitu
     protected abstract void MapRequiredProperties(TEntity entity);
     protected abstract void UpdateProperties(TEntity entity);
 
@@ -66,7 +64,6 @@ public abstract class GenericRepositoryTests<TEntity, TRepository> : Persistence
         (await Repo.GetByIdAsync(created.Id)).Should().BeNull();
         (await Repo.ExistsAsync(created.Id)).Should().BeFalse();
 
-        // Raw DB check - ověření, že záznam v DB fyzicky existuje, ale má příznak Deleted
         var rawDb = await Context.Set<TEntity>()
             .IgnoreQueryFilters()
             .FirstOrDefaultAsync(x => x.Id == created.Id);
