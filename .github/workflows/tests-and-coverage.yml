@@ -35,12 +35,12 @@ jobs:
       run: dotnet build "ZUMA.API.slnx" --no-restore
 
     - name: Test with Coverage
+      # Míříme přímo na složku s testovacími projekty
       run: |
-        dotnet test "ZUMA.API.slnx" --no-build --verbosity normal \
+        dotnet test "Tests/" --no-build --verbosity normal \
         /p:CollectCoverage=true \
         /p:CoverletOutputFormat=cobertura \
-        /p:CoverletOutput=./TestResults/ \
-        "/p:Exclude=[ZUMA.*.Migrations]*;[ZUMA.*]*.Program;[ZUMA.*.DTOs]*"
+        /p:CoverletOutput=../TestResults/
 
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v5
