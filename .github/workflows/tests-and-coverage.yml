@@ -36,22 +36,25 @@ jobs:
 
     - name: Run all tests
       run: |
+          # Vytvoříme složku explicitně v rootu
+          mkdir -p TestResults
           find Tests -name "*.csproj" | while read project_file; do
-            # Vytvoříme unikátní název podle jména projektu
             project_name=$(basename "$project_file" .csproj)
             echo "Running tests for $project_name"
+            # DŮLEŽITÉ: Cesta musí být absolutní nebo jasně daná k rootu
             dotnet test "$project_file" --no-build --verbosity normal \
               /p:CollectCoverage=true \
               /p:CoverletOutputFormat=cobertura \
-              /p:CoverletOutput=./TestResults/$project_name.xml
+              /p:CoverletOutput="${{ github.workspace }}/TestResults/$project_name.xml"
           done
           
-    - name: Upload coverage reports to Codecov
+    - name: List Test Results (Debug)
+      run: ls -R ${{ github.workspace }}/TestResults
+    
+    - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v5
       with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        # Místo 'files' s hvězdičkou použijeme 'directory'
-        # To vynutí prohledání konkrétní složky
-        directory: ${{ github.workspace }}/TestResults
-        fail_ci_if_error: true
-        verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ${{ github.workspace }}/TestResults
+          fail_ci_if_error: true
+          verbose: true
