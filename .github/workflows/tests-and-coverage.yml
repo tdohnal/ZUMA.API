@@ -9,32 +9,55 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-
+    environment: ZUMA
     steps:
     - uses: actions/checkout@v4
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.x' # nebo 9.0.x podle tvého projektu
+        dotnet-version: '10.0.x'
+
+    - name: Add NuGet Source and Auth
+      # Nejdřív smažeme případný existující zdroj "GitHub", aby add source nehodil chybu
+      run: |
+        dotnet nuget remove source "GitHub" || true
+        dotnet nuget add source "https://nuget.pkg.github.com/tdohnal/index.json" --name "GitHub" --username "tdohnal" --password "${{ secrets.NUGET_GITHUB_TOKEN }}" --store-password-in-clear-text
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.NUGET_GITHUB_TOKEN }}
 
     - name: Restore
-      run: dotnet restore ZUMA.API.sln
+      run: dotnet restore "ZUMA.API.slnx"
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.NUGET_GITHUB_TOKEN }}
 
     - name: Build
-      run: dotnet build ZUMA.API.sln --no-restore
+      run: dotnet build "ZUMA.API.slnx" --no-restore
 
     - name: Test with Coverage
-      # Generujeme cobertura.xml pro Codecov
       run: |
-        dotnet test ZUMA.API.sln --no-build --verbosity normal \
-        /p:CollectCoverage=true \
-        /p:CoverletOutputFormat=cobertura \
-        /p:CoverletOutput=./TestResults/ \
-        --p:Exclude="[ZUMA.*.Migrations]*;[ZUMA.*]*.Program;[ZUMA.*.DTOs]*"
+        # Vyčištění a vytvoření složky
+        rm -rf "${{ github.workspace }}/TestResults"
+        mkdir -p "${{ github.workspace }}/TestResults"
+        
+        # Spuštění testů pro každý projekt
+        find Tests -name "*.csproj" | while read project_file; do
+          echo "Testing project: $project_file"
+          
+          dotnet test "$project_file" --no-build --verbosity normal \
+            /p:CollectCoverage=true \
+            /p:CoverletOutputFormat=cobertura \
+            /p:CoverletOutput="${{ github.workspace }}/TestResults/"
+            # Coverlet v novějších verzích při cestě končící lomítkem 
+            # automaticky pojmenuje soubor jako coverage.cobertura.xml 
+            # nebo zachová název projektu.
+        done
 
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
+        # Použijeme hvězdičku pro nalezení všech xml reportů v rootu složky
+        files: ${{ github.workspace }}/TestResults/*.xml
         fail_ci_if_error: true
+        verbose: true
