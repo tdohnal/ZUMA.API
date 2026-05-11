@@ -9,6 +9,7 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v4
 
@@ -16,16 +17,10 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '10.0.x'
-      # ODEBRALI JSME source-url, aby to neházelo tu chybu
 
     - name: Add NuGet Source and Auth
-      # Tento krok ručně nastaví přístup k tvým balíčkům
-      run: |
-        dotnet nuget add source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
-          --name "GitHub" \
-          --username "${{ github.actor }}" \
-          --password "${{ secrets.GHCR_TOKEN }}" \
-          --store-password-in-clear-text
+      # Vše na jednom řádku, aby GitHub neztratil parametry username a password
+      run: dotnet nuget add source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --name "GitHub" --username "${{ github.actor }}" --password "${{ secrets.GHCR_TOKEN }}" --store-password-in-clear-text
       env:
         NUGET_AUTH_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
@@ -43,7 +38,7 @@ jobs:
         /p:CollectCoverage=true \
         /p:CoverletOutputFormat=cobertura \
         /p:CoverletOutput=./TestResults/ \
-        --p:Exclude="[ZUMA.*.Migrations]*;[ZUMA.*]*.Program;[ZUMA.*.DTOs]*"
+        /p:Exclude="[ZUMA.*.Migrations]*;[ZUMA.*]*.Program;[ZUMA.*.DTOs]*"
 
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v5
