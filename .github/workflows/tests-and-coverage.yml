@@ -40,11 +40,11 @@ jobs:
           find Tests -name "*.csproj" | while read project_file; do
             project_name=$(basename "$project_file" .csproj)
             echo "Running tests for $project_name"
+            # Všimni si těch zpětných lomítek na koncích řádků:
             dotnet test "$project_file" --no-build --verbosity normal \
               /p:CollectCoverage=true \
               /p:CoverletOutputFormat=cobertura \
-              # Změna: přidali jsme .coverage před .xml
-              /p:CoverletOutput="${{ github.workspace }}/TestResults/$project_name.coverage.xml"
+              /p:CoverletOutput="${{ github.workspace }}/TestResults/${project_name}.coverage.xml"
           done
 
     - name: List Test Results (Debug)
