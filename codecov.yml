@@ -1,0 +1,15 @@
+# Konfigurace limitů a vzhledu Codecov
+coverage:
+  status:
+    project:
+      default:
+        target: 80%    # Celkové pokrytí projektu musí být aspoň 80 %
+        threshold: 1%  # Tolerance (vypne fail, pokud to klesne jen o kousíček)
+    patch:
+      default:
+        target: 80%    # Nový kód v tomto konkrétním PR musí být pokryt z 80 %
+
+comment:
+  layout: "reach, diff, flags, files" # Toto zajistí tu velkou tabulku se soubory
+  behavior: default
+  require_changes: false  # Tabulka se ukáže vždy, i když se procenta nezměnila
