@@ -16,18 +16,18 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.x' # nebo 9.0.x podle tvého projektu
+        dotnet-version: '10.0.x' # nebo 9.0.x podle tvého projektu
 
     - name: Restore
-      run: dotnet restore ZUMA.API.sln
+      run: dotnet restore "ZUMA.API.slnx"
 
     - name: Build
-      run: dotnet build ZUMA.API.sln --no-restore
+      run: dotnet build "ZUMA.API.slnx" --no-restore
 
     - name: Test with Coverage
       # Generujeme cobertura.xml pro Codecov
       run: |
-        dotnet test ZUMA.API.sln --no-build --verbosity normal \
+        dotnet test "ZUMA.API.slnx" --no-build --verbosity normal \
         /p:CollectCoverage=true \
         /p:CoverletOutputFormat=cobertura \
         /p:CoverletOutput=./TestResults/ \
