@@ -19,15 +19,15 @@ jobs:
         dotnet-version: '8.0.x' # nebo 9.0.x podle tvého projektu
 
     - name: Restore
-      run: dotnet restore
+      run: dotnet restore ZUMA.API.sln
 
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build ZUMA.API.sln --no-restore
 
     - name: Test with Coverage
       # Generujeme cobertura.xml pro Codecov
       run: |
-        dotnet test --no-build --verbosity normal \
+        dotnet test ZUMA.API.sln --no-build --verbosity normal \
         /p:CollectCoverage=true \
         /p:CoverletOutputFormat=cobertura \
         /p:CoverletOutput=./TestResults/ \
