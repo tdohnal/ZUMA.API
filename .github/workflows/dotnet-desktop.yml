@@ -5,7 +5,7 @@ on:
     branches: [ "main", "master" ]
 
 jobs:
-  # Společný job pro přípravu metadat (volitelné, ale čisté)
+  # 1. Příprava metadat
   prepare:
     runs-on: ubuntu-latest
     outputs:
@@ -14,12 +14,37 @@ jobs:
       - id: timestamp
         run: echo "BUILD_VER=$(date +'%Y.%m%d.%H%M')" >> $GITHUB_OUTPUT
 
-  # MATRIX JOB: Build a Push (běží paralelně pro každou službu)
+  # 2. SPUŠTĚNÍ TESTŮ - Pokud tohle selže, zbytek se nespustí
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x' # Uprav podle své verze (.NET 8/9)
+
+      - name: Restore dependencies
+        run: dotnet restore
+        env:
+          # Pokud používáš GitHub NuGet feed, potřebuješ token
+          NUGET_AUTH_TOKEN: ${{ secrets.NUGET_GITHUB_TOKEN }}
+
+      - name: Build tests
+        run: dotnet build --no-restore
+
+      - name: Run all tests
+        # Spustí všechny projekty končící na .Tests
+        run: dotnet test --no-build --verbosity normal
+
+  # 3. BUILD A PUSH - Teď závisí i na 'run-tests'
   build-and-push:
-    needs: prepare
+    needs: [prepare, run-tests] # Změna: musí projít testy i příprava
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false # Zásadní: pád jedné služby nezastaví ostatní
+      fail-fast: false
       matrix:
         include:
           - service_name: "API"
@@ -52,7 +77,7 @@ jobs:
           password: ${{ secrets.GHCR_TOKEN }}
 
       - name: Build and push ${{ matrix.service_name }}
-        uses: docker/build-push-action@v6 # V6 řeší Node.js warningy
+        uses: docker/build-push-action@v6
         with:
           context: ${{ matrix.context }}
           file: ${{ matrix.dockerfile }}
