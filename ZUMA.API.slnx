@@ -3,6 +3,11 @@
     <Project Path="ZUMA.CommunicationService/ZUMA.CommunicationService.csproj" />
     <Project Path="ZUMA.CustomerService/ZUMA.CustomerService.csproj" />
   </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Tests/ZUMA.API.Tests/ZUMA.API.Tests.csproj" Id="e2ab7011-62db-4566-aa3c-578c95fab8cb" />
+    <Project Path="Tests/ZUMA.CommunicationService.Tests/ZUMA.CommunicationService.Tests.csproj" Id="f65e162b-3f74-4f88-9ea7-b1e05764789b" />
+    <Project Path="Tests/Zuma.CustomerService.Tests/Zuma.CustomerService.Tests.csproj" Id="b0b0286a-3823-4ea5-8a64-961cb49f29d6" />
+  </Folder>
   <Project Path="docker-compose.dcproj">
     <Build />
   </Project>
