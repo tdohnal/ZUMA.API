@@ -34,25 +34,18 @@ jobs:
     - name: Build
       run: dotnet build "ZUMA.API.slnx" --no-restore
 
-    - name: Test with Coverage
+    - name: Run all tests
       run: |
-        # Vyčištění a vytvoření složky
-        rm -rf "${{ github.workspace }}/TestResults"
-        mkdir -p "${{ github.workspace }}/TestResults"
-        
-        # Spuštění testů pro každý projekt
-        find Tests -name "*.csproj" | while read project_file; do
-          echo "Testing project: $project_file"
+          find Tests -name "*.csproj" | while read project_file; do
+            # Vytvoříme unikátní název podle jména projektu
+            project_name=$(basename "$project_file" .csproj)
+            echo "Running tests for $project_name"
+            dotnet test "$project_file" --no-build --verbosity normal \
+              /p:CollectCoverage=true \
+              /p:CoverletOutputFormat=cobertura \
+              /p:CoverletOutput=./TestResults/$project_name.xml
+          done
           
-          dotnet test "$project_file" --no-build --verbosity normal \
-            /p:CollectCoverage=true \
-            /p:CoverletOutputFormat=cobertura \
-            /p:CoverletOutput="${{ github.workspace }}/TestResults/"
-            # Coverlet v novějších verzích při cestě končící lomítkem 
-            # automaticky pojmenuje soubor jako coverage.cobertura.xml 
-            # nebo zachová název projektu.
-        done
-
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v5
       with:
