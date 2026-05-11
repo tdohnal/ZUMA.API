@@ -19,8 +19,10 @@ jobs:
         dotnet-version: '10.0.x'
 
     - name: Add NuGet Source and Auth
-      # Vše na jednom řádku, aby GitHub neztratil parametry username a password
-      run: dotnet nuget add source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --name "GitHub" --username "${{ github.actor }}" --password "${{ secrets.NUGET_GITHUB_TOKEN }}" --store-password-in-clear-text
+      # Nejdřív smažeme případný existující zdroj "GitHub", aby add source nehodil chybu
+      run: |
+        dotnet nuget remove source "GitHub" || true
+        dotnet nuget add source "https://nuget.pkg.github.com/tdohnal/index.json" --name "GitHub" --username "tdohnal" --password "${{ secrets.NUGET_GITHUB_TOKEN }}" --store-password-in-clear-text
       env:
         NUGET_AUTH_TOKEN: ${{ secrets.NUGET_GITHUB_TOKEN }}
 
