@@ -9,10 +9,6 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-
-    env:
-        NUGET_AUTH_TOKEN: ${{ secrets.GHCR_TOKEN }} 
-    
     steps:
     - uses: actions/checkout@v4
 
@@ -20,17 +16,28 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '10.0.x'
-        source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
-      
+      # ODEBRALI JSME source-url, aby to neházelo tu chybu
+
+    - name: Add NuGet Source and Auth
+      # Tento krok ručně nastaví přístup k tvým balíčkům
+      run: |
+        dotnet nuget add source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" \
+          --name "GitHub" \
+          --username "${{ github.actor }}" \
+          --password "${{ secrets.GHCR_TOKEN }}" \
+          --store-password-in-clear-text
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
     - name: Restore
-      run: dotnet restore "ZUMA.API.slnx" --interactive
+      run: dotnet restore "ZUMA.API.slnx"
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
     - name: Build
       run: dotnet build "ZUMA.API.slnx" --no-restore
 
     - name: Test with Coverage
-      # Generujeme cobertura.xml pro Codecov
       run: |
         dotnet test "ZUMA.API.slnx" --no-build --verbosity normal \
         /p:CollectCoverage=true \
