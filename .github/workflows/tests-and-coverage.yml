@@ -19,7 +19,7 @@ jobs:
         dotnet-version: '10.0.x'
         source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
       env:
-        NODE_AUTH_TOKEN: ${{ secrets.GHCR_TOKEN }} 
+        NUGET_AUTH_TOKEN: ${{ secrets.GHCR_TOKEN }} 
 
     - name: Restore
       run: dotnet restore "ZUMA.API.slnx" --interactive
