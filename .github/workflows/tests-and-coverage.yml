@@ -50,7 +50,8 @@ jobs:
       uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        # Použijeme hvězdičku pro nalezení všech xml reportů v rootu složky
-        files: ${{ github.workspace }}/TestResults/*.xml
+        # Místo 'files' s hvězdičkou použijeme 'directory'
+        # To vynutí prohledání konkrétní složky
+        directory: ${{ github.workspace }}/TestResults
         fail_ci_if_error: true
         verbose: true
