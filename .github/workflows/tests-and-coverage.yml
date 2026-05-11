@@ -34,30 +34,27 @@ jobs:
     - name: Build
       run: dotnet build "ZUMA.API.slnx" --no-restore
 
-    - name: Test with Coverage
+    - name: Run all tests
       run: |
-        # Vyčištění a vytvoření složky
-        rm -rf "${{ github.workspace }}/TestResults"
-        mkdir -p "${{ github.workspace }}/TestResults"
-        
-        # Spuštění testů pro každý projekt
-        find Tests -name "*.csproj" | while read project_file; do
-          echo "Testing project: $project_file"
-          
-          dotnet test "$project_file" --no-build --verbosity normal \
-            /p:CollectCoverage=true \
-            /p:CoverletOutputFormat=cobertura \
-            /p:CoverletOutput="${{ github.workspace }}/TestResults/"
-            # Coverlet v novějších verzích při cestě končící lomítkem 
-            # automaticky pojmenuje soubor jako coverage.cobertura.xml 
-            # nebo zachová název projektu.
-        done
+          mkdir -p TestResults
+          find Tests -name "*.csproj" | while read project_file; do
+            project_name=$(basename "$project_file" .csproj)
+            echo "Running tests for $project_name"
+            # Všimni si těch zpětných lomítek na koncích řádků:
+            dotnet test "$project_file" --no-build --verbosity normal \
+              /p:CollectCoverage=true \
+              /p:CoverletOutputFormat=cobertura \
+              /p:CoverletOutput="${{ github.workspace }}/TestResults/${project_name}.coverage.xml"
+          done
 
-    - name: Upload coverage reports to Codecov
+    - name: List Test Results (Debug)
+      run: ls -R ${{ github.workspace }}/TestResults
+
+    - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v5
       with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        # Použijeme hvězdičku pro nalezení všech xml reportů v rootu složky
-        files: ${{ github.workspace }}/TestResults/*.xml
-        fail_ci_if_error: true
-        verbose: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+          # Teď mu řekneme o konkrétních souborech natvrdo přes glob
+          files: ${{ github.workspace }}/TestResults/*.coverage.xml
+          fail_ci_if_error: true
+          verbose: true
