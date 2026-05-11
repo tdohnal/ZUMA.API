@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector underlineName="XPlat Code Coverage">
+        <Configuration>
+          <Format>cobertura</Format>
+          <Include>[ZUMA.CustomerService*]*,[ZUMA.SharedKernel*]*</Include>
+          <Exclude>[*Tests*]*</Exclude>
+          <IncludeDirectoryList>
+            <Directory>ZUMA.SharedKernel</Directory>
+          </IncludeDirectoryList>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Sockets;
 
 namespace ZUMA.CustomerService;
 
+[ExcludeFromCodeCoverage]
 public class TcpHealthCheckListener : BackgroundService
 {
     private readonly HealthCheckService _healthCheckService;

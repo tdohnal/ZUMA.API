@@ -166,3 +166,6 @@ app.MapGet("/index.html", () => Results.Redirect("/docs/v1"))
 #endregion
 
 app.Run();
+
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+public partial class Program { }

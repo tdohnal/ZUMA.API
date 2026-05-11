@@ -57,3 +57,6 @@ using (IServiceScope scope = host.Services.CreateScope())
 #endregion
 
 host.Run();
+
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+public partial class Program { }

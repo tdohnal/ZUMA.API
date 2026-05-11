@@ -8,12 +8,12 @@ namespace ZUMA.CustomerService.Infrastructure.Repositories;
 
 internal class RegistrationRepository : RepositoryBase<RegistrationEntity>, IRegistrationRepository
 {
-    private readonly ILogger<UserRepository> _logger;
+    private readonly ILogger<RegistrationRepository> _logger;
     private readonly CustomerDbContext _dbContext;
 
     public RegistrationRepository
         (
-        ILogger<UserRepository> logger,
+        ILogger<RegistrationRepository> logger,
         CustomerDbContext dbContext
         )
       : base(dbContext, logger)

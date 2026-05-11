@@ -1,5 +1,7 @@
-﻿using ZUMA.CustomerService.Domain.Entities;
+﻿using System.Diagnostics.CodeAnalysis;
+using ZUMA.CustomerService.Domain.Entities;
 
+[ExcludeFromCodeCoverage]
 public class VerificationResult
 {
     public VerificationResult(string errorMessage = "")
