@@ -27,17 +27,17 @@ jobs:
           dotnet-version: '8.0.x' # Uprav podle své verze (.NET 8/9)
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore ZUMA.API.sln
         env:
           # Pokud používáš GitHub NuGet feed, potřebuješ token
           NUGET_AUTH_TOKEN: ${{ secrets.NUGET_GITHUB_TOKEN }}
 
       - name: Build tests
-        run: dotnet build --no-restore
+        run: dotnet build ZUMA.API.sln --no-restore
 
       - name: Run all tests
         # Spustí všechny projekty končící na .Tests
-        run: dotnet test --no-build --verbosity normal
+        run: dotnet test ZUMA.API.sln --no-build --verbosity normal
 
   # 3. BUILD A PUSH - Teď závisí i na 'run-tests'
   build-and-push:
