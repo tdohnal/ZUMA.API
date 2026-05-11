@@ -10,6 +10,9 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    env:
+        NUGET_AUTH_TOKEN: ${{ secrets.GHCR_TOKEN }} 
+    
     steps:
     - uses: actions/checkout@v4
 
@@ -18,14 +21,10 @@ jobs:
       with:
         dotnet-version: '10.0.x'
         source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
-      env:
-        NUGET_AUTH_TOKEN: ${{ secrets.GHCR_TOKEN }} 
+      
 
     - name: Restore
       run: dotnet restore "ZUMA.API.slnx" --interactive
-      env:
-        # Tohle vnutí dotnetu použití tvého secretu pro GitHub Packages
-        NUGET_AUTH_TOKEN: ${{ secrets.GHCR_TOKEN }}
 
     - name: Build
       run: dotnet build "ZUMA.API.slnx" --no-restore
