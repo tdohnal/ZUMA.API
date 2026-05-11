@@ -35,12 +35,17 @@ jobs:
       run: dotnet build "ZUMA.API.slnx" --no-restore
 
     - name: Test with Coverage
-      # Míříme přímo na složku s testovacími projekty
       run: |
-        dotnet test "Tests/" --no-build --verbosity normal \
-        /p:CollectCoverage=true \
-        /p:CoverletOutputFormat=cobertura \
-        /p:CoverletOutput=../TestResults/
+        mkdir -p TestResults
+        # find najde všechny .csproj v podsložkách Tests
+        find Tests -name "*.csproj" | while read project_file; do
+          echo "Processing project: $project_file"
+          # Spustíme testy a nasměrujeme cobertura report do centrální složky
+          dotnet test "$project_file" --no-build --verbosity normal \
+            /p:CollectCoverage=true \
+            /p:CoverletOutputFormat=cobertura \
+            /p:CoverletOutput="../../TestResults/$(basename ${project_file%.*}).cobertura.xml"
+        done
 
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v5
