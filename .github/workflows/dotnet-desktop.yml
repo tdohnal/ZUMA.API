@@ -149,6 +149,7 @@ jobs:
             SMTP_SENDER=${{ secrets.SMTP_SENDER }}
             SMTP_SENDER_NAME=${{ secrets.SMTP_SENDER_NAME }}
             SEQ_PASS=${{ secrets.SEQ_PASS }}
+            REDIS_CONNECTION=${{ secrets.REDIS_CONNECTION }}
             APP_ENV=Sandbox
             GITHUB_REPO_LOWER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
             EOF
