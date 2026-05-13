@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using ZUMA.CustomerService.Domain.Entities;
 using ZUMA.CustomerService.Domain.Interfaces;
 using ZUMA.CustomerService.Infrastructure.Persistence;
@@ -13,14 +14,18 @@ internal class RegistrationRepository : RepositoryBase<RegistrationEntity>, IReg
 
     public RegistrationRepository
         (
-        ILogger<RegistrationRepository> logger,
-        CustomerDbContext dbContext
+          CustomerDbContext dbContext,
+          IDistributedCache cache,
+          ILogger<RegistrationRepository> logger
+
         )
-      : base(dbContext, logger)
+      : base(dbContext, cache, logger)
     {
         _dbContext = dbContext;
         _logger = logger;
     }
+
+    protected override bool IsCacheEnabled => true;
 
     protected override IQueryable<RegistrationEntity> ApplyIncludes(IQueryable<RegistrationEntity> query)
     {

@@ -24,6 +24,16 @@ builder.Services.AddZumaTelemetry("ZUMA.API", otlpEndpoint);
 
 #endregion
 
+#region Cache
+
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration["REDIS_CONNECTION"];
+    options.InstanceName = "ZUMA_";
+});
+
+#endregion
+
 builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddHealthChecks()
