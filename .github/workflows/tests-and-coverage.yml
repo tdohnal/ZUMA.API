@@ -1,8 +1,6 @@
 name: CI - Build, Test and Coverage
 
 on:
-  push:
-    branches-ignore: [ master, develop ]
   pull_request:
     branches: [ '*' ]
 
