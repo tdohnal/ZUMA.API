@@ -1,10 +1,8 @@
 name: CI - Build, Test and Coverage
 
 on:
-  push:
-    branches: [ master, develop ]
   pull_request:
-    branches: [ master, develop ]
+    branches: [ '*' ]
 
 jobs:
   build-and-test:
@@ -19,7 +17,6 @@ jobs:
         dotnet-version: '10.0.x'
 
     - name: Add NuGet Source and Auth
-      # Nejdřív smažeme případný existující zdroj "GitHub", aby add source nehodil chybu
       run: |
         dotnet nuget remove source "GitHub" || true
         dotnet nuget add source "https://nuget.pkg.github.com/tdohnal/index.json" --name "GitHub" --username "tdohnal" --password "${{ secrets.NUGET_GITHUB_TOKEN }}" --store-password-in-clear-text
@@ -54,7 +51,5 @@ jobs:
       uses: codecov/codecov-action@v5
       with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          # Teď mu řekneme o konkrétních souborech natvrdo přes glob
-          files: ${{ github.workspace }}/TestResults/*.coverage.xml
           fail_ci_if_error: true
           verbose: true
