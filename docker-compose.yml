@@ -13,6 +13,9 @@ services:
     restart: always
     environment:
       - REDIS_CONNECTION=${REDIS_CONNECTION}
+    networks:
+      - proxy-nw
+      - zuma-network
 
   zuma-redis-insight:
     image: redis/redisinsight:latest
@@ -20,6 +23,9 @@ services:
     ports:
       - "5540:5540"
     restart: always
+    networks:
+      - proxy-nw
+      - zuma-network
 
   nginx-proxy-manager:
     image: 'jc21/nginx-proxy-manager:latest'
