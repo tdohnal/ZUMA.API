@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Zuma.CustomerService.Tests.Infrastructure.Persistance.Repositories.Base;
@@ -13,7 +14,8 @@ public class ControlsElementsItemRepositoryTests : GenericRepositoryTests<Contro
     protected override IControlsElementsItemRepository CreateRepository(ILogger<IControlsElementsItemRepository> logger)
     {
         var classLogger = Mock.Of<ILogger<ControlsElementsItemRepository>>();
-        return new ControlsElementsItemRepository(classLogger, Context);
+        var distributedCache = Mock.Of<IDistributedCache>();
+        return new ControlsElementsItemRepository(Context, distributedCache, classLogger);
     }
 
     protected override void MapRequiredProperties(ControlsElementsItemEntity entity)

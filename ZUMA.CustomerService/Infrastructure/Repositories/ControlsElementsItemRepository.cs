@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using ZUMA.CustomerService.Domain.Entities;
 using ZUMA.CustomerService.Domain.Interfaces;
 using ZUMA.CustomerService.Infrastructure.Persistence;
@@ -12,13 +13,16 @@ internal class ControlsElementsItemRepository : RepositoryBase<ControlsElementsI
 
     public ControlsElementsItemRepository
         (
-        ILogger<ControlsElementsItemRepository> logger,
-        CustomerDbContext dbContext
+        CustomerDbContext dbContext,
+        IDistributedCache cache,
+        ILogger<ControlsElementsItemRepository> logger
         )
-      : base(dbContext, logger)
+      : base(dbContext, cache, logger)
     {
         _logger = logger;
     }
+
+    protected override bool IsCacheEnabled => true;
 
     protected override IQueryable<ControlsElementsItemEntity> ApplyIncludes(IQueryable<ControlsElementsItemEntity> query)
     {

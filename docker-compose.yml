@@ -5,11 +5,27 @@ networks:
     external: true
 
 services:
+  zuma-cache:
+    image: redis:alpine
+    container_name: zuma-redis
+    ports:
+      - "6379:6379"
+    restart: always
+    environment:
+      - REDIS_CONNECTION=${REDIS_CONNECTION}
+
+  zuma-redis-insight:
+    image: redis/redisinsight:latest
+    container_name: zuma-redis-insight
+    ports:
+      - "5540:5540"
+    restart: always
+
   nginx-proxy-manager:
     image: 'jc21/nginx-proxy-manager:latest'
     container_name: zuma-npm
     restart: always
-    ports:
+    ports: 
       - '80:80'
       - '81:81'
       - '443:443'

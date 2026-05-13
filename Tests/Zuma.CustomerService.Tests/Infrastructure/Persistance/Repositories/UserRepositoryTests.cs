@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Zuma.CustomerService.Tests.Infrastructure.Persistance.Repositories.Base;
@@ -13,7 +14,8 @@ public class UserRepositoryTests : GenericRepositoryTests<UserEntity, IUserRepos
     protected override IUserRepository CreateRepository(ILogger<IUserRepository> logger)
     {
         var classLogger = Mock.Of<ILogger<UserRepository>>();
-        return new UserRepository(classLogger, Context);
+        var distributedCache = Mock.Of<IDistributedCache>();
+        return new UserRepository(Context, distributedCache, classLogger);
     }
 
     protected override void MapRequiredProperties(UserEntity entity)
